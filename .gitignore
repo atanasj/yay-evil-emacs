@@ -1,9 +1,15 @@
-# Ignore everything
-*
+# Ignore
+transient/
+snippets/
+elpa/
+auto-save-list/
+src/
+lisp/atanas.el
+to-be-dumpted.el
+projectile*
+.last-package-update-day
+to-be-dumped.el
+ido.last
+congig.el
+
 # Except for..
-!.gitignore
-!init.el
-!config.org
-!themes/
-!lisp/
-!assets/

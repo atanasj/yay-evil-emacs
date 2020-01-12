@@ -9,7 +9,7 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
     :preface
     (defvar ian/indent-width 4) ; change this value to your preferred width
     :config
-    (setq frame-title-format '("Yay-Evil") ; Yayyyyy Evil!
+    (setq frame-title-format '("\"In the middle of difficulty lies opportunity.\"") ; Yayyyyy Evil!
           ring-bell-function 'ignore       ; minimise distraction
           frame-resize-pixelwise t
           default-directory "~/")
@@ -203,15 +203,22 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 *** Load custom theme
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-  (load-theme 'wilmersdorf t)
+  ;; (load-theme 'wilmersdorf t) ; this was Ian's custom, disabled for the below instead
+
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one t))
 #+END_SRC
 *** Dashboard welcome page
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :config
     (dashboard-setup-startup-hook)
-    (setq dashboard-startup-banner 'logo
-          dashboard-banner-logo-title "Yay Evil!"
+    (setq dashboard-startup-banner "~/.emacs.d/assets/einstein2.png" ; 'logo
+          dashboard-banner-logo-title "\"If you can't explain it simply, you don't understand it well enough.\""
           dashboard-items nil
           dashboard-set-footer nil))
 #+END_SRC
@@ -229,7 +236,7 @@ Lightweight syntax highlighting improvement for numbers, operators, and escape s
 #+END_SRC
 ** Vi keybindings
 I personally find Vi(m) bindings to be the most efficient way of editing text (especially code). I also changed the default ~:q~ and ~:wq~ to be killing current buffer instead of killing the frame or subsequently killing Emacs.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package evil
     :diminish undo-tree-mode
     :init
@@ -250,7 +257,7 @@ I personally find Vi(m) bindings to be the most efficient way of editing text (e
     (evil-ex-define-cmd "wq" #'ian/save-and-kill-this-buffer))
 #+END_SRC
 Evil-collection covers more parts of Emacs that the original Evil doesn't support (e.g. Packages buffer, eshell, calendar etc.)
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package evil-collection
     :after evil
     :config
@@ -258,14 +265,14 @@ Evil-collection covers more parts of Emacs that the original Evil doesn't suppor
     (evil-collection-init))
 #+END_SRC
 Tim Pope's vim commentary package (Use ~gcc~ to comment out a line, ~gc~ to comment out the target of a motion (for example, ~gcap~ to comment out a paragraph), ~gc~ in visual mode to comment out the selection etc.)
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package evil-commentary
     :after evil
     :diminish
     :config (evil-commentary-mode +1))
 #+END_SRC
 Evil keybindings for magit.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package evil-magit)
 #+END_SRC
 ** Git Integration
@@ -321,9 +328,13 @@ A modern on-the-fly syntax checking extension -- absolute essential
 Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a more visually pleasing look.
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :init
+    (setq org-support-shift-select t) ; could be okay or not
+    (setq org-src-tab-acts-natively t)
     :hook ((org-mode . visual-line-mode)
-           (org-mode . org-indent-mode)))
-
+           (org-mode . org-indent-mode))
+    ;; :bind ("\C-cl" . org-store-link) ; not using, but taken from kjhealy's setup
+    )
   (use-package org-bullets :hook (org-mode . org-bullets-mode))
 #+END_SRC
 *** Yasnippet & yasnippet-snippets
@@ -349,7 +360,8 @@ Use TAB to expand snippets. The code snippet below also avoids clashing with com
 *** Useful major modes
 Markdown mode and JSON mode
 #+BEGIN_SRC emacs-lisp
-  (use-package markdown-mode :hook (markdown-mode . visual-line-mode))
+  ;; This has been loaded via the atanas.org file
+  ;; (use-package markdown-mode :hook (markdown-mode . visual-line-mode))
 
   (use-package json-mode)
 #+END_SRC
@@ -376,3 +388,25 @@ Provides us with hints on available keystroke combinations.
     :config (when (memq window-system '(mac ns x))
               (exec-path-from-shell-initialize)))
 #+END_SRC
+
+* Atanas' tweaks
+** Function for loading/compiling starter-kit-*
+
+#+srcname: set load path
+#+begin_src emacs-lisp
+  ;; this has been included for simplicity, however may need something more complex
+  (org-babel-load-file (expand-file-name "~/.emacs.d/lisp/atanas.org")) ; for my custom settings
+  ;; for custom lisp files from github or similar
+  (add-to-list 'load-path (expand-file-name "~/.emacs.d/src")) ; test to make sure this is working
+
+  ;;; Commentary:
+  ;; this is taken form the plain text starter kit
+  ;;; Code:
+  ;; (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
+  ;; (setq dotfiles-dir (file-name-directory (or load-file-name (buffer-file-name))))
+  ;; (add-to-list 'load-path
+  ;; (expand-file-name "lisp" dotfiles-dir
+  ;; (expand-file-name "org"
+  ;; (expand-file-name "src" dotfiles-dir))))
+
+#+end_src

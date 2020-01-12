@@ -5,5 +5,5 @@
 !init.el
 !config.org
 !themes/
-!lisp/*
-!assets/*
+!lisp/
+!assets/

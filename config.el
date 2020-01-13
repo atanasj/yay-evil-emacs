@@ -32,6 +32,10 @@
      (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
      (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
 
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode 1))
+
 (use-package "startup"
   :ensure nil
   :config (setq inhibit-startup-screen t))

@@ -3,8 +3,34 @@
 #+Date: 2020
 This is my config for additional packages and thier associated settings. Some of this is taken from other packages, and I will cite them as appropriate.
 
+* Keybindings
+These are keybindings related to built-in features that are not enabled by default.
+** Turn on the menu bar for exploring new modes
+#+begin_src emacs-lisp
+  (global-set-key [f1] 'menu-bar-mode)
+#+end_src
+
+** Font size
+Make the font larger or smaller in the buffer.
+
+#+begin_src emacs-lisp
+  (define-key global-map (kbd "C-+") 'text-scale-increase)
+  (define-key global-map (kbd "C--") 'text-scale-decrease)
+#+end_src
+
+** Org-mode
+A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
+Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
+globally for later insertion into an Org-mode buffer.
+See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
+
+#+begin_src emacs-lisp :tangle no
+  (define-key global-map "\C-cl" 'org-store-link)
+#+end_src
+
+#  LocalWords:  iTerm
 * Settings without corresponding packages
-** Map fn to Hyper
+** Map fn to Hyper, CMD to Super
 #+source: fn-to-hyper
 #+begin_src emacs-lisp :tangle no
   ;; from  kjkeayl's config, however the remainder below at this stage not required
@@ -116,7 +142,6 @@ Load the snippets defined in the package's =./snippets/= directory, and local sn
 #+end_src
 ** ESS, R, ploy-R and poly-markdown
 This is taken mostly from the kjhealy.
-
 *** Load ESS
 #+src-name: ess-mode
 #+begin_src emacs-lisp
@@ -135,37 +160,37 @@ This is taken mostly from the kjhealy.
   ;;  "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
   ;;  )
 #+end_src
+
 *** Coding Hooks
 #+source: ide-ess
 #+begin_src emacs-lisp :tangle no
   (add-hook 'ess-mode-hook 'run-starter-kit-coding-hook) ; not sure I need this
   (add-hook 'ess-R-post-run-hook 'smartparens-mode)
-
 #+end_src
 
 *** Define Rnw-mode and make LaTeX aware of it.
 If you use Rnw documents, tangle this section. (Rnw files have been mostly superseded by Rmd files.)
 #+srcname: misc-r
 #+begin_src emacs-lisp :tangle no
-(add-to-list 'auto-mode-alist '("\\.Rnw\\'" . Rnw-mode))
-(add-to-list 'auto-mode-alist '("\\.Snw\\'" . Rnw-mode))
+  (add-to-list 'auto-mode-alist '("\\.Rnw\\'" . Rnw-mode))
+  (add-to-list 'auto-mode-alist '("\\.Snw\\'" . Rnw-mode))
 
-;; Make TeX and RefTex aware of Snw and Rnw files
-(setq reftex-file-extensions
-      '(("Snw" "Rnw" "nw" "tex" ".tex" ".ltx") ("bib" ".bib")))
-(setq TeX-file-extensions
-      '("Snw" "Rnw" "nw" "tex" "sty" "cls" "ltx" "texi" "texinfo"))
+  ;; Make TeX and RefTex aware of Snw and Rnw files
+  (setq reftex-file-extensions
+        '(("Snw" "Rnw" "nw" "tex" ".tex" ".ltx") ("bib" ".bib")))
+  (setq TeX-file-extensions
+        '("Snw" "Rnw" "nw" "tex" "sty" "cls" "ltx" "texi" "texinfo"))
 
-;; Lets you do 'C-c C-c Sweave' from your Rnw file
-(add-hook 'Rnw-mode-hook
-      (lambda ()
-        (add-to-list 'TeX-command-list
-             '("Sweave" "R CMD Sweave %s"
-               TeX-run-command nil (latex-mode) :help "Run Sweave") t)
-        (add-to-list 'TeX-command-list
-             '("LatexSweave" "%l %(mode) %s"
-               TeX-run-TeX nil (latex-mode) :help "Run Latex after Sweave") t)
-        (setq TeX-command-default "Sweave")))
+  ;; Lets you do 'C-c C-c Sweave' from your Rnw file
+  (add-hook 'Rnw-mode-hook
+            (lambda ()
+              (add-to-list 'TeX-command-list
+                           '("Sweave" "R CMD Sweave %s"
+                             TeX-run-command nil (latex-mode) :help "Run Sweave") t)
+              (add-to-list 'TeX-command-list
+                           '("LatexSweave" "%l %(mode) %s"
+                             TeX-run-TeX nil (latex-mode) :help "Run Latex after Sweave") t)
+              (setq TeX-command-default "Sweave")))
 #+end_src
 
 *** Use Knitr to process Sweave documents
@@ -234,7 +259,6 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 #+end_src
 
 *** Add a Keyboard Shortcut for the Pipe Operator
-
 Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inserting the `%>%` operator.
 
 #+src-name: ess-pipe-shortcut
@@ -477,7 +501,7 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
 #+end_src
 
 #+source: paren-face
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
   ;; this package reduces how paren-faces look
   (use-package paren-face
     :init
@@ -663,30 +687,3 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
     "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
 #+end_src
-* Keybindings
-These are keybindings related to built-in features that are not enabled by default.
-
-** Turn on the menu bar for exploring new modes
-#+begin_src emacs-lisp
-  (global-set-key [f1] 'menu-bar-mode)
-#+end_src
-
-** Font size
-Make the font larger or smaller in the buffer.
-
-#+begin_src emacs-lisp
-  (define-key global-map (kbd "C-+") 'text-scale-increase)
-  (define-key global-map (kbd "C--") 'text-scale-decrease)
-#+end_src
-
-** Org-mode
-A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
-Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
-globally for later insertion into an Org-mode buffer.
-See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
-
-#+begin_src emacs-lisp :tangle no
-  (define-key global-map "\C-cl" 'org-store-link)
-#+end_src
-
-#  LocalWords:  iTerm

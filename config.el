@@ -150,6 +150,19 @@
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-one t))
 
+(use-package quelpa-use-package)
+(require 'font-lock)
+(use-package font-lock+
+:ensure t
+:quelpa
+(font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode))
+
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)

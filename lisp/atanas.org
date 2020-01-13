@@ -71,7 +71,6 @@ This is not currently used. If needed, tangle them.
 
 ** Update the UI
 For the main :config options related to doom-modeline, please see the github repo
-
 #+source: doom-modeline
 #+begin_src emacs-lisp :tangle yes
   ;; load all-the-icons
@@ -80,17 +79,43 @@ For the main :config options related to doom-modeline, please see the github rep
   (use-package quelpa-use-package)
   (require 'font-lock)
   (use-package font-lock+
-  :ensure t
-  :quelpa
-  (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+  :ensure t)
+  ;; :quelpa
+  ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+
   (use-package all-the-icons)
 
   (use-package doom-modeline
+    :ensure t
     :hook (after-init . doom-modeline-mode)
     :config
     (setq doom-modeline-height 25)
     (setq doom-modeline-bar-width 3)
+    ;; How to detect the project root.
+    ;; The default priority of detection is `ffip' > `projectile' > `project'.
+    ;; nil means to use `default-directory'.
+    ;; The project management packages have some issues on detecting project root.
+    ;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
+    ;; to hanle sub-projects.
+    ;; You can specify one if you encounter the issue.
     (setq doom-modeline-project-detection 'project)
+    ;; Determines the style used by `doom-modeline-buffer-file-name'.
+    ;;
+    ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+    ;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+    ;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+    ;;   truncate-with-project => emacs/l/comint.el
+    ;;   truncate-except-project => ~/P/F/emacs/l/comint.el
+    ;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+    ;;   truncate-all => ~/P/F/e/l/comint.el
+    ;;   relative-from-project => emacs/lisp/comint.el
+    ;;   relative-to-project => lisp/comint.el
+    ;;   file-name => comint.el
+    ;;   buffer-name => comint.el<2> (uniquify buffer name)
+    ;;
+    ;; If you are experiencing the laggy issue, especially while editing remote files
+    ;; with tramp, please try `file-name' style.
+    ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
     (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
     ;; Whether display icons in mode-line. Respects `all-the-icons-color-icons'.
     ;; While using the server mode in GUI, should set the value explicitly.
@@ -667,15 +692,15 @@ Below are my custom scripts. Please note, any associated keybdings are contained
   :load-path "src/applescript-mode")
 #+end_src
 
-** TODO [#B] Zotero Cite as You Write
+** Zotero Cite as You Write
 This used `applescript` to access Zotero's citation picker via Better Bibtex.
 #+srcname: zotero-cayw
 #+begin_src emacs-lisp
   ;; This script needs a citation as it was not written by me.
   (defun zotero-cayw ()
-     "Zotero citation picker"
-     (interactive)
-     (do-applescript
+    "Zotero citation picker"
+    (interactive)
+    (do-applescript
      "tell application \"System Events\"
            try
                  set appName to (the name of every process whose frontmost is true) as string
@@ -718,6 +743,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
   (global-set-key (kbd "s-y") 'zotero-cayw)
 #+end_src
 ** iTerm2 integration
+
 #+source: iterm2
 #+begin_src emacs-lisp
   ;; from https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/

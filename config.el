@@ -273,6 +273,9 @@
 
 (use-package yasnippet-snippets)
 
+;; load snippets from kjhealy's config
+(yas-load-directory (expand-file-name "~/.emacs.d/snippets"))
+
 ;; This has been loaded via the atanas.org file
 ;; (use-package markdown-mode :hook (markdown-mode . visual-line-mode))
 

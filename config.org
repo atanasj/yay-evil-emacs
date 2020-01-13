@@ -449,6 +449,8 @@ Provides us with hints on available keystroke combinations.
   ;; assign and pipe operatoros
   ;; (use-package undo-tree
   ;;   :init (global-undo-tree-mode))
+  ;; (global-undo-tree-mode)
+
   (eval-after-load 'undo-tree
     '(progn
        (define-key undo-tree-map (kbd "C-/") nil)

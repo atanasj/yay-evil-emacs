@@ -3,32 +3,6 @@
 #+Date: 2020
 This is my config for additional packages and thier associated settings. Some of this is taken from other packages, and I will cite them as appropriate.
 
-* Keybindings
-These are keybindings related to built-in features that are not enabled by default.
-** Turn on the menu bar for exploring new modes
-#+begin_src emacs-lisp
-  (global-set-key [f1] 'menu-bar-mode)
-#+end_src
-
-** Font size
-Make the font larger or smaller in the buffer.
-
-#+begin_src emacs-lisp
-  (define-key global-map (kbd "C-+") 'text-scale-increase)
-  (define-key global-map (kbd "C--") 'text-scale-decrease)
-#+end_src
-
-** Org-mode
-A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
-Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
-globally for later insertion into an Org-mode buffer.
-See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
-
-#+begin_src emacs-lisp :tangle no
-  (define-key global-map "\C-cl" 'org-store-link)
-#+end_src
-
-#  LocalWords:  iTerm
 * Settings without corresponding packages
 ** Map fn to Hyper, CMD to Super
 #+source: fn-to-hyper
@@ -151,8 +125,8 @@ This is taken mostly from the kjhealy.
   ;; there may be a more elegant way of doing this... but for now, this works.
   (require 'ess-r-mode)
   ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
-  (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
-  (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
+  ;; (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
+  ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
 
   ;; (general-define-key
   ;;  :prefix "M+s"
@@ -271,8 +245,8 @@ Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inser
 
     (reindent-then-newline-and-indent))
 
-  (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator) ; "M-_"
-  (define-key inferior-ess-mode-map (kbd "M-_") 'my_pipe_operator)
+  ;; (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator) ; "M-_"
+  ;; (define-key inferior-ess-mode-map (kbd "M-_") 'my_pipe_operator)
 #+end_src
 
 *** Add a Keyboard Shortcut for Rmd chunks
@@ -286,7 +260,7 @@ Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inser
     (insert (concat "```{r " header "}\n\n```"))
     (forward-line -1))
 
-  (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
+  ;; (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
 #+END_SRC
 
 *** TODO Uniquify Buffer Names
@@ -640,10 +614,9 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
            end tell
            end if"))
   ;; set the binding
-  (global-set-key (kbd "s-y") 'zotero-cayw)
+  ;; (global-set-key (kbd "s-y") 'zotero-cayw)
 #+end_src
 ** iTerm2 integration
-
 #+source: iterm2
 #+begin_src emacs-lisp
   ;; from https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
@@ -678,11 +651,59 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
      " do shell script \"open -a iTerm\"\n"
      ))
 
-  (use-package general)
+  ;; (use-package general)
 
-  (general-define-key
-   :prefix "C-x"
-    "t" '(iterm-focus :which-key "focus iterm")
-    "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
+  ;; (general-define-key
+  ;;  :prefix "C-x"
+  ;;   "t" '(iterm-focus :which-key "focus iterm")
+  ;;   "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
 #+end_src
+* Keybindings
+These are keybindings related to built-in features that are not enabled by default.
+** Turn on the menu bar for exploring new modes
+#+begin_src emacs-lisp :tangle yes
+  ;; If you want the keybinding to override all minor modes that may also bind
+  ;; the same key, use the `bind-key*' form:
+  ;;
+  ;;   (bind-key* "<C-return>" 'other-window)
+
+  ;; To bind multiple keys in a `bind-key*' way (to be sure that your bindings
+  ;; will not be overridden by other modes), you may use `bind-keys*' macro:
+  ;;
+     (bind-keys*
+      ("C-x t" . iterm-focus)
+      ("C-x /" . iterm-goto-filedir-or-home)
+      ("C-+" . text-scale-increase)
+      ("C--" . text-scale-decrease)
+      ("s-y" . zotero-cayw) ; Zotero CAYW
+      ("C-'" . ess-insert-assign) ; Load ESS
+      ("C-\"" . my_pipe_operator) ; Pipe Operator
+      ("C-c i" . kjh-insert-r-chunk) ;  Rmd chunks
+      ([f1] . menu-bar-mode))
+
+  ;; (global-set-key [f1] 'menu-bar-mode)
+#+end_src
+
+#+RESULTS:
+: menu-bar-mode
+
+** Font size
+Make the font larger or smaller in the buffer.
+
+#+begin_src emacs-lisp :tangle no
+  (define-key global-map (kbd "C-+") 'text-scale-increase)
+  (define-key global-map (kbd "C--") 'text-scale-decrease)
+#+end_src
+
+** Org-mode
+A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
+Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
+globally for later insertion into an Org-mode buffer.
+See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
+
+#+begin_src emacs-lisp :tangle no
+  (define-key global-map "\C-cl" 'org-store-link)
+#+end_src
+
+#  LocalWords:  iTerm

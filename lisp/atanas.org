@@ -111,7 +111,7 @@ Yasnippet is a snippet expansion system for Emacs. It uses short phrases and the
 
 Load the snippets defined in the package's =./snippets/= directory, and local snippets from the =./local-snippets/= directory.
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (yas-load-directory (expand-file-name "~/.emacs.d/snippets"))
 #+end_src
 
@@ -312,7 +312,6 @@ This is useful for when you have buffers with many similar names, as when there 
 
 ** Markdown, Pandoc and all things writing
 These are where settings for pandoc and markdown related features.
-
 **** Markdown and Marked2.app
 Markdown mode support, including preview in =.Marked2.app.=.
 
@@ -328,7 +327,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
     (setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
     (setq auto-mode-alist (cons '("README\\.md" . gfm-mode) auto-mode-alist))
     :hook ((markdown-mode . visual-line-mode)
-           (markdown-mod . latex-unicode-simplified))
+           (markdown-mode . latex-unicode-simplified))
     ;; (add-hook 'markdown-mode-hook 'visual-line-mode)
     ;; (add-hook 'markdown-mode-hook 'latex-unicode-simplified)
     )

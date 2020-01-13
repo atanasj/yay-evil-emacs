@@ -405,6 +405,9 @@ Use TAB to expand snippets. The code snippet below also avoids clashing with com
                       (yas-expand)))))
 
   (use-package yasnippet-snippets)
+
+  ;; load snippets from kjhealy's config
+  (yas-load-directory (expand-file-name "~/.emacs.d/snippets"))
 #+END_SRC
 *** Useful major modes
 Markdown mode and JSON mode
@@ -439,8 +442,24 @@ Provides us with hints on available keystroke combinations.
 #+END_SRC
 
 * Atanas' tweaks
-** Function for loading/compiling starter-kit-*
+** Set undo-tree keybindings
+#+source: undo-tree-kbd
+#+begin_src emacs-lisp :tangle no
+  ;; this packages keybindings have caused issues with the ess-r-mode
+  ;; assign and pipe operatoros
+  ;; (use-package undo-tree
+  ;;   :init (global-undo-tree-mode))
+  (eval-after-load 'undo-tree
+    '(progn
+       (define-key undo-tree-map (kbd "C-/") nil)
+       (define-key undo-tree-map (kbd "C-_") nil)
+       (define-key undo-tree-map (kbd "C-?") nil)
+       (define-key undo-tree-map (kbd "M-_") nil)
+       (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
+       (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
+#+end_src
 
+** Load additional config files*
 #+srcname: set load path
 #+begin_src emacs-lisp
   ;; this has been included for simplicity, however may need something more complex

@@ -11,5 +11,6 @@ projectile*
 to-be-dumped.el
 ido.last
 config.el
+.mc-lists.el
 
 # Except for..

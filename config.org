@@ -15,7 +15,7 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
           default-directory "~/")
 
     (tool-bar-mode -1)
-    (menu-bar-mode 1) ; menu-bar on
+    (menu-bar-mode 1) ; menu-bar on, I like it this way
 
     ;; better scrolling experience
     (setq scroll-margin 0
@@ -29,8 +29,51 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
     ;; Always use spaces for indentation
     (setq-default indent-tabs-mode nil
                   tab-width ian/indent-width))
+#+END_SRC
+* Map fn to Hyper, CMD to Super
+#+source: fn-to-hyper
+#+begin_src emacs-lisp :tangle no
+  ;; from  kjkeayl's config, however the remainder below at this stage not required
+  ;; set keys for Apple keyboard, for emacs in OS X
+  (setq ns-command-modifier 'super) ; make cmd key do Super
+  ;; (setq mac-option-modifier 'super) ; make opt key do Super
+  ;; (setq mac-control-modifier 'control) ; make Control key do Control
+  (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
 
-  (eval-after-load 'undo-tree
+  ;; fix page-up and page-down keys
+
+  ;; (defun sfp-page-down (&optional arg)
+  ;;   (interactive "^P")
+  ;;   (setq this-command 'next-line)
+  ;;   (next-line
+  ;;    (- (window-text-height)
+  ;;       next-screen-context-lines)))
+  ;; (put 'sfp-page-down 'isearch-scroll t)
+  ;; (put 'sfp-page-down 'CUA 'move)
+
+  ;; (defun sfp-page-up (&optional arg)
+  ;;   (interactive "^P")
+  ;;   (setq this-command 'previous-line)
+  ;;   (previous-line
+  ;;    (- (window-text-height)
+  ;;       next-screen-context-lines)))
+  ;; (put 'sfp-page-up 'isearch-scroll t)
+  ;; (put 'sfp-page-up 'CUA 'move)
+
+  ;; (global-set-key [(H down)] 'scroll-up)
+  ;; (global-set-key [(H up)]   'scroll-down)
+  ;; (use-package scroll-lock
+  ;;   :init
+  ;;   (setq scroll-preserve-screen-position t))
+
+#+end_src
+* Configuration for built-in packages
+Since we're using use-package as our package management system, we might as well try to organise under the same syntax as much as possible to keep the configuration consistent. The option ~use-package-always-ensure~ is turned on in ~init.el~, so we'll add ~:ensure nil~ when configuring the built-in packages.
+** Undo-Tree
+I think this is important to have upfront, so that it does not conflict with other keybindings, particularly the R-IDE pipe and assign operators.
+#+source: undo-tree
+#+begin_src emacs-lisp
+   (eval-after-load 'undo-tree
     '(progn
        (define-key undo-tree-map (kbd "C-/") nil)
        (define-key undo-tree-map (kbd "C-_") nil)
@@ -42,9 +85,7 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
   (use-package undo-tree
     :config
     (global-undo-tree-mode 1))
-#+END_SRC
-* Configuration for built-in packages
-Since we're using use-package as our package management system, we might as well try to organise under the same syntax as much as possible to keep the configuration consistent. The option ~use-package-always-ensure~ is turned on in ~init.el~, so we'll add ~:ensure nil~ when configuring the built-in packages.
+#+end_src
 ** Omit default startup screen
 #+BEGIN_SRC emacs-lisp
   (use-package "startup"

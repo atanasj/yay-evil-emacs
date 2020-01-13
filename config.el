@@ -1,6 +1,9 @@
 (use-package emacs
   :preface
   (defvar ian/indent-width 4) ; change this value to your preferred width
+  :bind
+  ("C-+" . text-scale-increase)
+  ("C--" . text-scale-decrease)
   :config
   (setq frame-title-format '("\"In the middle of difficulty lies opportunity.\"") ; Yayyyyy Evil!
         ring-bell-function 'ignore       ; minimise distraction
@@ -8,7 +11,7 @@
         default-directory "~/")
 
   (tool-bar-mode -1)
-  (menu-bar-mode -1)
+  (menu-bar-mode 1) ; menu-bar on, I like it this way
 
   ;; better scrolling experience
   (setq scroll-margin 0
@@ -22,6 +25,19 @@
   ;; Always use spaces for indentation
   (setq-default indent-tabs-mode nil
                 tab-width ian/indent-width))
+
+(eval-after-load 'undo-tree
+  '(progn
+     (define-key undo-tree-map (kbd "C-/") nil)
+     (define-key undo-tree-map (kbd "C-_") nil)
+     (define-key undo-tree-map (kbd "C-?") nil)
+     (define-key undo-tree-map (kbd "M-_") nil)
+     (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
+     (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
+
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode 1))
 
 (use-package "startup"
   :ensure nil

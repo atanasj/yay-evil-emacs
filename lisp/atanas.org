@@ -5,72 +5,16 @@ This is my config for additional packages and thier associated settings. Some of
 
 * Keybindings
 These are keybindings related to built-in features that are not enabled by default.
-** Turn on the menu bar for exploring new modes
-#+begin_src emacs-lisp
-  ;; (menu-bar-mode 1)
-  (global-set-key [f1] 'menu-bar-mode)
-#+end_src
-
-** Font size
-Make the font larger or smaller in the buffer.
-
-#+begin_src emacs-lisp
-  (define-key global-map (kbd "C-+") 'text-scale-increase)
-  (define-key global-map (kbd "C--") 'text-scale-decrease)
-#+end_src
-
 ** Org-mode
 A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
 Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
 globally for later insertion into an Org-mode buffer.
 See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
-
 #+begin_src emacs-lisp :tangle no
   (define-key global-map "\C-cl" 'org-store-link)
 #+end_src
-
 #  LocalWords:  iTerm
-** Global-undo-tree
-
 * Settings without corresponding packages
-** Map fn to Hyper, CMD to Super
-#+source: fn-to-hyper
-#+begin_src emacs-lisp :tangle no
-  ;; from  kjkeayl's config, however the remainder below at this stage not required
-  ;; set keys for Apple keyboard, for emacs in OS X
-  (setq ns-command-modifier 'super) ; make cmd key do Super
-  ;; (setq mac-option-modifier 'super) ; make opt key do Super
-  ;; (setq mac-control-modifier 'control) ; make Control key do Control
-  (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
-
-  ;; fix page-up and page-down keys
-
-  ;; (defun sfp-page-down (&optional arg)
-  ;;   (interactive "^P")
-  ;;   (setq this-command 'next-line)
-  ;;   (next-line
-  ;;    (- (window-text-height)
-  ;;       next-screen-context-lines)))
-  ;; (put 'sfp-page-down 'isearch-scroll t)
-  ;; (put 'sfp-page-down 'CUA 'move)
-
-  ;; (defun sfp-page-up (&optional arg)
-  ;;   (interactive "^P")
-  ;;   (setq this-command 'previous-line)
-  ;;   (previous-line
-  ;;    (- (window-text-height)
-  ;;       next-screen-context-lines)))
-  ;; (put 'sfp-page-up 'isearch-scroll t)
-  ;; (put 'sfp-page-up 'CUA 'move)
-
-  ;; (global-set-key [(H down)] 'scroll-up)
-  ;; (global-set-key [(H up)]   'scroll-down)
-  ;; (use-package scroll-lock
-  ;;   :init
-  ;;   (setq scroll-preserve-screen-position t))
-
-#+end_src
-
 ** Cleanup-Buffers
 This is not currently used. If needed, tangle them.
 
@@ -261,8 +205,9 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
   ;; (use-package ess-site) ; this was already enable above, so have commneted out for now.
 #+end_src
 
-*** Add a Keyboard Shortcut for the Pipe Operator
+*** TODO Add a Keyboard Shortcut for the Pipe Operator
 Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inserting the `%>%` operator.
+Review indentation rules for r-language as size of tabs seems excessive.
 
 #+src-name: ess-pipe-shortcut
 #+begin_src emacs-lisp
@@ -271,10 +216,9 @@ Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inser
     (interactive)
     (just-one-space 1)
     (insert "%>%")
+    (just-one-space 1))
 
-    (reindent-then-newline-and-indent))
-
-  (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator) ; "M-_"
+  (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator)
   (define-key inferior-ess-mode-map (kbd "M-_") 'my_pipe_operator)
 #+end_src
 
@@ -292,16 +236,6 @@ Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inser
   (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
 #+END_SRC
 
-*** TODO Uniquify Buffer Names
-# Delete this section if not needed as already set in =.config.el.=
-This is useful for when you have buffers with many similar names, as when there are various open files from different folders named =analysis.R= or similar.
-
-#+source: uniquify
-#+begin_src emacs-lisp :tangle no
-  (use-package uniquify
-    :config
-    (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
-#+end_src
 *** lintr and flycheck
 [[https://github.com/jimhester/lintr][lintr]] checks your R code for style and syntax errors. It's an R library that integrates with [[http://www.flycheck.org][flycheck]]. You must install lintr from R. Flycheck can also check code in many other languages. You will need to install linters for them separately as well. See the flycheck documentation for details.
 
@@ -310,7 +244,6 @@ This is useful for when you have buffers with many similar names, as when there 
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (add-hook 'ess-mode-hook
             (lambda () (flycheck-mode t)))
-
 #+end_src
 
 ** Markdown, Pandoc and all things writing

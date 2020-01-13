@@ -152,15 +152,15 @@
 
 (use-package quelpa-use-package)
 (require 'font-lock)
-(use-package font-lock+
-:ensure t
-:quelpa
-(font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+(use-package font-lock+)
+;; commented as only needed to install once, slows down load time otherwise
+;; :quelpa
+;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
 
 (use-package all-the-icons)
 
+;; see github repo for options on further config if desired
 (use-package doom-modeline
-    :ensure t
     :hook (after-init . doom-modeline-mode))
 
 (use-package dashboard
@@ -181,8 +181,8 @@
   :hook (prog-mode . hes-mode))
 
 (use-package magit
-  :bind ("C-x g" . magit-status)
-  :config (add-hook 'with-editor-mode-hook #'evil-insert-state))
+  :bind ("C-x g" . magit-status))
+  ;; :config (add-hook 'with-editor-mode-hook #'evil-insert-state)) ; commented as providing errors
 
 (use-package ido
   :config

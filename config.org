@@ -217,10 +217,10 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 #+BEGIN_SRC emacs-lisp
   (use-package quelpa-use-package)
   (require 'font-lock)
-  (use-package font-lock+
-  :ensure t
-  :quelpa
-  (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+  (use-package font-lock+)
+  ;; commented as only needed to install once, slows down load time otherwise
+  ;; :quelpa
+  ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
 
   (use-package all-the-icons)
 #+END_SRC
@@ -228,7 +228,6 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 #+BEGIN_SRC emacs-lisp
   ;; see github repo for options on further config if desired
   (use-package doom-modeline
-      :ensure t
       :hook (after-init . doom-modeline-mode))
 #+END_SRC
 *** Dashboard welcome page
@@ -298,8 +297,8 @@ Evil keybindings for magit.
 Tell magit to automatically put us in vi-insert-mode when committing a change.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :bind ("C-x g" . magit-status)
-    :config (add-hook 'with-editor-mode-hook #'evil-insert-state))
+    :bind ("C-x g" . magit-status))
+    ;; :config (add-hook 'with-editor-mode-hook #'evil-insert-state)) ; commented as providing errors
 #+END_SRC
 ** Searching/sorting enhancements & project management
 *** Ido, ido-vertical, ido-ubiquitous and fuzzy matching

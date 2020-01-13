@@ -151,8 +151,8 @@ This is taken mostly from the kjhealy.
   ;; there may be a more elegant way of doing this... but for now, this works.
   (require 'ess-r-mode)
   ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
-  (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
-  (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
+  (define-key ess-r-mode-map "H--" #'ess-insert-assign) ; "_"
+  (define-key inferior-ess-r-mode-map "H--" #'ess-insert-assign)
 
   ;; (general-define-key
   ;;  :prefix "M+s"

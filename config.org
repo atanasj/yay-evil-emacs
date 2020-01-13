@@ -8,6 +8,9 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
   (use-package emacs
     :preface
     (defvar ian/indent-width 4) ; change this value to your preferred width
+    :bind
+    ("C-+" . text-scale-increase)
+    ("C--" . text-scale-decrease)
     :config
     (setq frame-title-format '("\"In the middle of difficulty lies opportunity.\"") ; Yayyyyy Evil!
           ring-bell-function 'ignore       ; minimise distraction

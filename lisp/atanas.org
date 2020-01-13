@@ -5,12 +5,6 @@ This is my config for additional packages and thier associated settings. Some of
 
 * Keybindings
 These are keybindings related to built-in features that are not enabled by default.
-** Font size
-Make the font larger or smaller in the buffer.
-#+begin_src emacs-lisp
-  (define-key global-map (kbd "C-+") 'text-scale-increase)
-  (define-key global-map (kbd "C--") 'text-scale-decrease)
-#+end_src
 ** Org-mode
 A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
 Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.

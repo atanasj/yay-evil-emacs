@@ -92,20 +92,14 @@ This is taken mostly from the kjhealy.
 *** Load ESS
 #+src-name: ess-mode
 #+begin_src emacs-lisp
-  ;; (load "ess-autoloads")
-  ;; (require 'ess-r-mode)
+  ;; ===========================
+  ;; This solution is working
+  ;; ===========================
   (use-package ess)
-  ;; there may be a more elegant way of doing this... but for now, this works.
   (require 'ess-r-mode)
   ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
   (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
   (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
-
-  ;; (general-define-key
-  ;;  :prefix "M+s"
-  ;;  "t" '(iterm-focus :which-key "focus iterm")
-  ;;  "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
-  ;;  )
 #+end_src
 
 *** Coding Hooks
@@ -214,9 +208,7 @@ Review indentation rules for r-language as size of tabs seems excessive.
   (defun my_pipe_operator ()
     "R/ESS %>% operator"
     (interactive)
-    (just-one-space 1)
-    (insert "%>%")
-    (just-one-space 1))
+    (insert " %>% "))
 
   (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator)
   (define-key inferior-ess-mode-map (kbd "M-_") 'my_pipe_operator)
@@ -244,6 +236,38 @@ Review indentation rules for r-language as size of tabs seems excessive.
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (add-hook 'ess-mode-hook
             (lambda () (flycheck-mode t)))
+#+end_src
+
+*** TODO Load ESS and configure R-IDE (attempt)
+This is a tidy attempt, hacked together form the spacemacs config, however not working. This is much nicer and I will leave here if I get back to it. However, the other solutions above are working.
+
+#+source: ess-r-ides
+#+begin_src emacs-lisp :tangle no
+  ;; ===========================
+  ;; Tidyverse IDE
+  ;; ===========================
+  ;; This seems to work, however not sure if these will be operational in non-R ess modes
+  (use-package ess-site
+    :load-path "/elpa/ess/ess-site.el"
+    :init
+    (ess-mode)
+    (defvar ess-enable-smart-equals nil
+      "If non-nil smart-equal support is enabled")
+    (defun tide_insert_assign ()
+      "Insert an assignment <-"
+      (interactive)
+      (insert " <- "))
+    (defun my_pipe_operator ()
+      "R/ESS %>% operator"
+      (interactive)
+      (insert " %>% "))
+    :bind
+    (:map ess-mode-map
+          ("_" . tide_insert_assign)
+          ("M-_" . my_pipe_operator))
+    (:map inferior-ess-mode-map
+          ("_" . tide_insert_assign)
+          ("M-_" . my_pipe_operator)))
 #+end_src
 
 ** Markdown, Pandoc and all things writing

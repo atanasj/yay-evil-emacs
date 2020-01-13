@@ -8,7 +8,7 @@
         default-directory "~/")
 
   (tool-bar-mode -1)
-  (menu-bar-mode -1)
+  (menu-bar-mode 1) ; menu-bar on
 
   ;; better scrolling experience
   (setq scroll-margin 0

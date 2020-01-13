@@ -6,7 +6,7 @@ This is my config for additional packages and thier associated settings. Some of
 * Keybindings
 These are keybindings related to built-in features that are not enabled by default.
 ** Turn on the menu bar for exploring new modes
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;; (menu-bar-mode 1)
   (global-set-key [f1] 'menu-bar-mode)
 #+end_src

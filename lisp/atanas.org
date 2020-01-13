@@ -102,38 +102,6 @@ This is taken mostly from the kjhealy.
   (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
 #+end_src
 
-*** Coding Hooks
-#+source: ide-ess
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'ess-mode-hook 'run-starter-kit-coding-hook) ; not sure I need this
-  (add-hook 'ess-R-post-run-hook 'smartparens-mode)
-#+end_src
-
-*** Define Rnw-mode and make LaTeX aware of it.
-If you use Rnw documents, tangle this section. (Rnw files have been mostly superseded by Rmd files.)
-#+srcname: misc-r
-#+begin_src emacs-lisp :tangle no
-  (add-to-list 'auto-mode-alist '("\\.Rnw\\'" . Rnw-mode))
-  (add-to-list 'auto-mode-alist '("\\.Snw\\'" . Rnw-mode))
-
-  ;; Make TeX and RefTex aware of Snw and Rnw files
-  (setq reftex-file-extensions
-        '(("Snw" "Rnw" "nw" "tex" ".tex" ".ltx") ("bib" ".bib")))
-  (setq TeX-file-extensions
-        '("Snw" "Rnw" "nw" "tex" "sty" "cls" "ltx" "texi" "texinfo"))
-
-  ;; Lets you do 'C-c C-c Sweave' from your Rnw file
-  (add-hook 'Rnw-mode-hook
-            (lambda ()
-              (add-to-list 'TeX-command-list
-                           '("Sweave" "R CMD Sweave %s"
-                             TeX-run-command nil (latex-mode) :help "Run Sweave") t)
-              (add-to-list 'TeX-command-list
-                           '("LatexSweave" "%l %(mode) %s"
-                             TeX-run-TeX nil (latex-mode) :help "Run Latex after Sweave") t)
-              (setq TeX-command-default "Sweave")))
-#+end_src
-
 *** Use Knitr to process Sweave documents
 #+source: knitr-swv
 #+begin_src emacs-lisp
@@ -195,8 +163,6 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
           '(lambda()
              (local-set-key [(shift return)] 'my-ess-eval)))
 
-  ;; TODO delete below line if not needed
-  ;; (use-package ess-site) ; this was already enable above, so have commneted out for now.
 #+end_src
 
 *** TODO Add a Keyboard Shortcut for the Pipe Operator
@@ -238,7 +204,39 @@ Review indentation rules for r-language as size of tabs seems excessive.
             (lambda () (flycheck-mode t)))
 #+end_src
 
-*** TODO Load ESS and configure R-IDE (attempt)
+*** Unused
+Code blocks, mostly from kjhealy's config that are not used.
+**** Coding Hooks
+#+source: ide-ess
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'ess-mode-hook 'run-starter-kit-coding-hook) ; not sure I need this
+  (add-hook 'ess-R-post-run-hook 'smartparens-mode)
+#+end_src
+**** Define Rnw-mode and make LaTeX aware of it.
+If you use Rnw documents, tangle this section. (Rnw files have been mostly superseded by Rmd files.)
+#+srcname: misc-r
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'auto-mode-alist '("\\.Rnw\\'" . Rnw-mode))
+  (add-to-list 'auto-mode-alist '("\\.Snw\\'" . Rnw-mode))
+
+  ;; Make TeX and RefTex aware of Snw and Rnw files
+  (setq reftex-file-extensions
+        '(("Snw" "Rnw" "nw" "tex" ".tex" ".ltx") ("bib" ".bib")))
+  (setq TeX-file-extensions
+        '("Snw" "Rnw" "nw" "tex" "sty" "cls" "ltx" "texi" "texinfo"))
+
+  ;; Lets you do 'C-c C-c Sweave' from your Rnw file
+  (add-hook 'Rnw-mode-hook
+            (lambda ()
+              (add-to-list 'TeX-command-list
+                           '("Sweave" "R CMD Sweave %s"
+                             TeX-run-command nil (latex-mode) :help "Run Sweave") t)
+              (add-to-list 'TeX-command-list
+                           '("LatexSweave" "%l %(mode) %s"
+                             TeX-run-TeX nil (latex-mode) :help "Run Latex after Sweave") t)
+              (setq TeX-command-default "Sweave")))
+#+end_src
+**** TODO Load ESS and configure R-IDE (attempt)
 This is a tidy attempt, hacked together form the spacemacs config, however not working. This is much nicer and I will leave here if I get back to it. However, the other solutions above are working.
 
 #+source: ess-r-ides

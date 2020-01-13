@@ -128,11 +128,26 @@ This is taken mostly from the kjhealy.
   ;; (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
   ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
 
+  ;; (use-package general)
+
   ;; (general-define-key
   ;;  :prefix "M+s"
-  ;;  "t" '(iterm-focus :which-key "focus iterm")
+  ;;  "-" '(iterm-focus :which-key "focus iterm")
   ;;  "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
   ;;  )
+  ;; =====================================================================
+  ;; Tidyverse IDE
+  ;; =====================================================================
+  (defun tide-insert-pipe ()
+    "Insert a %>% and newline"
+    (interactive)
+    (insert "%>%"))
+  (defun tide-insert-assign ()
+    "Insert an assignment <-"
+    (interactive)
+    (insert "<- "))
+  (define-key ess-mode-map (kbd "C-\"") 'tide-insert-pipe)
+  (define-key ess-mode-map (kbd "C-'") 'tide-insert-assign)
 #+end_src
 
 *** Coding Hooks
@@ -236,7 +251,7 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inserting the `%>%` operator.
 
 #+src-name: ess-pipe-shortcut
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun my_pipe_operator ()
     "R/ESS %>% operator"
     (interactive)
@@ -614,7 +629,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
            end tell
            end if"))
   ;; set the binding
-  ;; (global-set-key (kbd "s-y") 'zotero-cayw)
+  (global-set-key (kbd "s-y") 'zotero-cayw)
 #+end_src
 ** iTerm2 integration
 #+source: iterm2
@@ -655,8 +670,8 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
 
   ;; (general-define-key
   ;;  :prefix "C-x"
-  ;;   "t" '(iterm-focus :which-key "focus iterm")
-  ;;   "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
+    "t" '(iterm-focus :which-key "focus iterm")
+    "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
 #+end_src
 * Keybindings
@@ -671,18 +686,22 @@ These are keybindings related to built-in features that are not enabled by defau
   ;; To bind multiple keys in a `bind-key*' way (to be sure that your bindings
   ;; will not be overridden by other modes), you may use `bind-keys*' macro:
   ;;
-     (bind-keys*
-      ("C-x t" . iterm-focus)
-      ("C-x /" . iterm-goto-filedir-or-home)
-      ("C-+" . text-scale-increase)
-      ("C--" . text-scale-decrease)
-      ("s-y" . zotero-cayw) ; Zotero CAYW
-      ("C-'" . ess-insert-assign) ; Load ESS
-      ("C-\"" . my_pipe_operator) ; Pipe Operator
-      ("C-c i" . kjh-insert-r-chunk) ;  Rmd chunks
-      ([f1] . menu-bar-mode))
+  ;; (bind-keys*
+  ;;  ("C-x t" . iterm-focus)
+  ;;  ("C-x /" . iterm-goto-filedir-or-home)
+  ;;  ("C-+" . text-scale-increase)
+  ;;  ("C--" . text-scale-decrease)
+  ;;  ;; Zotero CAYW
+  ;;  ("s-y" . zotero-cayw)
+  ;;  ;; Load ESS
+  ;;  ("s--" . ess-insert-assign)
+  ;;  ;; Pipe Operator
+  ;;  ("s-_" . my_pipe_operator)
+  ;;  ;; Rmd Chunks
+  ;;  ("C-c i" . kjh-insert-r-chunk)
+  ;;  ([f1] . menu-bar-mode))
 
-  ;; (global-set-key [f1] 'menu-bar-mode)
+  (global-set-key [f1] 'menu-bar-mode)
 #+end_src
 
 #+RESULTS:

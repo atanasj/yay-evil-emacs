@@ -23,6 +23,15 @@
   (setq-default indent-tabs-mode nil
                 tab-width ian/indent-width))
 
+(eval-after-load 'undo-tree
+  '(progn
+     (define-key undo-tree-map (kbd "C-/") nil)
+     (define-key undo-tree-map (kbd "C-_") nil)
+     (define-key undo-tree-map (kbd "C-?") nil)
+     (define-key undo-tree-map (kbd "M-_") nil)
+     (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
+     (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
+
 (use-package "startup"
   :ensure nil
   :config (setq inhibit-startup-screen t))

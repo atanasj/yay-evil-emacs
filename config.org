@@ -29,6 +29,16 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
     ;; Always use spaces for indentation
     (setq-default indent-tabs-mode nil
                   tab-width ian/indent-width))
+
+  (eval-after-load 'undo-tree
+    '(progn
+       (define-key undo-tree-map (kbd "C-/") nil)
+       (define-key undo-tree-map (kbd "C-_") nil)
+       (define-key undo-tree-map (kbd "C-?") nil)
+       (define-key undo-tree-map (kbd "M-_") nil)
+       (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
+       (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
+
 #+END_SRC
 * Configuration for built-in packages
 Since we're using use-package as our package management system, we might as well try to organise under the same syntax as much as possible to keep the configuration consistent. The option ~use-package-always-ensure~ is turned on in ~init.el~, so we'll add ~:ensure nil~ when configuring the built-in packages.

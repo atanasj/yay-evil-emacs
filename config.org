@@ -202,6 +202,10 @@ Reduce the highlight delay to instantly.
     :ensure nil
     :init (setq show-paren-delay 0)
     :config (show-paren-mode +1))
+
+  ;; jump to mathcing paren
+  (global-set-key (kbd "C-M-f") 'forward-sexp)
+  (global-set-key (kbd "C-M-b") 'backward-sexp)
 #+END_SRC
 ** Setting up some frame defaults
 Maximise the frame by default on start-up. Set the font to Menlo size 13, if Menlo is installed.

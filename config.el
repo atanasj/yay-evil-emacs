@@ -123,6 +123,10 @@
   :init (setq show-paren-delay 0)
   :config (show-paren-mode +1))
 
+;; jump to mathcing paren
+(global-set-key (kbd "C-M-f") 'forward-sexp)
+(global-set-key (kbd "C-M-b") 'backward-sexp)
+
 (use-package frame
   :ensure nil
   :config

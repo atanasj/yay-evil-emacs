@@ -88,9 +88,8 @@ Load the snippets defined in the package's =./snippets/= directory, and local sn
   (global-set-key [tab] 'tab-indent-or-complete)
 #+end_src
 ** ESS, R, ploy-R and poly-markdown
-This is taken mostly from the kjhealy.
-
-*** TODO Make shift-enter do a lot in ESS.
+This is taken mostly from the kjhealy and the spacemacs config. May need to go out to a separate lisp at some time if navigation proves too unwieldy.
+***  Make shift-enter do a lot in ESS.
  Use shift-enter to split window & launch R (if not running), execute
  highlighted region (if R running & area highlighted), or execute
  current line (and move to next line, skipping comments). Nice. See
@@ -124,20 +123,7 @@ This is taken mostly from the kjhealy.
     (if (and transient-mark-mode mark-active)
     (call-interactively 'ess-eval-region)
       (call-interactively 'ess-eval-line-and-step)))
-
-  ;; (add-hook 'ess-mode-hook
-  ;;       '(lambda()
-  ;;          (local-set-key [(shift return)] 'my-ess-eval)))
-  ;; (add-hook 'inferior-ess-mode-hook
-  ;;       '(lambda()
-  ;;          (local-set-key [C-up] 'comint-previous-input)
-  ;;          (local-set-key [C-down] 'comint-next-input)))
-  ;; (add-hook 'Rnw-mode-hook
-  ;;         '(lambda()
-  ;;            (local-set-key [(shift return)] 'my-ess-eval)))
-
 #+end_src
-
 *** Load ESS
 This is hacked together form the ess-r-mode for spacemacs.
 #+src-name: ess-mode
@@ -190,33 +176,7 @@ This is hacked together form the ess-r-mode for spacemacs.
                  (local-set-key [(shift return)] 'my-ess-eval)))
     )
 
-  ;; (define-key ess-r-mode-map "_" #'ess-insert-assign)
-  ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
-
   (use-package ess-R-data-view)
-
-  ;; /Users/atanas/.emacs.d/elpa/ess-20200103.915/ess-site.el
-  ;; (use-package ess-site
-  ;;   :load-path "elpa/ess/ess-site"
-  ;;   :commands R
-  ;;   :init
-  ;;   (setq inferior-ess-r-program "R")
-  ;;   (setq ess-first-continued-statement-offset 2
-  ;;         ess-continued-statement-offset 0
-  ;;         ess-expression-offset 2
-  ;;         ess-nuke-trailing-whitespace-p t
-  ;;         ess-default-style 'DEFAULT)
-  ;;   :config
-  ;;   (define-key ess-r-mode-map "_" #'ess-insert-assign)
-  ;;   (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
-
-  ;; (use-package ess)
-  ;; (require 'ess-r-mode)
-  ;; (ess-set-style 'RStudio)
-  ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
-  ;; (define-key ess-r-mode-map "_" #'ess-insert-assign)
-  ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
-
 #+end_src
 
 *** Use Knitr to process Sweave documents

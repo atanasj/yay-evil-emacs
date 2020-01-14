@@ -45,6 +45,8 @@
 (require 'org)
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
 
+(server-start); start emacs in server mode so can list as editor
+
 (provide 'init)
 ;;; init.el ends here
 (custom-set-variables

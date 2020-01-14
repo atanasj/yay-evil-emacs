@@ -89,33 +89,6 @@ Load the snippets defined in the package's =./snippets/= directory, and local sn
 #+end_src
 ** ESS, R, ploy-R and poly-markdown
 This is taken mostly from the kjhealy.
-*** Load ESS
-#+src-name: ess-mode
-#+begin_src emacs-lisp
-  ;; ===========================
-  ;; This solution is working
-  ;; ===========================
-  (use-package ess)
-  (require 'ess-r-mode)
-  ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
-  (define-key ess-r-mode-map "_" #'ess-insert-assign) ; "_"
-  (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
-#+end_src
-
-*** Use Knitr to process Sweave documents
-#+source: knitr-swv
-#+begin_src emacs-lisp
-  (setq ess-swv-processor "'knitr")
-#+end_src
-
-*** Use Polymode
-Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.
-
-#+source: Polymode
-#+begin_src emacs-lisp
-  (use-package poly-R)
-  (use-package poly-markdown)
-#+end_src
 
 *** TODO Make shift-enter do a lot in ESS.
  Use shift-enter to split window & launch R (if not running), execute
@@ -152,17 +125,113 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
     (call-interactively 'ess-eval-region)
       (call-interactively 'ess-eval-line-and-step)))
 
-  (add-hook 'ess-mode-hook
-        '(lambda()
-           (local-set-key [(shift return)] 'my-ess-eval)))
-  (add-hook 'inferior-ess-mode-hook
-        '(lambda()
-           (local-set-key [C-up] 'comint-previous-input)
-           (local-set-key [C-down] 'comint-next-input)))
-  (add-hook 'Rnw-mode-hook
-          '(lambda()
-             (local-set-key [(shift return)] 'my-ess-eval)))
+  ;; (add-hook 'ess-mode-hook
+  ;;       '(lambda()
+  ;;          (local-set-key [(shift return)] 'my-ess-eval)))
+  ;; (add-hook 'inferior-ess-mode-hook
+  ;;       '(lambda()
+  ;;          (local-set-key [C-up] 'comint-previous-input)
+  ;;          (local-set-key [C-down] 'comint-next-input)))
+  ;; (add-hook 'Rnw-mode-hook
+  ;;         '(lambda()
+  ;;            (local-set-key [(shift return)] 'my-ess-eval)))
 
+#+end_src
+
+*** Load ESS
+This is hacked together form the ess-r-mode for spacemacs.
+#+src-name: ess-mode
+#+begin_src emacs-lisp
+  ;; ===========================
+  ;; This solution is working
+  ;; ===========================
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+
+  (use-package ess
+    :init
+    (require 'ess-r-mode)
+    (setq ess-first-continued-statement-offset 2
+          ess-continued-statement-offset 0
+          ess-expression-offset 2
+          ess-nuke-trailing-whitespace-p t
+          ess-default-style 'DEFAULT)
+    ;; Toggle underscore off no replacement of _ for <-
+    (setq ess-smart-S-assign-key nil)
+    ;; Stop R repl eval from blocking emacs.
+    (setq ess-eval-visibly 'nowait)
+    (defun tide-insert-assign ()
+      "Insert an assignment <-"
+      (interactive)
+      (insert "<- "))
+    (defun tide-insert-pipe ()
+      "Insert a %>% and newline"
+      (interactive)
+      (insert "%>%"))
+    (defun tide-insert-assign ()
+      "Insert an assignment <-"
+      (interactive)
+      (insert "<- "))
+    (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+    (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+    (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+    (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+    :config
+    (add-hook 'ess-mode-hook
+              (lambda () (flycheck-mode t)))
+    (add-hook 'ess-mode-hook
+              '(lambda()
+                 (local-set-key [(shift return)] 'my-ess-eval)))
+    (add-hook 'inferior-ess-mode-hook
+              '(lambda()
+                 (local-set-key [C-up] 'comint-previous-input)
+                 (local-set-key [C-down] 'comint-next-input)))
+    (add-hook 'Rnw-mode-hook
+              '(lambda()
+                 (local-set-key [(shift return)] 'my-ess-eval)))
+    )
+
+  ;; (define-key ess-r-mode-map "_" #'ess-insert-assign)
+  ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
+
+  (use-package ess-R-data-view)
+
+  ;; /Users/atanas/.emacs.d/elpa/ess-20200103.915/ess-site.el
+  ;; (use-package ess-site
+  ;;   :load-path "elpa/ess/ess-site"
+  ;;   :commands R
+  ;;   :init
+  ;;   (setq inferior-ess-r-program "R")
+  ;;   (setq ess-first-continued-statement-offset 2
+  ;;         ess-continued-statement-offset 0
+  ;;         ess-expression-offset 2
+  ;;         ess-nuke-trailing-whitespace-p t
+  ;;         ess-default-style 'DEFAULT)
+  ;;   :config
+  ;;   (define-key ess-r-mode-map "_" #'ess-insert-assign)
+  ;;   (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
+
+  ;; (use-package ess)
+  ;; (require 'ess-r-mode)
+  ;; (ess-set-style 'RStudio)
+  ;; smart-underscore and ess-smart-S-assign-key have been removed in ESS 19.04 so we need to set them up manually
+  ;; (define-key ess-r-mode-map "_" #'ess-insert-assign)
+  ;; (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign))
+
+#+end_src
+
+*** Use Knitr to process Sweave documents
+#+source: knitr-swv
+#+begin_src emacs-lisp
+  (setq ess-swv-processor "'knitr")
+#+end_src
+
+*** Use Polymode
+Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.
+
+#+source: Polymode
+#+begin_src emacs-lisp
+  (use-package poly-R)
+  (use-package poly-markdown)
 #+end_src
 
 *** TODO Add a Keyboard Shortcut for the Pipe Operator
@@ -170,7 +239,7 @@ Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inser
 Review indentation rules for r-language as size of tabs seems excessive.
 
 #+src-name: ess-pipe-shortcut
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun my_pipe_operator ()
     "R/ESS %>% operator"
     (interactive)
@@ -198,7 +267,7 @@ Review indentation rules for r-language as size of tabs seems excessive.
 [[https://github.com/jimhester/lintr][lintr]] checks your R code for style and syntax errors. It's an R library that integrates with [[http://www.flycheck.org][flycheck]]. You must install lintr from R. Flycheck can also check code in many other languages. You will need to install linters for them separately as well. See the flycheck documentation for details.
 
 #+source: lintr
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (add-hook 'ess-mode-hook
             (lambda () (flycheck-mode t)))

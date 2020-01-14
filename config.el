@@ -211,8 +211,12 @@
 (use-package all-the-icons)
 
 ;; see github repo for options on further config if desired
+(use-package nyan-mode
+  :config
+  (nyan-mode))
 (use-package doom-modeline
-    :hook (after-init . doom-modeline-mode))
+  :hook (after-init . doom-modeline-mode)
+  :config (setq doom-modeline-height 25))
 
 (use-package dashboard
   :config

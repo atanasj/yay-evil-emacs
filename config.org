@@ -319,8 +319,12 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 **** doom-modeline
 #+BEGIN_SRC emacs-lisp
   ;; see github repo for options on further config if desired
+  (use-package nyan-mode
+    :config
+    (nyan-mode))
   (use-package doom-modeline
-      :hook (after-init . doom-modeline-mode))
+    :hook (after-init . doom-modeline-mode)
+    :config (setq doom-modeline-height 25))
 #+END_SRC
 *** Dashboard welcome page
 #+BEGIN_SRC emacs-lisp

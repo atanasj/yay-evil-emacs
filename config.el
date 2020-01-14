@@ -1,17 +1,17 @@
 (use-package emacs
   :preface
-  (defvar ian/indent-width 4) ; change this value to your preferred width
+  (defvar ian/indent-width 4)      ; change this value to your preferred width
   :bind
   ("C-+" . text-scale-increase)
   ("C--" . text-scale-decrease)
   :config
-  (setq frame-title-format '("\"In the middle of difficulty lies opportunity.\"") ; Yayyyyy Evil!
-        ring-bell-function 'ignore       ; minimise distraction
+  (setq frame-title-format "%b"    ; set to bufer title name
+        ring-bell-function 'ignore ; minimise distraction
         frame-resize-pixelwise t
         default-directory "~/")
 
   (tool-bar-mode -1)
-  (menu-bar-mode 1) ; menu-bar on, I like it this way
+  (menu-bar-mode 1)                ; menu-bar on, I like it this way
 
   ;; better scrolling experience
   (setq scroll-margin 0

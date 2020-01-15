@@ -363,10 +363,23 @@ In CSV mode, the following commands are available:
   details, see the documentation for the individual commands.
 
 #+srcname csv-mode
-#+begin_src elisp :tangle yes
-  (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
-  (autoload 'csv-mode "csv-mode"
-  "Major mode for editing comma-separated value files." t)
+#+begin_src elisp :tangle no
+  ;; this is slow, so not required as have other tools.
+  ;; this also needed to be installed manually
+  ;; (autoload 'csv-mode "csv-mode"
+  ;; "Major mode for editing comma-separated value files." t)
+  (use-package csv-mode
+    :load-path "src/csv-mode/"
+    :mode ("\\.csv$" . csv-mode)
+    :defer t
+    :config
+    ;; Define separators
+    (setq csv-separators '("," ";" ":" " ")))
+
+  ;; ;; Subpackages
+  ;; (use-package csv-nav
+  ;;   :disabled t)
+
 #+end_src
 
 *** Multiple Cursors and Drag-Stuff

@@ -177,22 +177,6 @@ This is hacked together form the ess-r-mode for spacemacs.
       )
 #+end_src
 
-#+source: ess-smart-equals
-#+begin_src emacs-lisp :tangle no
-  (defvar ess-enable-smart-equals nil
-    "If non-nil smart-equal support is enabled")
-
-  (defun ess/init-ess-smart-equals ()
-    (use-package ess-smart-equals
-      :defer t
-      :if ess-enable-smart-equals
-      :init
-      (progn
-        (add-hook 'ess-r-mode-hook 'ess-smart-equals-mode)
-        (add-hook 'inferior-ess-r-mode-hook 'ess-smart-equals-mode))))
-
-#+end_src
-
 #+source: ess-R-data-view
 #+begin_src emacs-lisp :tangle yes
   (use-package ess-R-data-view)

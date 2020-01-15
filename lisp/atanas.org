@@ -436,7 +436,7 @@ Highlight various =.ANCHORS.= in comments.
     :config
     ;; Adding a new keyword: ANCHOR and REVIEW.
     (add-to-list 'hl-todo-keyword-faces '("ANCHOR" . "#dc8cc3"))
-    (add-to-list 'hl-todo-keyword-faces '("REVIEW" . "#dca3a3"))
+    (add-to-list 'hl-todo-keyword-faces '("REVIEW" . "#33ff3c"))
     :init
     (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
 #+end_src

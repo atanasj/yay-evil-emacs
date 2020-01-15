@@ -89,7 +89,7 @@ Load the snippets defined in the package's =./snippets/= directory, and local sn
 #+end_src
 ** ESS, R, ploy-R and poly-markdown
 This is taken mostly from the kjhealy and the spacemacs config. May need to go out to a separate lisp at some time if navigation proves too unwieldy.
-***  Make shift-enter do a lot in ESS.
+*** Make shift-enter do a lot in ESS.
  Use shift-enter to split window & launch R (if not running), execute
  highlighted region (if R running & area highlighted), or execute
  current line (and move to next line, skipping comments). Nice. See
@@ -128,70 +128,107 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
 This is hacked together form the ess-r-mode for spacemacs.
 #+src-name: ess-mode
 #+begin_src emacs-lisp
-  ;; ===========================
-  ;; This solution is working
-  ;; ===========================
-  (add-hook 'after-init-hook #'global-flycheck-mode)
+    ;; ===========================
+    ;; This solution is working
+    ;; ===========================
+    (add-hook 'after-init-hook #'global-flycheck-mode)
 
-  (use-package ess
-    :init
-    (require 'ess-r-mode)
-    (setq ess-first-continued-statement-offset 2
-          ess-continued-statement-offset 0
-          ess-expression-offset 2
-          ess-nuke-trailing-whitespace-p t
-          ess-default-style 'DEFAULT)
-    ;; Toggle underscore off no replacement of _ for <-
-    (setq ess-smart-S-assign-key nil)
-    ;; Stop R repl eval from blocking emacs.
-    (setq ess-eval-visibly 'nowait)
-    (defun tide-insert-assign ()
-      "Insert an assignment <-"
-      (interactive)
-      (insert "<- "))
-    (defun tide-insert-pipe ()
-      "Insert a %>% and newline"
-      (interactive)
-      (insert "%>%"))
-    (defun tide-insert-assign ()
-      "Insert an assignment <-"
-      (interactive)
-      (insert "<- "))
-    (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
-    (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
-    (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
-    (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
-    :config
-    (add-hook 'ess-mode-hook
-              (lambda () (flycheck-mode t)))
-    (add-hook 'ess-mode-hook
-              '(lambda()
-                 (local-set-key [(shift return)] 'my-ess-eval)))
-    (add-hook 'inferior-ess-mode-hook
-              '(lambda()
-                 (local-set-key [C-up] 'comint-previous-input)
-                 (local-set-key [C-down] 'comint-next-input)))
-    (add-hook 'Rnw-mode-hook
-              '(lambda()
-                 (local-set-key [(shift return)] 'my-ess-eval)))
-    )
+    (use-package ess
+      :init
+      (require 'ess-r-mode)
+      (setq ess-first-continued-statement-offset 2
+            ess-continued-statement-offset 0
+            ess-expression-offset 2
+            ess-nuke-trailing-whitespace-p t
+            ess-default-style 'DEFAULT)
+      ;; Toggle underscore off no replacement of _ for <-
+      (setq ess-smart-S-assign-key nil)
+      ;; Stop R repl eval from blocking emacs.
+      (setq ess-eval-visibly 'nowait)
+      (defun tide-insert-assign ()
+        "Insert an assignment <-"
+        (interactive)
+        (insert "<- "))
+      (defun tide-insert-pipe ()
+        "Insert a %>% and newline"
+        (interactive)
+        (insert "%>%"))
+      (defun tide-insert-assign ()
+        "Insert an assignment <-"
+        (interactive)
+        (insert "<- "))
+      (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+      (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+      (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+      (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+      :config
+      (add-hook 'ess-mode-hook
+                (lambda () (flycheck-mode t)))
+      (add-hook 'ess-mode-hook
+                '(lambda()
+                   (local-set-key [(shift return)] 'my-ess-eval)))
+      (add-hook 'inferior-ess-mode-hook
+                '(lambda()
+                   (local-set-key [C-up] 'comint-previous-input)
+                   (local-set-key [C-down] 'comint-next-input)))
+      (add-hook 'Rnw-mode-hook
+                '(lambda()
+                   (local-set-key [(shift return)] 'my-ess-eval)))
+      )
+#+end_src
 
+#+source: ess-smart-equals
+#+begin_src emacs-lisp :tangle no
+  (defvar ess-enable-smart-equals nil
+    "If non-nil smart-equal support is enabled")
+
+  (defun ess/init-ess-smart-equals ()
+    (use-package ess-smart-equals
+      :defer t
+      :if ess-enable-smart-equals
+      :init
+      (progn
+        (add-hook 'ess-r-mode-hook 'ess-smart-equals-mode)
+        (add-hook 'inferior-ess-r-mode-hook 'ess-smart-equals-mode))))
+
+#+end_src
+
+#+source: ess-R-data-view
+#+begin_src emacs-lisp :tangle yes
   (use-package ess-R-data-view)
 #+end_src
 
 *** Use Knitr to process Sweave documents
 #+source: knitr-swv
-#+begin_src emacs-lisp
-  (setq ess-swv-processor "'knitr")
+#+begin_src emacs-lisp :tangle yes
+    (setq ess-swv-processor "'knitr"
+          ess-swv-pdflatex-commands '("pdflatex" "make" "texi2pdf")) ; added from spacemacs config
 #+end_src
 
 *** Use Polymode
 Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.
 
 #+source: Polymode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package poly-R)
   (use-package poly-markdown)
+#+end_src
+
+#+source: polymode-alt
+#+begin_src emacs-lisp :tangle yes
+  ;; from spacemacs config
+   (use-package polymode
+    :mode (("\\.Rmd"   . Rmd-mode))
+    :init
+    (progn
+      (defun Rmd-mode ()
+        "ESS Markdown mode for Rmd files"
+        (interactive)
+        (require 'poly-R)
+        (require 'poly-markdown)
+        (R-mode)
+        (poly-markdown+r-mode))
+      ))
 #+end_src
 
 *** TODO Add a Keyboard Shortcut for the Pipe Operator

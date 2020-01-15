@@ -443,7 +443,7 @@ Highlight various =.ANCHORS.= in comments.
     (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
 #+end_src
 
-** TODO Project Management
+** TODO Project Management and Navigation
 #+source: projectile
 #+begin_src emacs-lisp :tangle yes
   (use-package ag)
@@ -482,6 +482,19 @@ Additionally, I was finding it quite annoying that the temp files would be store
 #+begin_src emacs-lisp :tangle yes
   ;; get restart-emacs for easy restarting when updating config
   (use-package restart-emacs)
+#+end_src
+#+source: ace-window
+#+begin_src emacs-lisp :tangle yes
+  (use-package ace-window
+    :defer t
+    :init
+    (progn
+      (global-set-key (kbd "<f9>") 'ace-window)
+      (global-set-key (kbd "M-[") 'ace-window)
+      ;; (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      ;;more info at https://github.com/abo-abo/ace-window
+      )
+    )
 #+end_src
 
 ** Keep packages up to date

@@ -232,7 +232,7 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 #+begin_src emacs-lisp :tangle yes
   (use-package golden-ratio
     :init
-    (golden-ration-mode 1)
+    (golden-ratio-mode 1)
     (setq golden-ratio-adjust-factor .8
           golden-ratio-wide-adjust-factor .8))
 #+end_src
@@ -280,6 +280,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
 
 **** TODO Pandoc
 Need to configure specific file types outlined below i.e., tempaltes, etc.
+This was attempted, however error generated due some environment problem. Will likely just take this over with makefiles.
 #+source: pandoc
 #+begin_src emacs-lisp :tangle yes
   (use-package pandoc-mode
@@ -345,7 +346,7 @@ In CSV mode, the following commands are available:
   details, see the documentation for the individual commands.
 
 #+srcname csv-mode
-#+begin_src elisp :tangle no
+#+begin_src elisp :tangle yes
   (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
   (autoload 'csv-mode "csv-mode"
   "Major mode for editing comma-separated value files." t)
@@ -356,51 +357,26 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
 
 #+source: multiple-cursors
 #+begin_src emacs-lisp :tangle yes
-  (use-package multiple-cursors)
-
-  ;; When you have an active region that spans multiple lines, the following will add a cursor to each line:
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-
-  (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
-  (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
-
-  ;; When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-
-  ;; Rectangular region mode
-  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
-
-  ;; Mark more like this
-  (global-set-key (kbd "H-a") 'mc/mark-all-like-this)
-  (global-set-key (kbd "H-p") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "H-n") 'mc/mark-next-like-this)
-  (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
-  (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region)
-#+end_src
-#+source: undo-tree
-#+begin_src emacs-lisp :tangle no
-  ;; not sure that this is needed, as undo tree already and potentially configured.
-  ;; review and delete this block if so.
-  (use-package undo-tree
-    :init (global-undo-tree-mode))
-  ;; not sure if this was causing problems, so ~use the statements below instead
-  ;;   :config
-  ;;   (define-key undo-tree-map (kbd "C-/") nil)
-  ;;   (define-key undo-tree-map (kbd "C-_") nil)
-  ;;   (define-key undo-tree-map (kbd "C-?") nil)
-  ;;   (define-key undo-tree-map (kbd "M-_") nil)
-  ;;   (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
-  ;;   (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo))
-  (eval-after-load 'undo-tree
-    '(progn
-       (define-key undo-tree-map (kbd "C-/") nil)
-       (define-key undo-tree-map (kbd "C-_") nil)
-       (define-key undo-tree-map (kbd "C-?") nil)
-       (define-key undo-tree-map (kbd "M-_") nil)
-       (define-key undo-tree-map (kbd "C-z") 'undo-tree-undo)
-       (define-key undo-tree-map (kbd "C-S-z") 'undo-tree-redo)))
+  (use-package multiple-cursors
+    :init
+    ;; set to on at start up
+    (multiple-cursors-mode)
+    ;; When you have an active region that spans multiple lines, the following will add a cursor to each line:
+    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+    (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
+    (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
+    ;; When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
+    (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+    ;; Rectangular region mode
+    (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
+    ;; Mark more like this
+    (global-set-key (kbd "H-a") 'mc/mark-all-like-this)
+    (global-set-key (kbd "H-p") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "H-n") 'mc/mark-next-like-this)
+    (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
+    (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region))
 #+end_src
 
 #+source: drag-stuff
@@ -412,7 +388,6 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
               ("<M-down>" . drag-stuff-down)
               ("<M-S-s-left>" . drag-stuff-left)
               ("<M-S-s-right>" . drag-stuff-right)))
-
 #+end_src
 
 First mark the word, then add more cursors. To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable multiple regions before disabling multiple cursors. If you want to insert a newline in multiple-cursors-mode, use C-j

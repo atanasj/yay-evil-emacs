@@ -290,6 +290,23 @@ This was attempted, however error generated due some environment problem. Will l
            (pandoc-mode . pandoc-load-default-settings)))
 #+end_src
 
+The below works, however there is some bash error message.
+#+source: pan_wc
+#+begin_src emacs-lisp :tangle yes
+  ;; to enable the use of my aliases
+  ;; solution form here: https://stackoverflow.com/questions/12224909/is-there-a-way-to-get-my-emacs-to-recognize-my-bash-aliases-and-custom-functions
+  (setq shell-file-name "bash")
+  (setq shell-command-switch "-ic")
+
+  (defun pwc ()
+    (interactive) (shell-command (concat "pandoc --lua-filter wordcount.lua " buffer-file-name)))
+  ;; this might be problematic, as really I only want this for markdown docs
+  (global-set-key "\C-cw" 'pwc)
+#+end_src
+
+#+RESULTS: pan_wc
+: pwc
+
 **** Spelling
 #+source: spelling
 #+begin_src emacs-lisp :tangle yes

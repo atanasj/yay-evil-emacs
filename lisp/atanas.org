@@ -287,7 +287,11 @@ This was attempted, however error generated due some environment problem. Will l
     :hook ((markdown-mode . pandoc-mode)
            (TeX-mode . pandoc-mode)
            (org-mode . pandoc-mode)
-           (pandoc-mode . pandoc-load-default-settings)))
+           (pandoc-mode . pandoc-load-default-settings))
+    :config
+    (define-key markdown-mode-map (kbd "C-c j") 'pandoc-jump-to-reference))
+    ;; :init
+    ;; (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 #+end_src
 #+source: manage-bib-files
 #+begin_src emacs-lisp :tangle yes
@@ -337,8 +341,6 @@ The below works, however there is some bash error message.
   ;; this might be problematic, as really I only want this for markdown docs
   (global-set-key "\C-cw" 'pwc)
 #+end_src
-
-
 
 **** Spelling
 #+source: spelling

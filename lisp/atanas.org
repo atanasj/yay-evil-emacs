@@ -293,9 +293,6 @@ This was attempted, however error generated due some environment problem. Will l
     ("C-c j" . pandoc-jump-to-reference)
     :config
     (setq pandoc-citation-jump-function 'pandoc-open-in-ebib))
-    ;; (define-key markdown-mode-map (kbd "C-c j") 'pandoc-jump-to-reference))
-    ;; :init
-    ;; (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 #+end_src
 ***** Reference management
 #+source: manage-bib-files
@@ -309,50 +306,15 @@ This was attempted, however error generated due some environment problem. Will l
                                    ("pdf")
                                    ("ps" . "gv")))
     )
-
-  ;; (use-package openwith
-  ;;   :config (progn
-  ;;             (when (require 'openwith nil 'noerror)
-  ;;               (setq openwith-associations
-  ;;                     (list
-  ;;                      (list (openwith-make-extension-regexp
-  ;;                             '("mpg" "mpeg" "mp3" "mp4"
-  ;;                               "avi" "wmv" "wav" "mov" "flv"
-  ;;                               "ogm" "ogg" "mkv"))
-  ;;                            "VLC"
-  ;;                            '(file))
-  ;;                      ;; (list (openwith-make-extension-regexp
-  ;;                      ;;        '("xbm" "pbm" "pgm" "ppm" "pnm"
-  ;;                      ;;          "png" "bmp" "tif" "jpeg" "jpg"))
-  ;;                      ;;       "gpicview"
-  ;;                      ;;       '(file))
-  ;;                      (list (openwith-make-extension-regexp
-  ;;                             '("pdf"))
-  ;;                            "PDF Expert"
-  ;;                            '(file))
-  ;;                      (list (openwith-make-extension-regexp
-  ;;                             '("doc" "docx"))
-  ;;                            "Microsoft Word"
-  ;;                            '(file))
-  ;;                      (list (openwith-make-extension-regexp
-  ;;                             '("csv" "xls" "xlsx"))
-  ;;                            "Microsoft Excel"
-  ;;                            '(file))
-  ;;                      ))
-  ;;               (openwith-mode 1))))
 #+end_src
 
 ***** PDF Tools
 
 #+source: pdf-tools
 #+begin_src emacs-lisp :tangle yes
-  ;; (use-package doc-view
-  ;;   :config
-  ;;   (setq doc-view-continuous t))
   (use-package pdf-tools
     :config
     (add-hook 'doc-view-mode-hook 'pdf-tools-install))
-  ;; (pdf-tools-install t)) ; do this manually
 #+end_src
 
 ***** Pandoc Word Count
@@ -427,6 +389,7 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     (global-set-key (kbd "H-n") 'mc/mark-next-like-this)
     (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
     (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region))
+
 #+end_src
 
 #+source: drag-stuff
@@ -438,6 +401,7 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
               ("<M-down>" . drag-stuff-down)
               ("<M-S-s-left>" . drag-stuff-left)
               ("<M-S-s-right>" . drag-stuff-right)))
+
 #+end_src
 
 First mark the word, then add more cursors. To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable multiple regions before disabling multiple cursors. If you want to insert a newline in multiple-cursors-mode, use C-j
@@ -449,6 +413,7 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
     :init
     (progn
       (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
+
 #+end_src
 
 #+source: aggressive-indent
@@ -461,6 +426,7 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
     :init
     (progn
     (global-aggressive-indent-mode 1)))
+
 #+end_src
 
 #+source: paren-face
@@ -471,7 +437,7 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
     (global-paren-face-mode)
     :config
     (add-hook 'prog-mode-hook (lambda () (setq paren-face-regexp "#?[](){}[]"))))
-    ;; (add-hook 'clojure-mode-hook (lambda () (setq paren-face-regexp "#?[](){}[]"))))
+
 #+end_src
 
 ** Highlight TO-DOs
@@ -479,7 +445,7 @@ Highlight various =.ANCHORS.= in comments.
 
 #+source: hl-todo
 #+begin_src emacs-lisp :tangle yes
-  ;; NOTE that the highlighting works even in comments.
+  ;; NOTE that the highlighting works even outside comments where TODO would usually be kept
   ;; The below words were configured to make migration my work from vscode to emacs easier
   ;; as they were already words used for project management
   (use-package hl-todo
@@ -491,41 +457,18 @@ Highlight various =.ANCHORS.= in comments.
     (add-to-list 'hl-todo-keyword-faces '("TODO" . "#ff3349"))
     :init
     (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
+
 #+end_src
 
 ** TODO Project Management and Navigation
 #+source: projectile
 #+begin_src emacs-lisp :tangle yes
   (use-package ag)
-  ;; (use-package delight) ; this was used without the doom-modeline
   (use-package projectile
-    ;; Remove the mode name for projectile-mode, but show the project name.
     :requires ag
-    ;; :delight '(:eval (concat " (╹◡╹) " (projectile-project-name) " (｡◕‿◕｡)")) ; commneted as doom-modeline has taken over
     :init (projectile-global-mode)
     :config
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
-#+end_src
-
-Additionally, I was finding it quite annoying that the temp files would be stored in the relevant project folder, and ended up cluttering things up. So, I made a single backup folder, that needs to be cleared from time-to-time.
-#+source: set-backups
-#+begin_src emacs-lisp :tangle no
-  ;; from here: https://www.emacswiki.org/emacs/AutoSave
-  ;; REVIEW consider deleting these if not required
-  (setq backup-directory-alist
-        `(("." . ,(concat user-emacs-directory "backups"))))
-#+end_src
-
-#+source: auto-save
-#+begin_src emacs-lisp :tangle no
-  (defun full-auto-save ()
-    (interactive)
-    (save-excursion
-      (dolist (buf (buffer-list))
-        (set-buffer buf)
-        (if (and (buffer-file-name) (buffer-modified-p))
-            (basic-save-buffer)))))
-  (add-hook 'auto-save-hook 'full-auto-save)
 #+end_src
 
 #+source: ace-jump-mode
@@ -559,7 +502,9 @@ Additionally, I was finding it quite annoying that the temp files would be store
 #+source: restart-emacs
 #+begin_src emacs-lisp :tangle yes
   ;; get restart-emacs for easy restarting when updating config
-  (use-package restart-emacs)
+  (use-package restart-emacs
+    :config
+    (setq restart-emacs-restore-frames t))
 #+end_src
 
 ** Keep packages up to date
@@ -582,12 +527,14 @@ Below are my custom scripts. Please note, any associated keybdings are contained
   (use-package ob-applescript)
 
   ;; general applescript-mode
-  (use-package applescript-mode
-  :load-path "src/applescript-mode")
+  ;; this is disabled, as it not seem to work as expected
+  ;; (use-package applescript-mode
+  ;; :load-path "src/applescript-mode")
 #+end_src
 
 ** Zotero Cite as You Write
 This used `applescript` to access Zotero's citation picker via Better Bibtex.
+
 #+srcname: zotero-cayw
 #+begin_src emacs-lisp
   ;; This script needs a citation as it was not written by me.
@@ -635,7 +582,9 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
            end if"))
   ;; set the binding
   (global-set-key (kbd "s-y") 'zotero-cayw)
+
 #+end_src
+
 ** iTerm2 integration
 
 #+source: iterm2
@@ -679,25 +628,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
     "t" '(iterm-focus :which-key "focus iterm")
     "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
-#+end_src
-* Custom variables to be added
-#+source: custom-variables
-#+begin_src emacs-lisp :tangle no
-    '(ebib-file-associations
-      (quote
-       (("pdf" . "/Applications/PDF Expert.app/Contents/MacOS/PDF Expert")
-        ("ps" . "gv"))))
-    '(ebib-layout (quote full or custom))
-    '(ebib-preload-bib-files (quote ("/Users/atanas/.pandoc/MyLib.bib")))
 
-    '(pandoc-citation-jump-function (quote pandoc-open-in-ebib)))
-    '(pandoc-citation-jump-function (quote pandoc-show-citation-as-help)))
-    '(pandoc-citation-jump-function (quote pandoc-goto-citation-reference))) ; default
-
-
-    '(pandoc-data-dir "~/.emacs.d/lisp/")
-
-  (doc-view-continuous t)
 #+end_src
 
 * Open File Path Under Cursor

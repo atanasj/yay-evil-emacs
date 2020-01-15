@@ -284,50 +284,78 @@ This was attempted, however error generated due some environment problem. Will l
 #+source: pandoc
 #+begin_src emacs-lisp :tangle yes
   (use-package pandoc-mode
+    :demand
     :hook ((markdown-mode . pandoc-mode)
            (TeX-mode . pandoc-mode)
            (org-mode . pandoc-mode)
            (pandoc-mode . pandoc-load-default-settings))
+    :bind
+    ("C-c j" . pandoc-jump-to-reference)
     :config
-    (define-key markdown-mode-map (kbd "C-c j") 'pandoc-jump-to-reference))
+    (setq pandoc-citation-jump-function 'pandoc-open-in-ebib))
+    ;; (define-key markdown-mode-map (kbd "C-c j") 'pandoc-jump-to-reference))
     ;; :init
     ;; (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 #+end_src
+***** Reference management
 #+source: manage-bib-files
 #+begin_src emacs-lisp :tangle yes
-  (use-package ebib)
-  (use-package openwith
-  :config (progn
-            (when (require 'openwith nil 'noerror)
-              (setq openwith-associations
-                    (list
-                     (list (openwith-make-extension-regexp
-                            '("mpg" "mpeg" "mp3" "mp4"
-                              "avi" "wmv" "wav" "mov" "flv"
-                              "ogm" "ogg" "mkv"))
-                           "VLC"
-                           '(file))
-                     ;; (list (openwith-make-extension-regexp
-                     ;;        '("xbm" "pbm" "pgm" "ppm" "pnm"
-                     ;;          "png" "bmp" "tif" "jpeg" "jpg"))
-                     ;;       "gpicview"
-                     ;;       '(file))
-                     (list (openwith-make-extension-regexp
-                            '("pdf"))
-                           "PDF Expert"
-                           '(file))
-                     (list (openwith-make-extension-regexp
-                            '("doc" "docx"))
-                           "Microsoft Word"
-                           '(file))
-                     (list (openwith-make-extension-regexp
-                            '("csv" "xls" "xlsx"))
-                           "Microsoft Excel"
-                           '(file))
-                     ))
-              (openwith-mode 1))))
+  (use-package ebib
+    :config
+    (setq ebib-preload-bib-files '("/Users/atanas/.pandoc/MyLib.bib")
+          ebib-lay-out 'full
+          ebib-file-associations '(
+                                   ;; ("pdf" . "/Applications/PDF Expert.app/Contents/MacOS/PDF Expert")
+                                   ("pdf")
+                                   ("ps" . "gv")))
+    )
+
+  ;; (use-package openwith
+  ;;   :config (progn
+  ;;             (when (require 'openwith nil 'noerror)
+  ;;               (setq openwith-associations
+  ;;                     (list
+  ;;                      (list (openwith-make-extension-regexp
+  ;;                             '("mpg" "mpeg" "mp3" "mp4"
+  ;;                               "avi" "wmv" "wav" "mov" "flv"
+  ;;                               "ogm" "ogg" "mkv"))
+  ;;                            "VLC"
+  ;;                            '(file))
+  ;;                      ;; (list (openwith-make-extension-regexp
+  ;;                      ;;        '("xbm" "pbm" "pgm" "ppm" "pnm"
+  ;;                      ;;          "png" "bmp" "tif" "jpeg" "jpg"))
+  ;;                      ;;       "gpicview"
+  ;;                      ;;       '(file))
+  ;;                      (list (openwith-make-extension-regexp
+  ;;                             '("pdf"))
+  ;;                            "PDF Expert"
+  ;;                            '(file))
+  ;;                      (list (openwith-make-extension-regexp
+  ;;                             '("doc" "docx"))
+  ;;                            "Microsoft Word"
+  ;;                            '(file))
+  ;;                      (list (openwith-make-extension-regexp
+  ;;                             '("csv" "xls" "xlsx"))
+  ;;                            "Microsoft Excel"
+  ;;                            '(file))
+  ;;                      ))
+  ;;               (openwith-mode 1))))
 #+end_src
 
+***** PDF Tools
+
+#+source: pdf-tools
+#+begin_src emacs-lisp :tangle yes
+  ;; (use-package doc-view
+  ;;   :config
+  ;;   (setq doc-view-continuous t))
+  (use-package pdf-tools
+    :config
+    (add-hook 'doc-view-mode-hook 'pdf-tools-install))
+  ;; (pdf-tools-install t)) ; do this manually
+#+end_src
+
+***** Pandoc Word Count
 The below works, however there is some bash error message.
 #+source: pan_wc
 #+begin_src emacs-lisp :tangle yes
@@ -652,3 +680,92 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
     "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
 #+end_src
+* Custom variables to be added
+#+source: custom-variables
+#+begin_src emacs-lisp :tangle no
+    '(ebib-file-associations
+      (quote
+       (("pdf" . "/Applications/PDF Expert.app/Contents/MacOS/PDF Expert")
+        ("ps" . "gv"))))
+    '(ebib-layout (quote full or custom))
+    '(ebib-preload-bib-files (quote ("/Users/atanas/.pandoc/MyLib.bib")))
+
+    '(pandoc-citation-jump-function (quote pandoc-open-in-ebib)))
+    '(pandoc-citation-jump-function (quote pandoc-show-citation-as-help)))
+    '(pandoc-citation-jump-function (quote pandoc-goto-citation-reference))) ; default
+
+
+    '(pandoc-data-dir "~/.emacs.d/lisp/")
+
+  (doc-view-continuous t)
+#+end_src
+
+* Open File Path Under Cursor
+This works, but errors when there is a space in the file name.
+#+source: open-path
+#+begin_src emacs-lisp :tangle no
+  (defun xah-open-file-at-cursor ()
+  "Open the file path under cursor.
+If there is text selection, uses the text selection for path.
+If the path starts with “http://”, open the URL in browser.
+Input path can be {relative, full path, URL}.
+Path may have a trailing “:‹n›” that indicates line number. If so, jump to that line number.
+If path does not have a file extension, automatically try with “.el” for elisp files.
+This command is similar to `find-file-at-point' but without prompting for confirmation.
+
+URL `http://ergoemacs.org/emacs/emacs_open_file_path_fast.html'
+Version 2019-01-16"
+  (interactive)
+  (let* (($inputStr (if (use-region-p)
+                        (buffer-substring-no-properties (region-beginning) (region-end))
+                      (let ($p0 $p1 $p2
+                                ;; chars that are likely to be delimiters of file path or url, e.g. whitespace, comma. The colon is a problem. cuz it's in url, but not in file name. Don't want to use just space as delimiter because path or url are often in brackets or quotes as in markdown or html
+                                ($pathStops "^  \t\n\"`'‘’“”|[]{}「」<>〔〕〈〉《》【】〖〗«»‹›❮❯❬❭〘〙·。\\\s\~"))
+                        (setq $p0 (point))
+                        (skip-chars-backward $pathStops)
+                        (setq $p1 (point))
+                        (goto-char $p0)
+                        (skip-chars-forward $pathStops)
+                        (setq $p2 (point))
+                        (goto-char $p0)
+                        (buffer-substring-no-properties $p1 $p2))))
+         ($path
+          (replace-regexp-in-string
+           "^file:///" "/"
+           (replace-regexp-in-string
+            ":\\'" "" $inputStr))))
+    (if (string-match-p "\\`https?://" $path)
+        (if (fboundp 'xahsite-url-to-filepath)
+            (let (($x (xahsite-url-to-filepath $path)))
+              (if (string-match "^http" $x )
+                  (browse-url $x)
+                (find-file $x)))
+          (progn (browse-url $path)))
+      (if ; not starting “http://”
+          (string-match "^\\`\\(.+?\\):\\([0-9]+\\)\\'" $path)
+          (let (
+                ($fpath (match-string 1 $path))
+                ($line-num (string-to-number (match-string 2 $path))))
+            (if (file-exists-p $fpath)
+                (progn
+                  (find-file $fpath)
+                  (goto-char 1)
+                  (forward-line (1- $line-num)))
+              (when (y-or-n-p (format "file no exist: 「%s」. Create?" $fpath))
+                (find-file $fpath))))
+        (if (file-exists-p $path)
+            (progn ; open f.ts instead of f.js
+              (let (($ext (file-name-extension $path))
+                    ($fnamecore (file-name-sans-extension $path)))
+                (if (and (string-equal $ext "js")
+                         (file-exists-p (concat $fnamecore ".ts")))
+                    (find-file (concat $fnamecore ".ts"))
+                  (find-file $path))))
+          (if (file-exists-p (concat $path ".el"))
+              (find-file (concat $path ".el"))
+            (when (y-or-n-p (format "file no exist: 「%s」. Create?" $path))
+              (find-file $path ))))))))
+#+end_src
+
+#+RESULTS: open-path
+: xah-open-file-at-cursor

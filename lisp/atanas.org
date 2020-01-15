@@ -89,6 +89,40 @@ Load the snippets defined in the package's =./snippets/= directory, and local sn
 #+end_src
 ** ESS, R, ploy-R and poly-markdown
 This is taken mostly from the kjhealy and the spacemacs config. May need to go out to a separate lisp at some time if navigation proves too unwieldy.
+*** Add Golden Ratio
+#+source: golden-ratio
+#+begin_src emacs-lisp :tangle yes
+  (use-package golden-ratio
+    :init
+    (setq golden-ratio-toggle-widescreen t)
+    (setq golden-ratio-adjust-factor .8
+          golden-ratio-wide-adjust-factor .8)
+    :config
+    (golden-ratio-mode 1)
+    (golden-ratio-toggle-widescreen)
+    (setq golden-ratio-extra-commands
+          (append golden-ratio-extra-commands
+                  '(ace-window
+                    ess-eval-buffer-and-go
+                    ess-eval-function-and-go
+                    ess-eval-line-and-go
+                    )))
+    )
+
+#+end_src
+
+#+source: spc-golden-ration-fun
+#+begin_src emacs-lisp :tangle no
+  (defun ess/pre-init-golden-ratio ()
+    (spacemacs|use-package-add-hook golden-ratio
+                                    :post-config
+                                    (dolist (f '(ess-eval-buffer-and-go
+                                                 ess-eval-function-and-go
+                                                 ess-eval-line-and-go))
+                                      (add-to-list 'golden-ratio-extra-commands f))))
+
+#+end_src
+
 *** Make shift-enter do a lot in ESS.
  Use shift-enter to split window & launch R (if not running), execute
  highlighted region (if R running & area highlighted), or execute
@@ -131,14 +165,28 @@ From kjhealy:
 
 #+src-name: ess-mode
 #+begin_src emacs-lisp
-  ;; ===========================
+  ;; =========================================================
   ;; This solution is working
-  ;; ===========================
+  ;; ========================================================
 
   ;; enable flycheck
   (add-hook 'after-init-hook #'global-flycheck-mode)
-
+  ;; setup ess for r-modes
   (use-package ess
+    :mode (
+           ("/R/.*\\.q\\'"       . R-mode)
+           ("\\.[rR]\\'"         . R-mode)
+           ("\\.[rR]profile\\'"  . R-mode)
+           ("NAMESPACE\\'"       . R-mode)
+           ("CITATION\\'"        . R-mode)
+           ("\\.[Rr]out"         . R-transcript-mode)
+           ("\\.Rd\\'"           . Rd-mode)
+           )
+    :interpreter (
+                  ("R" . R-mode)
+                  ("R" . R-transcript-mode)
+                  ("R" . Rd-mode)
+                  )
     :init
     (require 'ess-r-mode)
     (setq ess-first-continued-statement-offset 2
@@ -162,26 +210,47 @@ From kjhealy:
       "Insert an assignment <-"
       (interactive)
       (insert "<- "))
+    ;; set keybindings
+    ;; insert pipe
     (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
     (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+    ;; insert assign
     (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
-    :config
+    :hook
     ;; enable lintr
-    (add-hook 'ess-mode-hook
-              (lambda () (flycheck-mode t)))
-    ;; ess-shift-enter
-    (add-hook 'ess-mode-hook
-              '(lambda()
+    (ess-mode . (lambda ()
+                  (flycheck-mode t)))
+    ;; ess-shift-enter to execute code
+    (ess-mode . (lambda()
                  (local-set-key [(shift return)] 'my-ess-eval)))
-    (add-hook 'inferior-ess-mode-hook
-              '(lambda()
-                 (local-set-key [C-up] 'comint-previous-input)
-                 (local-set-key [C-down] 'comint-next-input)))
-    (add-hook 'Rnw-mode-hook
-              '(lambda()
-                 (local-set-key [(shift return)] 'my-ess-eval)))
+    (inferior-ess-mode . (lambda()
+                           (local-set-key [C-up] 'comint-previous-input)
+                           (local-set-key [C-down] 'comint-next-input)))
+    (Rnw-mode . (lambda()
+                  (local-set-key [(shift return)] 'my-ess-eval)))
+    ;; below disabled but left here, golden-ratio seems to interfere with company
+    ;; have set kbd for to enable company mode as "<f12>""
+    ;; (ess-mode . company-mode)
+    ;; (ess-r-mode . company-mode)
     )
+   ;; :config
+   ;; (add-hook 'ess-mode-hook
+   ;;            (lambda () (flycheck-mode t)))
+   ;;  ;; ess-shift-enter to execute code
+   ;;  (add-hook 'ess-mode-hook
+   ;;            '(lambda()
+   ;;               (local-set-key [(shift return)] 'my-ess-eval)))
+   ;;  (add-hook 'inferior-ess-mode-hook
+   ;;            '(lambda()
+   ;;               (local-set-key [C-up] 'comint-previous-input)
+   ;;               (local-set-key [C-down] 'comint-next-input)))
+   ;;  (add-hook 'Rnw-mode-hook
+   ;;            '(lambda()
+   ;;               (local-set-key [(shift return)] 'my-ess-eval)))
+   ;;  (add-hook 'ess-mode-hook 'company-mode)
+   ;;  (add-hook 'ess-r-mode-hook 'company-mode)
+
 #+end_src
 **** ess-R-data-view
 #+source: ess-R-data-view
@@ -226,40 +295,6 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 
   (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
 #+END_SRC
-
-*** Add Golden Ratio
-#+source: golden-ratio
-#+begin_src emacs-lisp :tangle yes
-  (use-package golden-ratio
-    :init
-    (setq golden-ratio-toggle-widescreen t)
-    (setq golden-ratio-adjust-factor .8
-          golden-ratio-wide-adjust-factor .8)
-    :config
-    (golden-ratio-mode 1)
-    (golden-ratio-toggle-widescreen)
-    (setq golden-ratio-extra-commands
-          (append golden-ratio-extra-commands
-                  '(ace-window
-                    ess-eval-buffer-and-go
-                    ess-eval-function-and-go
-                    ess-eval-line-and-go
-                    )))
-    )
-
-#+end_src
-
-#+source: spc-golden-ration-fun
-#+begin_src emacs-lisp :tangle no
-  (defun ess/pre-init-golden-ratio ()
-    (spacemacs|use-package-add-hook golden-ratio
-                                    :post-config
-                                    (dolist (f '(ess-eval-buffer-and-go
-                                                 ess-eval-function-and-go
-                                                 ess-eval-line-and-go))
-                                      (add-to-list 'golden-ratio-extra-commands f))))
-
-#+end_src
 
 ** Markdown, Pandoc and all things writing
 These are where settings for pandoc and markdown related features.

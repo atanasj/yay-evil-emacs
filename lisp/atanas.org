@@ -153,11 +153,11 @@ From kjhealy:
     (defun tide-insert-assign ()
       "Insert an assignment <-"
       (interactive)
-      (insert "<- "))
+      (insert " <- "))
     (defun tide-insert-pipe ()
       "Insert a %>% and newline"
       (interactive)
-      (insert "%>%"))
+      (insert " %>%"))
     (defun tide-insert-assign ()
       "Insert an assignment <-"
       (interactive)
@@ -232,15 +232,19 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 #+begin_src emacs-lisp :tangle yes
   (use-package golden-ratio
     :init
-    (golden-ratio-mode 1)
-    (golden-ratio-toggle-widescreen)
+    (setq golden-ratio-toggle-widescreen t)
     (setq golden-ratio-adjust-factor .8
           golden-ratio-wide-adjust-factor .8)
     :config
-    (dolist (f '(ess-eval-buffer-and-go
-                 ess-eval-function-and-go
-                 ess-eval-line-and-go))
-      (add-to-list 'golden-ratio-extra-commands f))
+    (golden-ratio-mode 1)
+    (golden-ratio-toggle-widescreen)
+    (setq golden-ratio-extra-commands
+          (append golden-ratio-extra-commands
+                  '(ace-window
+                    ess-eval-buffer-and-go
+                    ess-eval-function-and-go
+                    ess-eval-line-and-go
+                    )))
     )
 
 #+end_src

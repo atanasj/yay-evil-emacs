@@ -416,6 +416,7 @@ Selecting buffers/files with great efficiency. In my opinion, Ido is enough to r
   (use-package flx-ido :config (flx-ido-mode +1))
 #+END_SRC
 ** Programming language support and utilities
+
 *** Company for auto-completion
 Use ~C-n~ and ~C-p~ to navigate the tooltip.
 #+BEGIN_SRC emacs-lisp

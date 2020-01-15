@@ -233,8 +233,28 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
   (use-package golden-ratio
     :init
     (golden-ratio-mode 1)
+    (golden-ratio-toggle-widescreen)
     (setq golden-ratio-adjust-factor .8
-          golden-ratio-wide-adjust-factor .8))
+          golden-ratio-wide-adjust-factor .8)
+    :config
+    (dolist (f '(ess-eval-buffer-and-go
+                 ess-eval-function-and-go
+                 ess-eval-line-and-go))
+      (add-to-list 'golden-ratio-extra-commands f))
+    )
+
+#+end_src
+
+#+source: spc-golden-ration-fun
+#+begin_src emacs-lisp :tangle no
+  (defun ess/pre-init-golden-ratio ()
+    (spacemacs|use-package-add-hook golden-ratio
+                                    :post-config
+                                    (dolist (f '(ess-eval-buffer-and-go
+                                                 ess-eval-function-and-go
+                                                 ess-eval-line-and-go))
+                                      (add-to-list 'golden-ratio-extra-commands f))))
+
 #+end_src
 
 ** Markdown, Pandoc and all things writing

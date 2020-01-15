@@ -126,62 +126,68 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
 #+end_src
 *** Load ESS
 This is hacked together form the ess-r-mode for spacemacs.
+From kjhealy:
+"[[https://github.com/jimhester/lintr][lintr]] checks your R code for style and syntax errors. It's an R library that integrates with [[http://www.flycheck.org][flycheck]]. You must install lintr from R. Flycheck can also check code in many other languages. You will need to install linters for them separately as well. See the flycheck documentation for details."
+
 #+src-name: ess-mode
 #+begin_src emacs-lisp
-    ;; ===========================
-    ;; This solution is working
-    ;; ===========================
-    (add-hook 'after-init-hook #'global-flycheck-mode)
+  ;; ===========================
+  ;; This solution is working
+  ;; ===========================
 
-    (use-package ess
-      :init
-      (require 'ess-r-mode)
-      (setq ess-first-continued-statement-offset 2
-            ess-continued-statement-offset 0
-            ess-expression-offset 2
-            ess-nuke-trailing-whitespace-p t
-            ess-default-style 'DEFAULT)
-      ;; Toggle underscore off no replacement of _ for <-
-      (setq ess-smart-S-assign-key nil)
-      ;; Stop R repl eval from blocking emacs.
-      (setq ess-eval-visibly 'nowait)
-      (defun tide-insert-assign ()
-        "Insert an assignment <-"
-        (interactive)
-        (insert "<- "))
-      (defun tide-insert-pipe ()
-        "Insert a %>% and newline"
-        (interactive)
-        (insert "%>%"))
-      (defun tide-insert-assign ()
-        "Insert an assignment <-"
-        (interactive)
-        (insert "<- "))
-      (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
-      (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
-      (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
-      (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
-      :config
-      (add-hook 'ess-mode-hook
-                (lambda () (flycheck-mode t)))
-      (add-hook 'ess-mode-hook
-                '(lambda()
-                   (local-set-key [(shift return)] 'my-ess-eval)))
-      (add-hook 'inferior-ess-mode-hook
-                '(lambda()
-                   (local-set-key [C-up] 'comint-previous-input)
-                   (local-set-key [C-down] 'comint-next-input)))
-      (add-hook 'Rnw-mode-hook
-                '(lambda()
-                   (local-set-key [(shift return)] 'my-ess-eval)))
-      )
+  ;; enable flycheck
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+
+  (use-package ess
+    :init
+    (require 'ess-r-mode)
+    (setq ess-first-continued-statement-offset 2
+          ess-continued-statement-offset 0
+          ess-expression-offset 2
+          ess-nuke-trailing-whitespace-p t
+          ess-default-style 'DEFAULT)
+    ;; Toggle underscore off no replacement of _ for <-
+    (setq ess-smart-S-assign-key nil)
+    ;; Stop R repl eval from blocking emacs.
+    (setq ess-eval-visibly 'nowait)
+    (defun tide-insert-assign ()
+      "Insert an assignment <-"
+      (interactive)
+      (insert "<- "))
+    (defun tide-insert-pipe ()
+      "Insert a %>% and newline"
+      (interactive)
+      (insert "%>%"))
+    (defun tide-insert-assign ()
+      "Insert an assignment <-"
+      (interactive)
+      (insert "<- "))
+    (define-key ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+    (define-key inferior-ess-r-mode-map (kbd "C-\"") 'tide-insert-pipe)
+    (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+    (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
+    :config
+    ;; enable lintr
+    (add-hook 'ess-mode-hook
+              (lambda () (flycheck-mode t)))
+    ;; ess-shift-enter
+    (add-hook 'ess-mode-hook
+              '(lambda()
+                 (local-set-key [(shift return)] 'my-ess-eval)))
+    (add-hook 'inferior-ess-mode-hook
+              '(lambda()
+                 (local-set-key [C-up] 'comint-previous-input)
+                 (local-set-key [C-down] 'comint-next-input)))
+    (add-hook 'Rnw-mode-hook
+              '(lambda()
+                 (local-set-key [(shift return)] 'my-ess-eval)))
+    )
 #+end_src
-
+**** ess-R-data-view
 #+source: ess-R-data-view
 #+begin_src emacs-lisp :tangle yes
   (use-package ess-R-data-view)
 #+end_src
-
 *** Use Knitr to process Sweave documents
 #+source: knitr-swv
 #+begin_src emacs-lisp :tangle yes
@@ -191,14 +197,7 @@ This is hacked together form the ess-r-mode for spacemacs.
 
 *** Use Polymode
 Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.
-
-#+source: Polymode
-#+begin_src emacs-lisp :tangle no
-  (use-package poly-R)
-  (use-package poly-markdown)
-#+end_src
-
-#+source: polymode-alt
+#+source: polymode
 #+begin_src emacs-lisp :tangle yes
   ;; from spacemacs config
    (use-package polymode
@@ -214,22 +213,6 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
         (poly-markdown+r-mode))
       ))
 #+end_src
-
-*** TODO Add a Keyboard Shortcut for the Pipe Operator
-Assignment in ESS is shift-minus; by extension we'll use M-shift-minus for inserting the `%>%` operator.
-Review indentation rules for r-language as size of tabs seems excessive.
-
-#+src-name: ess-pipe-shortcut
-#+begin_src emacs-lisp :tangle no
-  (defun my_pipe_operator ()
-    "R/ESS %>% operator"
-    (interactive)
-    (insert " %>% "))
-
-  (define-key ess-mode-map (kbd "M-_") 'my_pipe_operator)
-  (define-key inferior-ess-mode-map (kbd "M-_") 'my_pipe_operator)
-#+end_src
-
 *** Add a Keyboard Shortcut for Rmd chunks
 
 #+src-name: rmd-chunk-insert
@@ -244,83 +227,18 @@ Review indentation rules for r-language as size of tabs seems excessive.
   (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
 #+END_SRC
 
-*** lintr and flycheck
-[[https://github.com/jimhester/lintr][lintr]] checks your R code for style and syntax errors. It's an R library that integrates with [[http://www.flycheck.org][flycheck]]. You must install lintr from R. Flycheck can also check code in many other languages. You will need to install linters for them separately as well. See the flycheck documentation for details.
-
-#+source: lintr
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (add-hook 'ess-mode-hook
-            (lambda () (flycheck-mode t)))
-#+end_src
-
-*** Unused
-Code blocks, mostly from kjhealy's config that are not used.
-**** Coding Hooks
-#+source: ide-ess
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'ess-mode-hook 'run-starter-kit-coding-hook) ; not sure I need this
-  (add-hook 'ess-R-post-run-hook 'smartparens-mode)
-#+end_src
-**** Define Rnw-mode and make LaTeX aware of it.
-If you use Rnw documents, tangle this section. (Rnw files have been mostly superseded by Rmd files.)
-#+srcname: misc-r
-#+begin_src emacs-lisp :tangle no
-  (add-to-list 'auto-mode-alist '("\\.Rnw\\'" . Rnw-mode))
-  (add-to-list 'auto-mode-alist '("\\.Snw\\'" . Rnw-mode))
-
-  ;; Make TeX and RefTex aware of Snw and Rnw files
-  (setq reftex-file-extensions
-        '(("Snw" "Rnw" "nw" "tex" ".tex" ".ltx") ("bib" ".bib")))
-  (setq TeX-file-extensions
-        '("Snw" "Rnw" "nw" "tex" "sty" "cls" "ltx" "texi" "texinfo"))
-
-  ;; Lets you do 'C-c C-c Sweave' from your Rnw file
-  (add-hook 'Rnw-mode-hook
-            (lambda ()
-              (add-to-list 'TeX-command-list
-                           '("Sweave" "R CMD Sweave %s"
-                             TeX-run-command nil (latex-mode) :help "Run Sweave") t)
-              (add-to-list 'TeX-command-list
-                           '("LatexSweave" "%l %(mode) %s"
-                             TeX-run-TeX nil (latex-mode) :help "Run Latex after Sweave") t)
-              (setq TeX-command-default "Sweave")))
-#+end_src
-**** TODO Load ESS and configure R-IDE (attempt)
-This is a tidy attempt, hacked together form the spacemacs config, however not working. This is much nicer and I will leave here if I get back to it. However, the other solutions above are working.
-
-#+source: ess-r-ides
-#+begin_src emacs-lisp :tangle no
-  ;; ===========================
-  ;; Tidyverse IDE
-  ;; ===========================
-  ;; This seems to work, however not sure if these will be operational in non-R ess modes
-  (use-package ess-site
-    :load-path "/elpa/ess/ess-site.el"
+*** Add Golden Ratio
+#+source: golden-ratio
+#+begin_src emacs-lisp :tangle yes
+  (use-package golden-ratio
     :init
-    (ess-mode)
-    (defvar ess-enable-smart-equals nil
-      "If non-nil smart-equal support is enabled")
-    (defun tide_insert_assign ()
-      "Insert an assignment <-"
-      (interactive)
-      (insert " <- "))
-    (defun my_pipe_operator ()
-      "R/ESS %>% operator"
-      (interactive)
-      (insert " %>% "))
-    :bind
-    (:map ess-mode-map
-          ("_" . tide_insert_assign)
-          ("M-_" . my_pipe_operator))
-    (:map inferior-ess-mode-map
-          ("_" . tide_insert_assign)
-          ("M-_" . my_pipe_operator)))
+    (golden-ration-mode 1)
+    (setq golden-ratio-adjust-factor .8
+          golden-ratio-wide-adjust-factor .8))
 #+end_src
 
 ** Markdown, Pandoc and all things writing
 These are where settings for pandoc and markdown related features.
-
 **** Markdown and Marked2.app
 Markdown mode support, including preview in =.Marked2.app.=.
 

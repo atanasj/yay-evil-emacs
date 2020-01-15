@@ -352,7 +352,7 @@ In CSV mode, the following commands are available:
   "Major mode for editing comma-separated value files." t)
 #+end_src
 
-*** Multiple Cursors and Undos-Tree and Drag-Stuff
+*** Multiple Cursors and Drag-Stuff
 Use multiple cursors for search, replace, and text-cleaning tasks. For a demonstration, see http://emacsrocks.com/e13.html. Tangle if need to use this.
 
 #+source: multiple-cursors
@@ -435,8 +435,10 @@ Highlight various =.ANCHORS.= in comments.
   (use-package hl-todo
     :config
     ;; Adding a new keyword: ANCHOR and REVIEW.
-    (add-to-list 'hl-todo-keyword-faces '("ANCHOR" . "#dc8cc3"))
-    (add-to-list 'hl-todo-keyword-faces '("REVIEW" . "#33ff3c"))
+    (add-to-list 'hl-todo-keyword-faces '("ANCHOR" . "#DAF7A6"))
+    (add-to-list 'hl-todo-keyword-faces '("REVIEW" . "#5eff33"))
+    (add-to-list 'hl-todo-keyword-faces '("NOTE" . "#ff8e33"))
+    (add-to-list 'hl-todo-keyword-faces '("TODO" . "#ff3349"))
     :init
     (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
 #+end_src

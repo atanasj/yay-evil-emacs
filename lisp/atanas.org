@@ -769,9 +769,9 @@ Version 2019-01-16"
 ** TODO Citations
 This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
 *** reftex
-
+this is too confusing to use, although it does work.
 #+source: reftex-md
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; reftex in markdown mode
 
   ;; if this isn't already set in your .emacs

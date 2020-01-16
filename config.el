@@ -203,10 +203,11 @@
 
 (use-package quelpa-use-package)
 (require 'font-lock)
-(use-package font-lock+)
-;; commented as only needed to install once, slows down load time otherwise
-;; :quelpa
-;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
+(use-package font-lock+
+  ;; commented as only needed to install once, slows down load time otherwise
+  ;; :quelpa
+  ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github)
+  )
 
 (use-package all-the-icons)
 

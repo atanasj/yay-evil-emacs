@@ -11,9 +11,88 @@ Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]
 globally for later insertion into an Org-mode buffer.
 See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
 #+begin_src emacs-lisp :tangle no
-  (define-key global-map "\C-cl" 'org-store-link)
+  (use-package org
+    :init
+    (define-key map-global ("\C-c l") 'org-store-link)
+    (define-key map-global ("\C-c a") 'org-agenda)
+    (define-key map-global ("\C-c c") 'org-capture)
+    (setq org-log-done 'time
+          org-agenda-files (list "/Users/atanas/Dropbox/Apps/org/work.org"
+                                 "/Users/atanas/Dropbox/Apps/org/home.org"
+                                 "/Users/atanas/Dropbox/Apps/org/school.org"
+                                 "/Users/atanas/Dropbox/Apps/org/OrgTutorial.org"
+                                 ))
+    )
 #+end_src
-#  LocalWords:  iTerm
+
+
+#+source: org-setup
+#+begin_src emacs-lisp :tangle no
+    (use-package org
+    :ensure t
+    :mode ("\\.org\\'" . org-mode)
+    :bind (("C-c l" . org-store-link)
+           ("C-c c" . org-capture)
+           ("C-c a" . org-agenda)
+           ("C-c b" . org-iswitchb)
+           ("C-c C-w" . org-refile)
+           ("C-c j" . org-clock-goto)
+           ("C-c C-x C-o" . org-clock-out))
+    :config
+    (progn
+      ;; The GTD part of this config is heavily inspired by
+      ;; https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+      (setq org-directory "~/org")
+      (setq org-agenda-files
+            (mapcar (lambda (path) (concat org-directory path))
+                    '("/org.org"
+                      "/gtd/gtd.org"
+                      "/gtd/inbox.org"
+                      "/gtd/tickler.org")))
+      (setq org-log-done 'time)
+      (setq org-src-fontify-natively t)
+      (setq org-use-speed-commands t)
+      (setq org-capture-templates
+            '(("t" "Todo [inbox]" entry
+               (file+headline "~/org/gtd/inbox.org" "Tasks")
+               "* TODO %i%?")
+              ("T" "Tickler" entry
+               (file+headline "~/org/gtd/tickler.org" "Tickler")
+               "* %i%? \n %^t")))
+      (setq org-refile-targets
+            '(("~/org/gtd/gtd.org" :maxlevel . 3)
+              ("~/org/gtd/someday.org" :level . 1)
+              ("~/org/gtd/tickler.org" :maxlevel . 2)))
+      (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+      (setq org-agenda-custom-commands
+            '(("@" "Contexts"
+               ((tags-todo "@email"
+                           ((org-agenda-overriding-header "Emails")))
+                (tags-todo "@phone"
+                           ((org-agenda-overriding-header "Phone")))))))
+      (setq org-clock-persist t)
+      (org-clock-persistence-insinuate)
+      (setq org-time-clocksum-format '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
+    )
+
+  (use-package org-inlinetask
+    :bind (:map org-mode-map
+                ("C-c C-x t" . org-inlinetask-insert-task))
+    :after (org)
+    :commands (org-inlinetask-insert-task)
+    )
+
+  (use-package org-bullets
+    :ensure t
+    :commands (org-bullets-mode)
+    :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+    )
+
+#+end_src
+
+#+RESULTS: org-setup
+| (lambda nil (org-bullets-mode 1)) | org-clock-load | pandoc-mode | org-bullets-mode | org-indent-mode | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-block-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+
 * Settings without corresponding packages
 ** Cleanup-Buffers
 This is not currently used. If needed, tangle them.
@@ -812,6 +891,139 @@ this is too confusing to use, although it does work.
 
 (request
  "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
+#+end_src
+
+#+source: request.el
+#+begin_src emacs-lisp :tangle no
+
+
+;; This buffer is for text that is not saved, and for Lisp evaluation.
+;; To create a file, visit it with C-x C-f and enter text in its buffer.
+
+(require 'request)
+;; check to see if its running
+(request "http://localhost:23119/better-bibtex/cayw?probe=probe' 2>/dev/null; exit 0")
+if zotRunning is "" then
+display alert "Zotero not running" message "This script will not work unless Zotero is running. Please launch Zotero and try again"
+error number -128
+;; or
+else if zotRunning is "No endpoint found" then
+display alert "Better BibTeX not installed" message "This script will not work unless Better BibTeX is installed. Please make sure that Better BibTeX is installed in the running instance of Zotero"
+tell application appName
+;; if all good then
+else if zotRunning is "ready" then
+set theReference to do shell script
+(request "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
+;; then
+repeat until application appName is frontmost
+tell application appName to activate
+end repeat
+;; end
+
+(request
+  "http://httpbin.org/get"
+  :params '(("key" . "value") ("key2" . "value2"))
+  :parser 'json-read
+  :success (cl-function
+            (lambda (&key data &allow-other-keys)
+              (message "I sent: %S" (assoc-default 'args data)))))
+
+
+
+(request
+  "http://httpbin.org/post"
+  :type "POST"
+  :data '(("key" . "value") ("key2" . "value2"))
+  ;; :data "key=value&key2=value2"  ; this is equivalent
+  :parser 'json-read
+  :success (cl-function
+            (lambda (&key data &allow-other-keys)
+              (message "I sent: %S" (assoc-default 'form data)))))
+
+(request
+  "http://httpbin.org/get"
+  :sync t
+  :complete (cl-function
+             (lambda (&key response &allow-other-keys)
+               (message "Done: %s" (request-response-status-code response)))))
+
+(request
+  "https://github.com/tkf/emacs-request/commits/master.atom"
+  ;; Parse XML in response body:
+  :parser (lambda () (libxml-parse-xml-region (point) (point-max)))
+  :success (cl-function
+            (lambda (&key data &allow-other-keys)
+              ;; Just don't look at this function....
+              (let ((get (lambda (node &rest names)
+                           (if names
+                               (apply get
+                                      (first (xml-get-children
+                                              node (car names)))
+                                      (cdr names))
+                             (first (xml-node-children node))))))
+                (message "Latest commit: %s (by %s)"
+                         (funcall get data 'entry 'title)
+                         (funcall get data 'entry 'author 'name)))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+on alfred_script(q)
+tell application "System Events"
+try
+set appName to (the name of every process whose frontmost is true) as string
+on error errMsg
+display alert "Problem" message "Could not get the name of the frontmost application."
+error number -128
+end try
+end tell
+set zotRunning to do shell script "/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?probe=probe' 2>/dev/null; exit 0"
+if zotRunning is "" then
+display alert "Zotero not running" message "This script will not work unless Zotero is running. Please launch Zotero and try again"
+tell application appName
+activate
+end tell
+error number -128
+else if zotRunning is "No endpoint found" then
+display alert "Better BibTeX not installed" message "This script will not work unless Better BibTeX is installed. Please make sure that Better BibTeX is installed in the running instance of Zotero"
+tell application appName
+activate
+end tell
+error number -128
+else if zotRunning is "ready" then
+set theReference to do shell script "/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?format=pandoc' 2>/dev/null; exit 0"
+try
+repeat until application appName is frontmost
+tell application appName to activate
+end repeat
+on error errMsg
+display alert errMsg
+end try
+tell application "System Events"
+try
+keystroke theReference
+on error errMsg
+display alert errMsg
+end try
+end tell
+end if
+end alfred_script
+
+
 #+end_src
 
 ** TODO Python-IDE

@@ -214,10 +214,13 @@
 ;; see github repo for options on further config if desired
 (use-package nyan-mode
   :config
-  (nyan-mode))
+  (nyan-mode)
+  )
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode)
-  :config (setq doom-modeline-height 25))
+  :config
+  (ace-window-display-mode 1)
+  )
 
 (use-package dashboard
   :config

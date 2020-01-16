@@ -131,13 +131,6 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
  FelipeCsaszar. Adapted to split vertically instead of horizontally.
 #+src-name: ess-shift-enter
 #+begin_src emacs-lisp
-  ;; (setq ess-ask-for-ess-directory nil)
-  ;; (setq ess-local-process-name "R")
-  ;; (setq ansi-color-for-comint-mode 'filter)
-  ;; (setq comint-scroll-to-bottom-on-input t)
-  ;; (setq comint-scroll-to-bottom-on-output t)
-  ;; (setq comint-move-point-for-output t)
-
   (setq ess-ask-for-ess-directory t
         ess-local-process-name "R"
         ansi-color-for-comint-mode 'filter
@@ -178,7 +171,9 @@ From kjhealy:
 
   ;; enable flycheck
   (add-hook 'after-init-hook #'global-flycheck-mode)
+
   ;; setup ess for r-modes
+  ;; not convinced need all this, as had simpler config  and same behaviour
   (use-package ess
     :mode (
            ("/R/.*\\.q\\'"       . R-mode)
@@ -230,7 +225,7 @@ From kjhealy:
                   (flycheck-mode t)))
     ;; ess-shift-enter to execute code
     (ess-mode . (lambda()
-                 (local-set-key [(shift return)] 'my-ess-eval)))
+                  (local-set-key [(shift return)] 'my-ess-eval)))
     (inferior-ess-mode . (lambda()
                            (local-set-key [C-up] 'comint-previous-input)
                            (local-set-key [C-down] 'comint-next-input)))
@@ -528,6 +523,26 @@ Highlight various =.ANCHORS.= in comments.
     :bind ("<f7>" . ace-jump-mode))
 #+end_src
 
+#+source: window-numbering
+#+begin_src emacs-lisp :tangle yes
+  (setq-default mode-line-format (list
+                                " "
+                                '(:eval (window-parameter (selected-window) 'ace-window-path))
+                                '(:eval (if (vc-backend buffer-file-name)
+                                            (list
+                                             (propertize octicon-octoface 'face 'octicons-modeline)
+                                             (propertize " "              'face 'mode-line))))
+                                mode-line-mule-info
+                                'mode-line-modified
+                                "-  "
+                                'mode-line-buffer-identification
+                                "  (%l, %c)  "
+                                'mode-line-modes
+                                " -- "
+                                `(vc-mode vc-mode)
+                                ))
+#+end_src
+
 #+source: ace-window
 #+begin_src emacs-lisp :tangle yes
   (use-package ace-window
@@ -536,7 +551,7 @@ Highlight various =.ANCHORS.= in comments.
     (progn
       (global-set-key (kbd "<f8>") 'ace-window)
       (global-set-key (kbd "M-[") 'ace-window)
-      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      ;; (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
       ;;more info at https://github.com/abo-abo/ace-window
       )
     )
@@ -586,7 +601,7 @@ Below are my custom scripts. Please note, any associated keybdings are contained
 This used `applescript` to access Zotero's citation picker via Better Bibtex.
 
 #+srcname: zotero-cayw
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; This script needs a citation as it was not written by me.
   (defun zotero-cayw ()
     "Zotero citation picker"
@@ -631,7 +646,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
            end tell
            end if"))
   ;; set the binding
-  (global-set-key (kbd "s-y") 'zotero-cayw)
+  ;; (global-set-key (kbd "s-y") 'zotero-cayw)
 
 #+end_src
 
@@ -750,3 +765,63 @@ Version 2019-01-16"
 
 #+RESULTS: open-path
 : xah-open-file-at-cursor
+* TODO Config Tasks
+** TODO Citations
+This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
+*** reftex
+
+#+source: reftex-md
+#+begin_src emacs-lisp
+  ;; reftex in markdown mode
+
+  ;; if this isn't already set in your .emacs
+  (setq reftex-default-bibliography '("/Users/atanas/.pandoc/MyLib.bib"))
+
+  ;; define markdown citation formats
+  (defvar markdown-cite-format)
+  (setq markdown-cite-format
+        '(
+          (?\C-m . "[@%l]")
+          (?p . "[@%l]")
+          (?t . "@%l")
+          )
+        )
+
+  ;; wrap reftex-citation with local variables for markdown format
+  (defun markdown-reftex-citation ()
+    (interactive)
+    (let ((reftex-cite-format markdown-cite-format)
+          (reftex-cite-key-separator "; @"))
+      (reftex-citation)))
+
+  ;; bind modified reftex-citation to C-c[, without enabling reftex-mode
+  ;; https://www.gnu.org/software/auctex/manual/reftex/Citations-Outside-LaTeX.html#SEC31
+  (add-hook
+   'markdown-mode-hook
+   (lambda ()
+     (define-key markdown-mode-map "\C-c[" 'markdown-reftex-citation)))
+#+end_#+BEGIN_SRC
+
+#+END_SRC
+
+*** curl
+#+source: get-easy-http
+#+begin_src emacs-lisp :tangle no
+  (use-package request
+    :demand`)
+
+(request
+ "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
+#+end_src
+
+** TODO Python-IDE
+Setup Python-IDE similar to R-IDE
+** TODO R-IDE
+It would be good to auto enable company mode on R windows, however this seems to be problematic with golden ratio.
+As such, have a keybinding enable to toggle company mode.
+** TODO Pandoc
+Setup templates and pandoc binaries in defualt.pandoc
+** TODO Markdown
+Change shortcuts for formatting font faces e.g., bold, italic, etc.
+** TODO Ace-Window
+Would like ace-window numbers in the modeline, but this is only for looks. Will keep here as a TODO and then review. Not important really.

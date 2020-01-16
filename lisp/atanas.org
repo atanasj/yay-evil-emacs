@@ -173,7 +173,7 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
 #+begin_src emacs-lisp :tangle yes
   (use-package golden-ratio
     :init
-    (setq golden-ratio-toggle-widescreen t)
+    ;; (setq golden-ratio-toggle-widescreen t
     (setq golden-ratio-adjust-factor .8
           golden-ratio-wide-adjust-factor .8)
     :config
@@ -186,19 +186,12 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
                     ess-eval-function-and-go
                     ess-eval-line-and-go
                     )))
+    ;; (global-set-key (kbd "C-c C-\^") 'golden-ratio-toggle-widescreen)
+    ;; :bind*
+    ;; ("C-c<f12>" . golden-ratio-toggle-widescreen)
     )
-
-#+end_src
-
-#+source: spc-golden-ration-fun
-#+begin_src emacs-lisp :tangle no
-  (defun ess/pre-init-golden-ratio ()
-    (spacemacs|use-package-add-hook golden-ratio
-                                    :post-config
-                                    (dolist (f '(ess-eval-buffer-and-go
-                                                 ess-eval-function-and-go
-                                                 ess-eval-line-and-go))
-                                      (add-to-list 'golden-ratio-extra-commands f))))
+  ;; cannot get a kebinding to work with toggling this feature not matter what I try
+  ;; (global-set-key (kbd "\C-c <f12>") 'golden-ratio-toggle-widescreen)
 
 #+end_src
 
@@ -249,7 +242,7 @@ From kjhealy:
   ;; ========================================================
 
   ;; enable flycheck
-  (add-hook 'after-init-hook #'global-flycheck-mode)
+  ;; (add-hook 'after-init-hook #'global-flycheck-mode) ; already enabled in config.org
 
   ;; setup ess for r-modes
   ;; not convinced need all this, as had simpler config  and same behaviour
@@ -444,11 +437,11 @@ This was attempted, however error generated due some environment problem. Will l
 ***** Pandoc Word Count
 The below works, however there is some bash error message.
 #+source: pan_wc
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   ;; to enable the use of my aliases
   ;; solution form here: https://stackoverflow.com/questions/12224909/is-there-a-way-to-get-my-emacs-to-recognize-my-bash-aliases-and-custom-functions
-  (setq shell-file-name "bash")
-  (setq shell-command-switch "-ic")
+  ;; (setq shell-file-name "bash")
+  ;; (setq shell-command-switch "-ic")
 
   (defun pwc ()
     (interactive) (shell-command (concat "pandoc --lua-filter wordcount.lua " buffer-file-name)))
@@ -649,6 +642,13 @@ Highlight various =.ANCHORS.= in comments.
   (use-package restart-emacs
     :config
     (setq restart-emacs-restore-frames t))
+#+end_src
+
+#+source: crux-open-with-system-def-app
+#+begin_src emacs-lisp :tangle yes
+  (use-package crux
+    :bind (("C-c o" . crux-open-with)
+           ("C-a" . crux-move-beginning-of-line)))
 #+end_src
 
 ** Keep packages up to date
@@ -892,6 +892,19 @@ this is too confusing to use, although it does work.
 (request
  "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
 #+end_src
+
+#+source: insert
+#+begin_src emacs-lisp :tangle yes
+  (defun zotero-cite ()
+    "Insert Zotero Cite at point."
+    (interactive)
+    (insert
+     (shell-command-to-string
+      "curl -s http://localhost:23119/better-bibtex/cayw?format=pandoc")))
+
+  (global-set-key (kbd "C-c C-c") 'zotero-cite)
+#+end_src
+
 
 #+source: request.el
 #+begin_src emacs-lisp :tangle no

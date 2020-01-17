@@ -194,12 +194,21 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 ;; (load-theme 'wilmersdorf t) ; this was Ian's custom, disabled for the below instead
 
+(use-package neotree
+  :bind ("<f6>" . neotree-toggle)
+  :config
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+  )
+
 (use-package doom-themes
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-one t))
+  (load-theme 'doom-one t)
+  (doom-themes-neotree-config)
+  (doom-themes-org-config)
+  )
 
 (use-package quelpa-use-package)
 (require 'font-lock)

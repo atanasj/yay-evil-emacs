@@ -297,7 +297,23 @@
   :hook ((org-mode . visual-line-mode)
          (org-mode . org-indent-mode))
   ;; :bind ("\C-cl" . org-store-link) ; not using, but taken from kjhealy's setup
+  :config
+  (progn
+    ;; The GTD part of this config is heavily inspired by
+    ;; https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+    (setq org-directory "~/Dropbox/Apps/org")
+    (setq org-agenda-files
+          (mapcar (lambda (path) (concat org-directory path))
+                  ' ("/work.org"
+                               "/home.org"
+                               "/school.org"
+                               "/OrgTutorial.org"
+                               )))
+    )
   )
+
+(setq org-log-done 'time)
+
 (use-package org-bullets :hook (org-mode . org-bullets-mode))
 
 (use-package yasnippet

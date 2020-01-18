@@ -5,7 +5,8 @@ This is my config for additional packages and thier associated settings. Some of
 
 * Keybindings
 These are keybindings related to built-in features that are not enabled by default.
-** Org-mode
+** DONE Org-mode
+CLOSED: [2020-01-18 Sat 23:48]
 A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
 Org-mode supports [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][links]], this command allows you to store links.
 globally for later insertion into an Org-mode buffer.

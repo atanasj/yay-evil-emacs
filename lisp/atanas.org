@@ -678,56 +678,20 @@ Below are my custom scripts. Please note, any associated keybdings are contained
 #+end_src
 
 ** Zotero Cite as You Write
-This used `applescript` to access Zotero's citation picker via Better Bibtex.
-
-#+srcname: zotero-cayw
-#+begin_src emacs-lisp :tangle no
-  ;; This script needs a citation as it was not written by me.
-  (defun zotero-cayw ()
-    "Zotero citation picker"
+This used to access Zotero's citation picker via Better Bibtex.
+#+source: zotero-cayw
+#+begin_src emacs-lisp :tangle yes
+  ;; with courtesy from https://emacs.stackexchange.com/questions/54939/how-do-i-get-request-el-to-post-the-contents-into-the-buffer/54950?noredirect=1#comment85788_54950
+  (defun aj/zotero-cayw ()
+    "Insert Zotero Cite at point."
     (interactive)
-    (do-applescript
-     "tell application \"System Events\"
-           try
-                 set appName to (the name of every process whose frontmost is true) as string
-           on error errMsg
-             display alert \"Problem\" message \"Could not get the name of the frontmost application.\"
-             error number -128
-           end try
-     end tell
-     set zotRunning to do shell script \"/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?probe=probe' 2>/dev/null\; exit 0\"
-     if zotRunning is \"\" then
-         display alert \"Zotero not running\" message \"This script will not work unless Zotero is running. Please launch Zotero and try again\"
-         tell application appName
-                 activate
-           end tell
-           error number -128
-     else if zotRunning is \"No endpoint found\" then
-         display alert \"Better BibTeX not installed\" message \"This script will not work unless Better BibTeX is installed. Please make sure that Better BibTeX is installed in the running instance of Zotero\"
-         tell application appName
-                 activate
-           end tell
-           error number -128
-     else if zotRunning is \"ready\" then
-         set theReference to do shell script \"/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?format=pandoc' 2>/dev/null\; exit 0\"
-         try
-                 repeat until application appName is frontmost
-                       tell application appName to activate
-                 end repeat
-           on error errMsg
-                 display alert errMsg
-           end try
-           tell application \"System Events\"
-                 try
-                       keystroke theReference
-                 on error errMsg
-                       display alert errMsg
-                 end try
-           end tell
-           end if"))
-  ;; set the binding
-  ;; (global-set-key (kbd "s-y") 'zotero-cayw)
+    (insert
+     (shell-command-to-string
+      "curl -s http://localhost:23119/better-bibtex/cayw?format=pandoc"))
+    (do-applescript "tell application \"Emacs\" to activate")
+    )
 
+  (global-set-key (kbd "s-y") 'aj/zotero-cayw)
 #+end_src
 
 ** iTerm2 integration
@@ -736,7 +700,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
 #+begin_src emacs-lisp
   ;; from https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
   ;; return the directory of the file currently opened. If it is a *scratch* buffer or something like that, it simply returns the home directory
-  (defun get-file-dir-or-home ()
+  (defun aj/get-file-dir-or-home ()
     "If inside a file buffer, return the directory, else return home"
     (interactive)
     (let ((filename (buffer-file-name)))
@@ -745,14 +709,14 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
         (file-name-directory filename))))
 
   ;; cd to the directory of the file I am editing in emacs. If I am in a *scratch* buffer or something like that, it cd to the $HOME directory. It then focus the iTerm2 app.
-  (defun iterm-goto-filedir-or-home ()
+  (defun aj/iterm-goto-filedir-or-home ()
     "Go to present working dir and focus iterm"
     (interactive)
     (do-applescript
      (concat
       " tell application \"iTerm2\"\n"
       "   tell the current session of current window\n"
-      (format "     write text \"cd %s\" \n" (get-file-dir-or-home))
+      (format "     write text \"cd %s\" \n" (aj/get-file-dir-or-home))
       "   end tell\n"
       " end tell\n"
       " do shell script \"open -a iTerm\"\n"
@@ -760,7 +724,7 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
     )
 
   ;; focus the iTerm2 app, without modifying the working directory
-  (defun iterm-focus ()
+  (defun aj/iterm-focus ()
     (interactive)
     (do-applescript
      " do shell script \"open -a iTerm\"\n"
@@ -770,8 +734,8 @@ This used `applescript` to access Zotero's citation picker via Better Bibtex.
 
   (general-define-key
    :prefix "C-x"
-    "t" '(iterm-focus :which-key "focus iterm")
-    "/" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
+    "t" '(aj/iterm-focus :which-key "focus iterm")
+    "/" '(aj/iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
     )
 
 #+end_src
@@ -880,9 +844,7 @@ this is too confusing to use, although it does work.
    'markdown-mode-hook
    (lambda ()
      (define-key markdown-mode-map "\C-c[" 'markdown-reftex-citation)))
-#+end_#+BEGIN_SRC
-
-#+END_SRC
+#+end_src
 
 *** curl
 #+source: get-easy-http
@@ -892,18 +854,6 @@ this is too confusing to use, although it does work.
 
 (request
  "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
-#+end_src
-
-#+source: insert
-#+begin_src emacs-lisp :tangle yes
-  (defun zotero-cite ()
-    "Insert Zotero Cite at point."
-    (interactive)
-    (insert
-     (shell-command-to-string
-      "curl -s http://localhost:23119/better-bibtex/cayw?format=pandoc")))
-
-  (global-set-key (kbd "C-c C-c") 'zotero-cite)
 #+end_src
 
 

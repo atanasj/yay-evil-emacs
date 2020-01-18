@@ -174,7 +174,6 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
 #+begin_src emacs-lisp :tangle yes
   (use-package golden-ratio
     :init
-    ;; (setq golden-ratio-toggle-widescreen t
     (setq golden-ratio-adjust-factor .8
           golden-ratio-wide-adjust-factor .8)
     :config
@@ -187,12 +186,7 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
                     ess-eval-function-and-go
                     ess-eval-line-and-go
                     )))
-    ;; (global-set-key (kbd "C-c C-\^") 'golden-ratio-toggle-widescreen)
-    ;; :bind*
-    ;; ("C-c<f12>" . golden-ratio-toggle-widescreen)
     )
-  ;; cannot get a kebinding to work with toggling this feature not matter what I try
-  ;; (global-set-key (kbd "\C-c <f12>") 'golden-ratio-toggle-widescreen)
 
 #+end_src
 
@@ -438,16 +432,29 @@ This was attempted, however error generated due some environment problem. Will l
 ***** Pandoc Word Count
 The below works, however there is some bash error message.
 #+source: pan_wc
-#+begin_src emacs-lisp :tangle no
-  ;; to enable the use of my aliases
-  ;; solution form here: https://stackoverflow.com/questions/12224909/is-there-a-way-to-get-my-emacs-to-recognize-my-bash-aliases-and-custom-functions
-  ;; (setq shell-file-name "bash")
-  ;; (setq shell-command-switch "-ic")
-
-  (defun pwc ()
+#+begin_src emacs-lisp :tangle yes
+  (defun aj/pwc ()
     (interactive) (shell-command (concat "pandoc --lua-filter wordcount.lua " buffer-file-name)))
   ;; this might be problematic, as really I only want this for markdown docs
-  (global-set-key "\C-cw" 'pwc)
+  (global-set-key "\C-cw" 'aj/pwc)
+#+end_src
+
+***** TODO Writeroom-mode
+Need to confi
+#+source: writeroom
+#+begin_src emacs-lisp :tangle yes
+  (use-package writeroom-mode
+    :config
+    (setq writeroom-fullscreen-effect 'maximized)
+    :bind (("C-c C-w C-r" . writeroom-mode)
+           :map writeroom-mode-map
+           ("C-M-<" . writeroom-decrease-width)
+           ("C-M->" . writeroom-increase-width)
+           ("C-M-=" . writeroom-adjust-width)
+           )
+    )
+  ;; this is just put here for now, maybe a better place to put it
+  (global-hl-line-mode 1)
 #+end_src
 
 **** Spelling
@@ -480,6 +487,12 @@ The below works, however there is some bash error message.
          (text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode)))
 
+#+end_src
+
+***** Writegood
+#+source: writegood-mode
+#+begin_src emacs-lisp :tangle yes
+  (use-package writegood-mode)
 #+end_src
 
 *** Multiple Cursors and Drag-Stuff
@@ -812,7 +825,7 @@ Version 2019-01-16"
 * TODO Config Tasks
 ** TODO Citations
 This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
-*** reftex
+*** TODO reftex
 this is too confusing to use, although it does work.
 #+source: reftex-md
 #+begin_src emacs-lisp :tangle no
@@ -844,150 +857,6 @@ this is too confusing to use, although it does work.
    'markdown-mode-hook
    (lambda ()
      (define-key markdown-mode-map "\C-c[" 'markdown-reftex-citation)))
-#+end_src
-
-*** curl
-#+source: get-easy-http
-#+begin_src emacs-lisp :tangle no
-  (use-package request
-    :demand`)
-
-(request
- "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
-#+end_src
-
-
-#+source: request.el
-#+begin_src emacs-lisp :tangle no
-
-
-;; This buffer is for text that is not saved, and for Lisp evaluation.
-;; To create a file, visit it with C-x C-f and enter text in its buffer.
-
-(require 'request)
-;; check to see if its running
-(request "http://localhost:23119/better-bibtex/cayw?probe=probe' 2>/dev/null; exit 0")
-if zotRunning is "" then
-display alert "Zotero not running" message "This script will not work unless Zotero is running. Please launch Zotero and try again"
-error number -128
-;; or
-else if zotRunning is "No endpoint found" then
-display alert "Better BibTeX not installed" message "This script will not work unless Better BibTeX is installed. Please make sure that Better BibTeX is installed in the running instance of Zotero"
-tell application appName
-;; if all good then
-else if zotRunning is "ready" then
-set theReference to do shell script
-(request "http://localhost:23119/better-bibtex/cayw?format=pandoc 2>/dev/null; exit 0")
-;; then
-repeat until application appName is frontmost
-tell application appName to activate
-end repeat
-;; end
-
-(request
-  "http://httpbin.org/get"
-  :params '(("key" . "value") ("key2" . "value2"))
-  :parser 'json-read
-  :success (cl-function
-            (lambda (&key data &allow-other-keys)
-              (message "I sent: %S" (assoc-default 'args data)))))
-
-
-
-(request
-  "http://httpbin.org/post"
-  :type "POST"
-  :data '(("key" . "value") ("key2" . "value2"))
-  ;; :data "key=value&key2=value2"  ; this is equivalent
-  :parser 'json-read
-  :success (cl-function
-            (lambda (&key data &allow-other-keys)
-              (message "I sent: %S" (assoc-default 'form data)))))
-
-(request
-  "http://httpbin.org/get"
-  :sync t
-  :complete (cl-function
-             (lambda (&key response &allow-other-keys)
-               (message "Done: %s" (request-response-status-code response)))))
-
-(request
-  "https://github.com/tkf/emacs-request/commits/master.atom"
-  ;; Parse XML in response body:
-  :parser (lambda () (libxml-parse-xml-region (point) (point-max)))
-  :success (cl-function
-            (lambda (&key data &allow-other-keys)
-              ;; Just don't look at this function....
-              (let ((get (lambda (node &rest names)
-                           (if names
-                               (apply get
-                                      (first (xml-get-children
-                                              node (car names)))
-                                      (cdr names))
-                             (first (xml-node-children node))))))
-                (message "Latest commit: %s (by %s)"
-                         (funcall get data 'entry 'title)
-                         (funcall get data 'entry 'author 'name)))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-on alfred_script(q)
-tell application "System Events"
-try
-set appName to (the name of every process whose frontmost is true) as string
-on error errMsg
-display alert "Problem" message "Could not get the name of the frontmost application."
-error number -128
-end try
-end tell
-set zotRunning to do shell script "/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?probe=probe' 2>/dev/null; exit 0"
-if zotRunning is "" then
-display alert "Zotero not running" message "This script will not work unless Zotero is running. Please launch Zotero and try again"
-tell application appName
-activate
-end tell
-error number -128
-else if zotRunning is "No endpoint found" then
-display alert "Better BibTeX not installed" message "This script will not work unless Better BibTeX is installed. Please make sure that Better BibTeX is installed in the running instance of Zotero"
-tell application appName
-activate
-end tell
-error number -128
-else if zotRunning is "ready" then
-set theReference to do shell script "/usr/bin/curl 'http://localhost:23119/better-bibtex/cayw?format=pandoc' 2>/dev/null; exit 0"
-try
-repeat until application appName is frontmost
-tell application appName to activate
-end repeat
-on error errMsg
-display alert errMsg
-end try
-tell application "System Events"
-try
-keystroke theReference
-on error errMsg
-display alert errMsg
-end try
-end tell
-end if
-end alfred_script
-
-
 #+end_src
 
 ** TODO Python-IDE

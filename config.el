@@ -196,6 +196,7 @@
 
 (use-package neotree
   :bind ("<f6>" . neotree-toggle)
+  :after all-the-icons
   :config
   (setq projectile-switch-project-action 'neotree-projectile-action)
   )

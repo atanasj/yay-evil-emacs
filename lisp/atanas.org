@@ -444,8 +444,9 @@ The below works, however there is some bash error message.
   (global-set-key "\C-cw" 'aj/pwc)
 #+end_src
 
-***** TODO Writeroom-mode
-Need to confi
+***** DONE Writeroom-mode
+CLOSED: [2020-01-20 Mon 09:26]
+Need to configi
 #+source: writeroom
 #+begin_src emacs-lisp :tangle yes
   (use-package writeroom-mode
@@ -495,6 +496,18 @@ Need to confi
 #+end_src
 
 ***** Writegood
+Description from [[http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/][here]]:
+Weasel words--phrases or words that sound good without conveying information--obscure precision...
+
+*Beholder words:*
+-  Bad:    We used various methods to isolate four samples.
+-  Better: We isolated four samples.
+
+*Lazy Words:*
+- Bad:    False positives were surprisingly low.
+- Better: To our surprise, false positives were low.
+- Good:   To our surprise, false positives were low (3%).
+
 #+source: writegood-mode
 #+begin_src emacs-lisp :tangle yes
   (use-package writegood-mode)
@@ -524,7 +537,10 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     (global-set-key (kbd "H-p") 'mc/mark-previous-like-this)
     (global-set-key (kbd "H-n") 'mc/mark-next-like-this)
     (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
-    (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region))
+    (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region)
+    :config
+    (setq mc/always-run-for-all t)
+    )
 
 #+end_src
 

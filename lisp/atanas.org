@@ -176,7 +176,10 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
     :config (key-chord-mode 1))
 
   (use-package golden-ratio
-    :chords ("gr" . golden-ratio-mode) ; not working
+    ;; both the below worked in scratch but must be something clonflicting
+    ;; TODO consider using general for keybindings to manage single layer
+    ;; :chords ("gr" . golden-ratio-mode) ; not working
+    ;; :bind ("C-c C-g" . golden-ratio-mode) ; worked in
     :init
     (setq golden-ratio-auto-scale t) ; use instead of the adjust factors
     (setq golden-ratio-extra-commands

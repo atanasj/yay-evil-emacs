@@ -17,3 +17,7 @@
 !init.el
 !config.org
 !lisp/atanas.org
+!assets/
+!themes/
+!README.md
+!snippets/

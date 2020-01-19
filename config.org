@@ -486,7 +486,7 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
       )
     )
 
-  (setq org-log-done 'time)
+  (setq org-log-done 'time) ; I couldn't get this working unless it was on its own
 
   (use-package org-bullets :hook (org-mode . org-bullets-mode))
 #+END_SRC

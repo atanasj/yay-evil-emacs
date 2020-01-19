@@ -1,16 +1,19 @@
 # Ignore
-transient/
-elpa/
-auto-save-list/
-src/
-quelpa/
-lisp/atanas.el
-to-be-dumpted.el
-projectile*
-.last-package-update-day
-to-be-dumped.el
-ido.last
-config.el
-.mc-lists.el
+# transient/
+# elpa/
+# auto-save-list/
+# src/
+# quelpa/
+# lisp/atanas.el
+# to-be-dumpted.el
+# projectile*
+# .last-package-update-day
+# to-be-dumped.el
+# ido.last
+# config.el
+# .mc-lists.el
 
 # Except for..
+!init.el
+!config.org
+!lisp/atanas.org

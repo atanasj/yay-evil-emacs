@@ -299,19 +299,18 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 
   (use-package neotree
     :bind ("<f6>" . neotree-toggle)
-    :after all-the-icons
     :config
-    (setq projectile-switch-project-action 'neotree-projectile-action)
+    (setq projectile-switch-project-action 'neotree-projectile-action
+          neo-theme 'icons)
     )
 
   (use-package doom-themes
-    :after all-the-icons
+    ;; :after all-the-icons
     :config
     ;; Global settings (defaults)
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
     (load-theme 'doom-one t)
-    (doom-themes-neotree-config)
     (doom-themes-org-config)
     )
 
@@ -322,8 +321,7 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
   (use-package quelpa-use-package)
   (require 'font-lock)
   (use-package font-lock+
-    ;; commented as only needed to install once, slows down load time otherwise
-    ;; :quelpa
+    ;; :quelpa     ; commented as only needed to install once, slows down load time otherwise
     ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github)
     )
 
@@ -341,6 +339,7 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
     :config
     (ace-window-display-mode 1)
     )
+
 #+END_SRC
 *** Dashboard welcome page
 #+BEGIN_SRC emacs-lisp

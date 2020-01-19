@@ -172,13 +172,13 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
 *** Add Golden Ratio
 #+source: golden-ratio
 #+begin_src emacs-lisp :tangle yes
+  (use-package use-package-chords
+    :config (key-chord-mode 1))
+
   (use-package golden-ratio
+    :chords ("gr" . golden-ratio-mode) ; not working
     :init
-    (setq golden-ratio-adjust-factor .8
-          golden-ratio-wide-adjust-factor .8)
-    :config
-    (golden-ratio-mode 1)
-    (golden-ratio-toggle-widescreen)
+    (setq golden-ratio-auto-scale t) ; use instead of the adjust factors
     (setq golden-ratio-extra-commands
           (append golden-ratio-extra-commands
                   '(ace-window
@@ -186,8 +186,10 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
                     ess-eval-function-and-go
                     ess-eval-line-and-go
                     )))
+    :config
+    (golden-ratio-mode 1)
+    (golden-ratio-toggle-widescreen)
     )
-
 #+end_src
 
 *** Make shift-enter do a lot in ESS.

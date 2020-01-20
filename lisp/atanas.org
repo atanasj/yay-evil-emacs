@@ -345,13 +345,13 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
 #+src-name: rmd-chunk-insert
 #+BEGIN_SRC emacs-lisp
   ;; Insert new chunk for Rmarkdown
-  (defun kjh-insert-r-chunk (header)
+  (defun aj/r-insert-chunk (header)
     "Insert an r-chunk in markdown mode."
     (interactive "sLabel: ")
     (insert (concat "```{r " header "}\n\n```"))
     (forward-line -1))
 
-  (global-set-key (kbd "\C-c i") 'kjh-insert-r-chunk)
+  (global-set-key (kbd "\C-c i") 'aj/r-insert-chunk)
 #+END_SRC
 
 ** Markdown, Pandoc and all things writing

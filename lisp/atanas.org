@@ -778,7 +778,7 @@ This used to access Zotero's citation picker via Better Bibtex.
 ** iTerm2 integration
 
 #+source: iterm2
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;; from https://sam217pa.github.io/2016/09/01/emacs-iterm-integration/
   ;; return the directory of the file currently opened. If it is a *scratch* buffer or something like that, it simply returns the home directory
   (defun aj/get-file-dir-or-home ()

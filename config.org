@@ -462,6 +462,7 @@ A modern on-the-fly syntax checking extension -- absolute essential
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck :config (global-flycheck-mode +1))
 #+END_SRC
+
 *** IN-PROGRESS Org Mode
 Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a more visually pleasing look.
 #+BEGIN_SRC emacs-lisp
@@ -511,21 +512,21 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
 The below code is not working, review if needed and amend as required.
 #+source: pop-to-agenda
 #+begin_src emacs-lisp :tangle no
-  (defun aj/pop-to-org-agenda (split)
+  (defun aj/org-pop-to-agenda (split)
     "Visit the org agenda, in the current window or a SPLIT."
     (interactive "P")
     (org-agenda-list)
     (when (not split)
       (delete-other-windows)))
 
-  (define-key global-map (kbd "C-c t a") 'aj/pop-to-org-agenda)
+  ;; (define-key global-map (kbd "C-c t a") 'aj/org-pop-to-agenda)
 
   (defun aj/org-task-capture ()
     "Capture a task with my default template."
     (interactive)
     (org-capture nil "a"))
 
-  (define-key global-map (kbd "C-c c") 'aj/org-task-capture)
+  ;; (define-key global-map (kbd "C-c c") 'aj/org-task-capture)
 #+end_src
 
 *** Yasnippet & yasnippet-snippets
@@ -544,7 +545,9 @@ Use TAB to expand snippets. The code snippet below also avoids clashing with com
                 :after
                 #'(lambda ()
                     (when (equal tmp/company-point (point))
-                      (yas-expand)))))
+                      (yas-expand))))
+    (yas-load-directory (expand-file-name "~/.emacs.d/snippets"))
+    )
 
   (use-package yasnippet-snippets)
 #+END_SRC

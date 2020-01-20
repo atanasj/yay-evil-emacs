@@ -138,7 +138,7 @@ Yasnippet is a snippet expansion system for Emacs. It uses short phrases and the
 
 Load the snippets defined in the package's =./snippets/= directory, and local snippets from the =./local-snippets/= directory.
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (yas-load-directory (expand-file-name "~/.emacs.d/snippets"))
 #+end_src
 

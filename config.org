@@ -2,6 +2,7 @@
 #+Author: Ian Y.E. Pan
 #+Date: 2019
 Welcome! This Emacs "distro" is based on my personal Emacs configuration (on GNU Emacs 26.3). It's unopinionated and was created for general use in mind. The package settings are grouped in a logical manner, and I've documented as detailed as possible what each code snippet does in this file.
+
 * Settings without corresponding packages
 Clean up the UI and enhance some basic defaults defined in "C Source Code". The variable ~ian/indent-width~ controls the default indentation across various programming modes. The default is 4, you can change this variable to 2 or any other indentation width you prefer, and the change will be made across all programming language modes including C, C++, Java, JavaScript, Python etc.
 #+BEGIN_SRC emacs-lisp

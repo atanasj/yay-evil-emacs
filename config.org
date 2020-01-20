@@ -477,7 +477,26 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
     (progn
       ;; The GTD part of this config is heavily inspired by
       ;; https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
-      (setq org-directory "~/Dropbox/Apps/org")
+      ;; (setq org-directory "~/Dropbox/Apps/org") ; from abieber---working
+      ;; set agenda files in recursive directories, from:
+      ;; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
+      (setq org-agenda-files (apply 'append
+                                    (mapcar
+                                     (lambda (directory)
+                                       (directory-files-recursively
+                                        directory org-agenda-file-regexp))
+                                     '(
+                                       "~/Dropbox/Apps/org"
+                                       "~/Dropbox/Apps/org/phd"
+                                       "~/Dropbox/Apps/org/clinic"
+                                       "~/Dropbox/Apps/org/work"
+                                       "~/Dropbox/Apps/org/home"
+                                       "~/Dropbox/Apps/org/inbox"
+                                       ;; "~/d/notes/" "~/d/work/"
+                                       ))))
+      ;; (setq org-directory
+      ;;             (mapcar '(
+      ;;                       )))
       ;; (setq org-agenda-files
       ;;       (mapcar (lambda (path) (concat org-directory path))
       ;;               ' ("/work.org"
@@ -489,12 +508,12 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
       ;; https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html
       (setq org-todo-keywords
             '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
-      (setq org-agenda-files '("~/Dropbox/Apps/org/"))
+      ;; (setq org-agenda-files '("~/Dropbox/Apps/org/"))
       (setq org-capture-templates
             '(("a" "My TODO task format." entry
                (file "todo.org")
                "* TODO %?
-      SCHEDULED: %t")))
+          SCHEDULED: %t")))
       (setq org-agenda-text-search-extra-files '(agenda-archives))
       (setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
       (setq org-enforce-todo-dependencies t)
@@ -508,7 +527,7 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
   (use-package org-bullets :hook (org-mode . org-bullets-mode))
 #+END_SRC
 
-**** IN-PROGRESS Org Mode functions and keybindings
+**** WAITING Org Mode functions and keybindings                    :fixme:
 The below code is not working, review if needed and amend as required.
 #+source: pop-to-agenda
 #+begin_src emacs-lisp :tangle no

@@ -753,6 +753,17 @@ ivy replaces ido, may have to update for use with ivy below.
 avy-jump: will replace ace-jump, by the same maintainer as the above packages.
 Note, that this may interfere with the ido-config in the config.org.
 
+**** Swiper
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (global-unset-key (kbd "C-s"))
+  (global-set-key (kbd "C-s") 'swiper)
+  (global-unset-key (kbd "C-r"))
+  (global-set-key (kbd "C-r") 'swiper)
+#+END_SRC
+
+
+**** ALL
 
 I want to change to the above packages, however this is been problematic.
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -812,7 +823,7 @@ https://github.com/mrkkrp/fix-word
 https://github.com/coldnew/linum-relative
 *** ace-link
 https://github.com/abo-abo/ace-link
-*** DONE [#B] helpful
+*** DONE [#B] Helpful
 CLOSED: [2020-01-22 Wed 11:00]
 https://github.com/Wilfred/helpful
 #+BEGIN_SRC emacs-lisp

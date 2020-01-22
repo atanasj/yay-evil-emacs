@@ -752,6 +752,47 @@ swiper replaces isearch: this looks really cool, and more flexible.
 ivy replaces ido, may have to update for use with ivy below.
 avy-jump: will replace ace-jump, by the same maintainer as the above packages.
 Note, that this may interfere with the ido-config in the config.org.
+
+
+I want to change to the above packages, however this is been problematic.
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
+  (use-package counsel
+    :after ivy
+    :config (counsel-mode))
+
+  (use-package ivy
+    :defer 0.1
+    :diminish
+    :bind (("C-c C-r" . ivy-resume)
+           ("C-x B" . ivy-switch-buffer-other-window))
+    :custom
+    (ivy-count-format "(%d/%d) ")
+    (ivy-use-virtual-buffers t)
+    :config (ivy-mode))
+
+  (use-package ivy-rich
+    :after ivy
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev)
+    :config
+    (ivy-set-display-transformer 'ivy-switch-buffer
+                                 'ivy-rich-switch-buffer-transformer))
+
+  (use-package swiper
+    :after ivy
+    :bind (("C-s" . swiper)
+           ("C-r" . swiper)))
+
+  (use-package all-the-icons-ivy
+    :ensure t
+    :config
+    (all-the-icons-ivy-setup))
+
+#+END_SRC
+
 *** DONE [#A] fix-word
 CLOSED: [2020-01-22 Wed 11:00]
 https://github.com/mrkkrp/fix-word

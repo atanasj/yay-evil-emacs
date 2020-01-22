@@ -371,7 +371,9 @@ Markdown mode support, including preview in =.Marked2.app.=.
     (setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
     (setq auto-mode-alist (cons '("README\\.md" . gfm-mode) auto-mode-alist))
     :hook ((markdown-mode . visual-line-mode)
-           (markdown-mode . display-line-numbers-mode))
+           (markdown-mode . display-line-numbers-mode)
+           (markdown-mode . rainbow-delimiters-mode)
+           )
     ;; (add-hook 'markdown-mode-hook 'visual-line-mode)
     ;; (add-hook 'markdown-mode-hook 'latex-unicode-simplified)
     )
@@ -753,9 +755,9 @@ ivy replaces ido, may have to update for use with ivy below.
 avy-jump: will replace ace-jump, by the same maintainer as the above packages.
 Note, that this may interfere with the ido-config in the config.org.
 
-**** Swiper
+**** IN-PROGRESS Swiper
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   (global-unset-key (kbd "C-s"))
   (global-set-key (kbd "C-s") 'swiper)
   (global-unset-key (kbd "C-r"))

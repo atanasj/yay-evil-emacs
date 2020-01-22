@@ -121,7 +121,7 @@ This is not currently used. If needed, tangle them.
 #+end_src
 
 * Third-party packages
-** Yasnippet
+** Yasnippet NOT USED
 Yasnippet is a snippet expansion system for Emacs. It uses short phrases and the tab key to trigger the insertion of frequently-used snippets of code or text in your document.
 
 *** Load the yasnippet bundle
@@ -130,10 +130,10 @@ Yasnippet is a snippet expansion system for Emacs. It uses short phrases and the
   ;;                  (expand-file-name  "yasnippet"
   ;;                                     (expand-file-name "elpa"
   ;;                                                       dotfiles-dir)))
-  (use-package yasnippet)
+  (use-package yasnippet
   ;;  (yas-set-ac-modes)
   ;;  (yas-enable-emacs-lisp-paren-hack)
-  :config (yas-global-mode 1)
+    :config (yas-global-mode 1))
 #+end_src
 
 Load the snippets defined in the package's =./snippets/= directory, and local snippets from the =./local-snippets/= directory.
@@ -176,12 +176,11 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
     :config (key-chord-mode 1))
 
   (use-package golden-ratio
-    ;; both the below worked in scratch but must be something clonflicting
-    ;; TODO consider using general for keybindings to manage single layer
-    ;; :chords ("gr" . golden-ratio-mode) ; not working
-    ;; :bind ("C-c C-g" . golden-ratio-mode) ; worked in
-    :init
+    :bind ("C-c C-g" . golden-ratio-mode)
+    :config
     (setq golden-ratio-auto-scale t) ; use instead of the adjust factors
+    ;; (setq golden-ratio-adjust-factor .8
+    ;;       golden-ratio-wide-adjust-factor .8)
     (setq golden-ratio-extra-commands
           (append golden-ratio-extra-commands
                   '(ace-window
@@ -189,10 +188,24 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
                     ess-eval-function-and-go
                     ess-eval-line-and-go
                     )))
-    :config
-    (golden-ratio-mode 1)
-    (golden-ratio-toggle-widescreen)
     )
+
+  ;;   (use-package golden-ratio
+  ;;     ;; both the below worked in scratch but must be something clonflicting
+  ;;     ;; TODO consider using general for keybindings to manage single layer
+  ;;     ;; :chords ("gr" . golden-ratio-mode) ; not working
+  ;;     ;; :bind ("C-c C-g" . golden-ratio-mode) ; worked in
+  ;; :bind (
+  ;; :config
+  ;;     (setq golden-ratio-auto-scale t) ; use instead of the adjust factors
+  ;;     (setq golden-ratio-extra-commands
+  ;;           (append golden-ratio-extra-commands
+  ;;                   '(ace-window
+  ;;                     ess-eval-buffer-and-go
+  ;;                     ess-eval-function-and-go
+  ;;                     ess-eval-line-and-go
+  ;;                     )))
+  ;;      )
 #+end_src
 
 *** Make shift-enter do a lot in ESS.
@@ -261,8 +274,10 @@ From kjhealy:
                   ("R" . R-transcript-mode)
                   ("R" . Rd-mode)
                   )
-    :init
-    (require 'ess-r-mode)
+    :config
+    ;; (require 'ess-r-mode)
+    (use-package ess-r-mode
+      :load-path "elpa/ess/")
     (setq ess-first-continued-statement-offset 2
           ess-continued-statement-offset 0
           ess-expression-offset 2
@@ -303,11 +318,15 @@ From kjhealy:
                            (local-set-key [C-down] 'comint-next-input)))
     (Rnw-mode . (lambda()
                   (local-set-key [(shift return)] 'my-ess-eval)))
+    (ess-mode . company-mode)
+    (inferior-ess-mode . company-mode)
+    )
+
+
     ;; below disabled but left here, golden-ratio seems to interfere with company
     ;; have set kbd for to enable company mode as "<f12>""
     ;; (ess-mode . company-mode)
     ;; (ess-r-mode . company-mode)
-    )
 
 #+end_src
 **** ess-R-data-view
@@ -329,13 +348,13 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
   ;; from spacemacs config
    (use-package polymode
     :mode (("\\.Rmd"   . Rmd-mode))
-    :init
+    :config
     (progn
       (defun Rmd-mode ()
         "ESS Markdown mode for Rmd files"
         (interactive)
-        (require 'poly-R)
-        (require 'poly-markdown)
+        (use-package poly-R) ; was (require 'poly-R)
+        (use-package poly-markdown)
         (R-mode)
         (poly-markdown+r-mode))
       ))
@@ -362,7 +381,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
 #+srcname: markdown-mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
-    :init
+    :config
     (autoload 'markdown-mode "markdown-mode"
     "Major mode for editing Markdown files" t)
     (setq auto-mode-alist (cons '("\\.Markdown" . markdown-mode) auto-mode-alist))
@@ -391,7 +410,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
   (global-set-key "\C-co" 'markdown-preview-file)
 
   (use-package yaml-mode
-    :init
+    :config
     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
     (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
     (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode)))
@@ -561,50 +580,88 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
 
 #+source: search-replace-regexp-entire-buffer
 #+begin_src emacs-lisp :tangle no
-  (defun aj/replace-regexp-entire-buffer (pattern replacement)
-  "Perform regular-expression replacement throughout buffer."
-  (interactive
-   (let ((args (query-replace-read-args "Replace" t)))
-     (setcdr (cdr args) nil)    ; remove third value returned from query---args
-     args))
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward pattern nil t)
-      (replace-match replacement)))
-  )
-
-#+end_src
-
-#+source: search-replace-buffer2
-#+begin_src emacs-lisp :tangle yes
-  ;; from https://emacs.stackexchange.com/questions/249/how-to-search-and-replace-in-the-entire-buffer
-  (defun aj/query-replace (from-string to-string &optional delimited start end)
-    "Replace some occurrences of FROM-STRING with TO-STRING.  As each match is
-  found, the user must type a character saying what to do with it. This is a
-  modified version of the standard `query-replace' function in `replace.el',
-  This modified version defaults to operating on the entire buffer instead of
-  working only from POINT to the end of the buffer. For more information, see
-  the documentation of `query-replace'"
+    (defun aj/replace-regexp-entire-buffer (pattern replacement)
+    "Perform regular-expression replacement throughout buffer."
     (interactive
-     (let ((common
-            (query-replace-read-args
-             (concat "Query replace"
-                     (if current-prefix-arg " word" "")
-                     (if (and transient-mark-mode mark-active) " in region" ""))
-             nil)))
-       (list (nth 0 common) (nth 1 common) (nth 2 common)
-             (if (and transient-mark-mode mark-active)
-                 (region-beginning)
-               (buffer-end -1))
-             (if (and transient-mark-mode mark-active)
-                 (region-end)
-               (buffer-end 1)))))
-    (perform-replace from-string to-string t nil delimited nil nil start end)
+     (let ((args (query-replace-read-args "Replace" t)))
+       (setcdr (cdr args) nil)    ; remove third value returned from query---args
+       args))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward pattern nil t)
+        (replace-match replacement)))
     )
   ;; Replace the default key mapping
-  ;; (define-key esc-map "%" ajquery-replace)
+  ;; (define-key esc-map "%" 'aj/query-replace)
 
 #+end_src
+
+*** aj/query-replace-regex
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+  (defun aj/query-replace-regexp (regexp to-string &optional delimited start end)
+    "Replace some things after point matching REGEXP with TO-STRING.  As each
+  match is found, the user must type a character saying what to do with
+  it. This is a modified version of the standard `query-replace-regexp'
+  function in `replace.el', This modified version defaults to operating on the
+  entire buffer instead of working only from POINT to the end of the
+  buffer. For more information, see the documentation of `query-replace-regexp'"
+    (interactive
+     (let ((common
+        (query-replace-read-args
+         (concat "Query replace"
+             (if current-prefix-arg " word" "")
+             " regexp"
+             (if (and transient-mark-mode mark-active) " in region" ""))
+         t)))
+       (list (nth 0 common) (nth 1 common) (nth 2 common)
+         (if (and transient-mark-mode mark-active)
+             (region-beginning)
+           (buffer-end -1))
+         (if (and transient-mark-mode mark-active)
+             (region-end)
+           (buffer-end 1)))))
+    (perform-replace regexp to-string t t delimited nil nil start end))
+  ;; Replace the default key mapping
+  (define-key esc-map [?\C-%] 'aj/query-replace-regexp)
+
+#+END_SRC
+
+*** aj/query-replace
+#+source: search-replace-buffer2
+#+begin_src emacs-lisp :tangle yes
+    ;; from https://emacs.stackexchange.com/questions/249/how-to-search-and-replace-in-the-entire-buffer
+    (defun aj/query-replace (from-string to-string &optional delimited start end)
+      "Replace some occurrences of FROM-STRING with TO-STRING.  As each match is
+    found, the user must type a character saying what to do with it. This is a
+    modified version of the standard `query-replace' function in `replace.el',
+    This modified version defaults to operating on the entire buffer instead of
+    working only from POINT to the end of the buffer. For more information, see
+    the documentation of `query-replace'"
+      (interactive
+       (let ((common
+              (query-replace-read-args
+               (concat "Query replace"
+                       (if current-prefix-arg " word" "")
+                       (if (and transient-mark-mode mark-active) " in region" ""))
+               nil)))
+         (list (nth 0 common) (nth 1 common) (nth 2 common)
+               (if (and transient-mark-mode mark-active)
+                   (region-beginning)
+                 (buffer-end -1))
+               (if (and transient-mark-mode mark-active)
+                   (region-end)
+                 (buffer-end 1)))))
+      (perform-replace from-string to-string t nil delimited nil nil start end)
+      )
+    ;; Replace the default key mapping
+  (define-key esc-map "%" 'aj/query-replace)
+    ;; (define-key glob-map "%" 'aj/query-replace)
+
+#+end_src
+
+#+RESULTS: search-replace-buffer2
+: aj/query-replace
 
 First mark the word, then add more cursors. To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable multiple regions before disabling multiple cursors. If you want to insert a newline in multiple-cursors-mode, use C-j
 
@@ -663,6 +720,7 @@ Highlight various =.ANCHORS.= in comments.
 #+end_src
 
 ** TODO Project Management and Navigation
+*** projectile
 #+source: projectile
 #+begin_src emacs-lisp :tangle yes
   (use-package ag)
@@ -672,16 +730,16 @@ Highlight various =.ANCHORS.= in comments.
     :config
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 #+end_src
-
+*** ace-jump
 #+source: ace-jump-mode
 #+begin_src emacs-lisp :tangle yes
   (use-package ace-jump-mode
     ;; this kbd originally in the bottom window thing
     :bind ("<f7>" . ace-jump-mode))
 #+end_src
-
+*** window-numbering
 #+source: window-numbering
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (setq-default mode-line-format (list
                                 " "
                                 '(:eval (window-parameter (selected-window) 'ace-window-path))
@@ -699,7 +757,7 @@ Highlight various =.ANCHORS.= in comments.
                                 `(vc-mode vc-mode)
                                 ))
 #+end_src
-
+*** ace-window
 #+source: ace-window
 #+begin_src emacs-lisp :tangle yes
   (use-package ace-window
@@ -713,14 +771,14 @@ Highlight various =.ANCHORS.= in comments.
       )
     )
 #+end_src
-
+*** frog-jump-buffer
 #+source: frog-jump-buffer
 #+begin_src emacs-lisp :tangle yes
   (use-package frog-jump-buffer
     :load-path "src/frog-jump-buffer/"
     :bind ("<f9>" . frog-jump-buffer))
 #+end_src
-
+*** restart-emacs
 #+source: restart-emacs
 #+begin_src emacs-lisp :tangle yes
   ;; get restart-emacs for easy restarting when updating config
@@ -728,13 +786,25 @@ Highlight various =.ANCHORS.= in comments.
     :config
     (setq restart-emacs-restore-frames t))
 #+end_src
-
+*** crux
 #+source: crux-open-with-system-def-app
 #+begin_src emacs-lisp :tangle yes
   (use-package crux
     :bind (("C-c o" . crux-open-with)
            ("C-a" . crux-move-beginning-of-line)))
 #+end_src
+
+*** imenu-list
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package imenu-list
+    :bind ("s-\\" . imenu-list-smart-toggle)
+    :config
+    (setq imenu-list-focus-after-activation t)
+    (setq imenu-list-auto-resize t)
+    (imenu-list-minor-mode 1)
+    )
+
+#+END_SRC
 
 ** Keep packages up to date
 #+source: updater
@@ -1075,7 +1145,7 @@ built in package for code-folding
 
 #+END_SRC
 
-* Open File Path Under Cursor
+** Open File Path Under Cursor
 This works, but errors when there is a space in the file name.
 #+source: open-path
 #+begin_src emacs-lisp :tangle no
@@ -1193,51 +1263,3 @@ Setup templates and pandoc binaries in defualt.pandoc
 Change shortcuts for formatting font faces e.g., bold, italic, etc.
 ** TODO Ace-Window
 Would like ace-window numbers in the modeline, but this is only for looks. Will keep here as a TODO and then review. Not important really.: xah-open-file-at-cursor
-* TODO Config Tasks
-** TODO Citations
-This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
-*** TODO reftex
-this is too confusing to use, although it does work.
-#+source: reftex-md
-#+begin_src emacs-lisp :tangle no
-  ;; reftex in markdown mode
-
-  ;; if this isn't already set in your .emacs
-  (setq reftex-default-bibliography '("/Users/atanas/.pandoc/MyLib.bib"))
-
-  ;; define markdown citation formats
-  (defvar markdown-cite-format)
-  (setq markdown-cite-format
-        '(
-          (?\C-m . "[@%l]")
-          (?p . "[@%l]")
-          (?t . "@%l")
-          )
-        )
-
-  ;; wrap reftex-citation with local variables for markdown format
-  (defun markdown-reftex-citation ()
-    (interactive)
-    (let ((reftex-cite-format markdown-cite-format)
-          (reftex-cite-key-separator "; @"))
-      (reftex-citation)))
-
-  ;; bind modified reftex-citation to C-c[, without enabling reftex-mode
-  ;; https://www.gnu.org/software/auctex/manual/reftex/Citations-Outside-LaTeX.html#SEC31
-  (add-hook
-   'markdown-mode-hook
-   (lambda ()
-     (define-key markdown-mode-map "\C-c[" 'markdown-reftex-citation)))
-#+end_src
-
-** TODO Python-IDE
-Setup Python-IDE similar to R-IDE
-** TODO R-IDE
-It would be good to auto enable company mode on R windows, however this seems to be problematic with golden ratio.
-As such, have a keybinding enable to toggle company mode.
-** TODO Pandoc
-Setup templates and pandoc binaries in defualt.pandoc
-** TODO Markdown
-Change shortcuts for formatting font faces e.g., bold, italic, etc.
-** TODO COMMENT Ace-Window
-Would like ace-window numbers in the modeline, but this is only for looks. Will keep here as a TODO and then review. Not important really.

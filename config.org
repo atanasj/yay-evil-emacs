@@ -201,9 +201,8 @@ Reduce the highlight delay to instantly.
 #+BEGIN_SRC emacs-lisp
   (use-package paren
     :ensure nil
-    :config
-    (setq show-paren-delay 0)
-    (show-paren-mode +1))
+    :init (setq show-paren-delay 0)
+    :config (show-paren-mode +1))
 
   ;; jump to mathcing paren
   (global-set-key (kbd "C-M-f") 'forward-sexp)
@@ -518,12 +517,13 @@ A modern on-the-fly syntax checking extension -- absolute essential
 Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a more visually pleasing look.
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :init
+    (setq org-support-shift-select t) ; could be okay or not
+    (setq org-src-tab-acts-natively t)
     :hook ((org-mode . visual-line-mode)
            (org-mode . org-indent-mode))
     ;; :bind ("\C-cl" . org-store-link) ; not using, but taken from kjhealy's setup
     :config
-    (setq org-support-shift-select t) ; could be okay or not
-    (setq org-src-tab-acts-natively t)
     (progn
       ;; The GTD part of this config is heavily inspired by
       ;; https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html

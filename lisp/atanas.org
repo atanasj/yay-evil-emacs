@@ -1,5 +1,5 @@
-#+Author: Atanas Janackovski
 #+Title: Additional Config
+#+Author: Atanas Janackovski
 #+Date: 2020
 This is my config for additional packages and thier associated settings. Some of this is taken from other packages, and I will cite them as appropriate.
 
@@ -503,20 +503,17 @@ Need to configi
   ;; solution from:
   ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
   (use-package flyspell
-  ;; :init
-  ;; (progn
-  ;;   (flyspell-mode 1))
+  :init
+  (progn
+    (flyspell-mode 1))
   :config
   (progn
-    (flyspell-mode 1)
     (setq ispell-program-name "aspell")
     (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
     )
-  :hook (
-         (flyspell-mode . my-flyspell-mode-hook)
+  :hook ((flyspell-mode . my-flyspell-mode-hook)
          (text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode)
-         ))
+         (prog-mode . flyspell-prog-mode)))
 
 #+end_src
 
@@ -544,8 +541,7 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
 #+source: multiple-cursors
 #+begin_src emacs-lisp :tangle yes
   (use-package multiple-cursors
-    ;; :init
-    :config
+    :init
     ;; set to on at start up
     (multiple-cursors-mode)
     ;; When you have an active region that spans multiple lines, the following will add a cursor to each line:
@@ -564,7 +560,7 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     (global-set-key (kbd "H-n") 'mc/mark-next-like-this)
     (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
     (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region)
-    ;; :config
+    :config
     (setq mc/always-run-for-all t)
     )
 
@@ -573,14 +569,12 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
 #+source: drag-stuff
 #+begin_src emacs-lisp :tangle yes
   (use-package drag-stuff
-    :init ; needs to be init, otherwise cannot drag in code blocks without re-enabling
-    (drag-stuff-global-mode)
+    :init (drag-stuff-global-mode)
     :bind (:map drag-stuff-mode-map
               ("<M-up>" . drag-stuff-up)
               ("<M-down>" . drag-stuff-down)
               ("<M-S-s-left>" . drag-stuff-left)
-              ("<M-S-s-right>" . drag-stuff-right))
-    )
+              ("<M-S-s-right>" . drag-stuff-right)))
 
 #+end_src
 
@@ -675,9 +669,9 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
 #+source: rainbow-delmitiers
 #+begin_src emacs-lisp :tangle yes
   (use-package rainbow-delimiters
-     :init
-      (progn
-        (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
+    :init
+    (progn
+      (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)))
 
 #+end_src
 
@@ -690,7 +684,7 @@ First mark the word, then add more cursors. To get out of multiple-cursors-mode,
     :ensure t
     :init
     (progn
-      (global-aggressive-indent-mode 1)))
+    (global-aggressive-indent-mode 1)))
 
 #+end_src
 
@@ -768,8 +762,7 @@ Highlight various =.ANCHORS.= in comments.
 #+begin_src emacs-lisp :tangle yes
   (use-package ace-window
     :defer t
-    ;; :init
-    :config
+    :init
     (progn
       (global-set-key (kbd "<f8>") 'ace-window)
       (global-set-key (kbd "M-[") 'ace-window)
@@ -834,9 +827,13 @@ Note, that this may interfere with the ido-config in the config.org.
 
 **** IN-PROGRESS Swiper
 
+<<<<<<< HEAD
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package swiper)
 
+=======
+#+BEGIN_SRC emacs-lisp :tangle yes
+>>>>>>> parent of 214be12... change lots of config from :init to :config re use-package
   (global-unset-key (kbd "C-s"))
   (global-unset-key (kbd "C-r"))
   (global-set-key (kbd "C-s") 'swiper)

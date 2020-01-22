@@ -416,7 +416,7 @@ Tell magit to automatically put us in vi-insert-mode when committing a change.
 ** Searching/sorting enhancements & project management
 *** Ido, ido-vertical, ido-ubiquitous and fuzzy matching
 Selecting buffers/files with great efficiency. In my opinion, Ido is enough to replace Ivy/Counsel and Helm. We install ido-vertical to get a better view of the available options (use ~C-n~, ~C-p~ or arrow keys to navigate). Ido-ubiquitous (from the ~ido-completing-read+~ package) provides us ido-like completions in describing functions and variables etc. Fuzzy matching is a nice feature and we have flx-ido for that purpose.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tanlge no
   (use-package ido
     :config
     (ido-mode +1)
@@ -439,6 +439,13 @@ Not working, so not tangled. However, when testing in buffer it is much superior
 
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
+  (use-package ido
+    :defer t)
+
+  (global-unset-key (kbd "C-s"))
+  (global-unset-key (kbd "C-r"))
+
+
   (use-package counsel
     :after ivy
     :config (counsel-mode))

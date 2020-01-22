@@ -435,6 +435,7 @@ Selecting buffers/files with great efficiency. In my opinion, Ido is enough to r
 *** Ivy, Counsel, Swiper
 I want to change to the above packages, however this is been problematic.
 #+BEGIN_SRC emacs-lisp :tangle no
+  ;; from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
   (use-package counsel
     :after ivy
     :config (counsel-mode))

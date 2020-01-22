@@ -745,6 +745,189 @@ Highlight various =.ANCHORS.= in comments.
   (auto-package-update-maybe))
 #+end_src
 
+** IN-PROGRESS Testing packages
+*** TODO counsel, swiper, ivy
+https://github.com/abo-abo/swiper
+swiper replaces isearch: this looks really cool, and more flexible.
+ivy replaces ido, may have to update for use with ivy below.
+avy-jump: will replace ace-jump, by the same maintainer as the above packages.
+Note, that this may interfere with the ido-config in the config.org.
+*** DONE [#A] fix-word
+CLOSED: [2020-01-22 Wed 11:00]
+https://github.com/mrkkrp/fix-word
+#+BEGIN_SRC emacs-lisp
+  ;; replaces built-in upcase, etc.
+  (use-package fix-word
+      :ensure t
+      :bind (
+             ("M-u" . fix-word-upcase)
+             ("M-l" . fix-word-downcase)
+             ("M-c" . fix-word-capitalize)
+             ))
+
+#+END_SRC
+
+*** linum relative
+https://github.com/coldnew/linum-relative
+*** ace-link
+https://github.com/abo-abo/ace-link
+*** DONE [#B] helpful
+CLOSED: [2020-01-22 Wed 11:00]
+https://github.com/Wilfred/helpful
+#+BEGIN_SRC emacs-lisp
+  ;; replaces built-in help
+  (use-package helpful
+    :bind (
+           ;; Note that the built-in `describe-function' includes both functions
+           ;; and macros. `helpful-function' is functions only, so we provide
+           ;; `helpful-callable' as a drop-in replacement.
+           ("C-h f" . helpful-callable)
+
+           ("C-h v" . helpful-variable)
+           ("C-h k" . helpful-key)
+           ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+           ;; for this in lisp modes.
+           ("C-c C-d" . helpful-at-point)
+
+           ;; Look up *F*unctions (excludes macros).
+           ;;
+           ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+           ;; already links to the manual, if a function is referenced there.
+           ("C-h F" . helpful-function)
+
+           ;; Look up *C*ommands.
+           ;;
+           ;; By default, C-h C is bound to describe `describe-coding-system'. I
+           ;; don't find this very useful, but it's frequently useful to only
+           ;; look at interactive functions.
+           ("C-h C" . helpful-command)
+           )
+    :ensure t)
+#+END_SRC
+
+*** IN-PROGRESS centaur-tab
+https://github.com/ema2159/centaur-tabs
+#+BEGIN_SRC emacs-lisp
+  (use-package centaur-tabs
+    :demand
+    :config
+    (centaur-tabs-mode t)
+    (setq centaur-tabs-set-icons t
+          centaur-tabs-set-bar 'left
+          uniquify-separator "/"
+          centaur-tabs-gray-out-icons 'buffer
+          centaur-tabs-set-modified-marker t
+          centaur-tabs-modified-marker "*"
+          centaur-tabs-cycle-scope 'tabs)
+    (defun centaur-tabs-buffer-groups ()
+      "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+   Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+   All buffer name start with * will group to \"Emacs\".
+   Other buffer group by `centaur-tabs-get-group-name' with project name."
+      (list
+       (cond
+        ;; ((not (eq (file-remote-p (buffer-file-name)) nil))
+        ;; "Remote")
+        ((or (string-equal "*" (substring (buffer-name) 0 1))
+             (memq major-mode '(magit-process-mode
+                                magit-status-mode
+                                magit-diff-mode
+                                magit-log-mode
+                                magit-file-mode
+                                magit-blob-mode
+                                magit-blame-mode
+                                )))
+         "Emacs")
+        ((derived-mode-p 'prog-mode)
+         "Editing")
+        ((derived-mode-p 'dired-mode)
+         "Dired")
+        ((memq major-mode '(helpful-mode
+                            help-mode))
+         "Help")
+        ((memq major-mode '(org-mode
+                            org-agenda-clockreport-mode
+                            org-src-mode
+                            org-agenda-mode
+                            org-beamer-mode
+                            org-indent-mode
+                            org-bullets-mode
+                            org-cdlatex-mode
+                            org-agenda-log-mode
+                            diary-mode))
+         "OrgMode")
+        (t
+         (centaur-tabs-get-group-name (current-buffer))))))
+    :hook
+    (dashboard-mode . centaur-tabs-local-mode)
+    (term-mode . centaur-tabs-local-mode)
+    (calendar-mode . centaur-tabs-local-mode)
+    (org-agenda-mode . centaur-tabs-local-mode)
+    (helpful-mode . centaur-tabs-local-mode)
+    :bind
+    ("C-<prior>" . centaur-tabs-backward)
+    ("C-<next>" . centaur-tabs-forward)
+    ("C-c t s" . centaur-tabs-counsel-switch-group)
+    ("C-c t p" . centaur-tabs-group-by-projectile-project)
+    ("C-c t g" . centaur-tabs-group-buffer-groups))
+
+#+END_SRC
+
+
+*** DONE rainbow mode
+CLOSED: [2020-01-22 Wed 11:25]
+https://github.com/emacsmirror/rainbow-mode
+
+#+BEGIN_SRC emacs-lisp
+  ;; colorise colour references
+  (use-package rainbow-mode
+    :config (rainbow-mode t))
+
+#+END_SRC
+
+*** DONE [#A] company-quick help (and pos-tip)
+CLOSED: [2020-01-22 Wed 11:00]
+https://github.com/company-mode/company-quickhelp
+#+BEGIN_SRC emacs-lisp
+  (use-package pos-tip)
+  ;; pop-up helpmenu when company used
+  ;; this may become annoying, so be aware
+  (use-package company-quickhelp
+    :requires pos-tip
+    :config
+    (company-quickhelp-mode))
+#+END_SRC
+
+*** dap-mode
+https://github.com/emacs-lsp/dap-mode
+mostly for python
+*** DONE [#A] dumb-jump
+CLOSED: [2020-01-22 Wed 11:00]
+https://github.com/jacktasia/dumb-jump
+jump to definition, support for R
+#+BEGIN_SRC emacs-lisp
+  ;; useful for navigationg R code
+  (use-package dumb-jump
+    :bind (("M-g o" . dumb-jump-go-other-window)
+           ("M-g j" . dumb-jump-go)
+           ("M-g b" . dumb-jump-back)
+           ("M-g i" . dumb-jump-go-prompt)
+           ("M-g x" . dumb-jump-go-prefer-external)
+           ("M-g z" . dumb-jump-go-prefer-external-other-window))
+    :ensure t)
+
+#+END_SRC
+
+*** markdown-mode+
+https://github.com/milkypostman/markdown-mode-plus
+#+BEGIN_SRC
+
+#+END_SRC
+
+*** no-literring
+https://github.com/emacscollective/no-littering
+cleanup config
 * Custom scripts
 Below are my custom scripts. Please note, any associated keybdings are contained under each relevant section.
 ** Applescript support
@@ -821,6 +1004,22 @@ This used to access Zotero's citation picker via Better Bibtex.
     )
 
 #+end_src
+
+** DONE hs-toggle-fold
+CLOSED: [2020-01-22 Wed 11:22]
+built in package for code-folding
+
+#+BEGIN_SRC emacs-lisp
+  ;; from https://www.reddit.com/r/emacs/comments/746cd0/which_code_folding_package_do_you_use/
+  (defun aj/toggle-fold ()
+    (interactive)
+    (save-excursion
+      (end-of-line)
+      (hs-toggle-hiding)))
+
+  (global-set-key (kbd "C-c C-<f8>") 'aj/toggle-fold)
+
+#+END_SRC
 
 * Open File Path Under Cursor
 This works, but errors when there is a space in the file name.

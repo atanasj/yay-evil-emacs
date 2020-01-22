@@ -371,7 +371,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
     (setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
     (setq auto-mode-alist (cons '("README\\.md" . gfm-mode) auto-mode-alist))
     :hook ((markdown-mode . visual-line-mode)
-           (markdown-mod . latex-unicode-simplified))
+           (markdown-mode . display-line-numbers-mode))
     ;; (add-hook 'markdown-mode-hook 'visual-line-mode)
     ;; (add-hook 'markdown-mode-hook 'latex-unicode-simplified)
     )
@@ -846,7 +846,8 @@ https://github.com/Wilfred/helpful
     :ensure t)
 #+END_SRC
 
-*** IN-PROGRESS centaur-tab
+*** DONE centaur-tab
+CLOSED: [2020-01-22 Wed 13:56]
 https://github.com/ema2159/centaur-tabs
 #+BEGIN_SRC emacs-lisp
   (use-package centaur-tabs
@@ -914,7 +915,6 @@ https://github.com/ema2159/centaur-tabs
     ("C-c t g" . centaur-tabs-group-buffer-groups))
 
 #+END_SRC
-
 
 *** DONE rainbow mode
 CLOSED: [2020-01-22 Wed 11:25]

@@ -335,10 +335,20 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
     :config
     (nyan-mode)
     )
+
   (use-package doom-modeline
     :hook (after-init . doom-modeline-mode)
     :config
     (ace-window-display-mode 1)
+    ;; turn off defualt icons
+    (setq doom-modeline-modal-icon nil
+          ;; set different faces for evil states
+          evil-normal-state-tag   (propertize "[Normal]" 'face '((:background "green" :foreground "black")))
+          evil-emacs-state-tag    (propertize "[Emacs]" 'face '((:background "orange" :foreground "black")))
+          evil-insert-state-tag   (propertize "[Insert]" 'face '((:background "red") :foreground "white"))
+          evil-motion-state-tag   (propertize "[Motion]" 'face '((:background "blue") :foreground "white"))
+          evil-visual-state-tag   (propertize "[Visual]" 'face '((:background "grey80" :foreground "black")))
+          evil-operator-state-tag (propertize "[Operator]" 'face '((:background "purple"))))
     )
 
 #+END_SRC

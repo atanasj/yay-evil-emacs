@@ -513,22 +513,25 @@ Need to configi
   ;; solution from:
   ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
   (use-package flyspell
-  :init
-  (progn
-    (flyspell-mode 1))
-  :config
-  (progn
-    (setq ispell-program-name "aspell")
-    (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+    :init
+    (progn
+      (flyspell-mode 1))
+    :config
+    (progn
+      (setq ispell-program-name "aspell")
+      (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+      )
+    :hook ((flyspell-mode . my-flyspell-mode-hook)
+           (text-mode . flyspell-mode)
+           (prog-mode . flyspell-prog-mode)
+           (flyspell-mode . flyspell-popup-auto-correct-mode))
     )
-  :hook ((flyspell-mode . my-flyspell-mode-hook)
-         (text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode)))
 
+  (use-package flyspell-popup)
 #+end_src
 
 ***** Writegood
-Description from [[http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/][here]]:
+Description from [[http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/][here]]: FSF
 Weasel words--phrases or words that sound good without conveying information--obscure precision...
 
 *Beholder words:*
@@ -777,7 +780,7 @@ Highlight various =.ANCHORS.= in comments.
     :init
     (progn
       (global-set-key (kbd "<f8>") 'ace-window)
-      (global-set-key (kbd "M-[") 'ace-window)
+      (global-set-key (kbd "M-]") 'ace-window)
       (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
       ;;more info at https://github.com/abo-abo/ace-window
       )
@@ -1173,7 +1176,21 @@ built in package for code-folding
       (end-of-line)
       (hs-toggle-hiding)))
 
-  (global-set-key (kbd "C-c C-<f8>") 'aj/toggle-fold)
+  (global-set-key (kbd "M-[") 'aj/toggle-fold)
+  ;; below does the same things but cannot get the symbols
+
+  (use-package hideshowvis
+    :load-path "src/hideshowvis/"
+    :diminish hs-minor-mode
+    :bind ("M-[" . hs-toggle-hiding)
+    :config
+    (progn
+      (hideshowvis-enable)
+      ;; graphical +/- fold buttons
+      (hideshowvis-symbols))
+    )
+
+
 
 #+END_SRC
 

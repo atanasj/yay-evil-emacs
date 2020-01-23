@@ -820,6 +820,15 @@ Highlight various =.ANCHORS.= in comments.
     )
 
 #+END_SRC
+*** elisp-slime-nav
+#+BEGIN_SRC emacs-lisp
+  ;; only works in .lisp files
+  ;; Slime-style navigation of Emacs Lisp source with M-. & M-,
+  (use-package elisp-slime-nav
+    :config
+    (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+      (add-hook hook 'turn-on-elisp-slime-nav-mode)))
+#+END_SRC
 
 ** Keep packages up to date
 #+source: updater

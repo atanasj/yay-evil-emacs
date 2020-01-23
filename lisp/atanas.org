@@ -717,6 +717,7 @@ Highlight various =.ANCHORS.= in comments.
   ;; NOTE that the highlighting works even outside comments where TODO would usually be kept
   ;; The below words were configured to make migration my work from vscode to emacs easier
   ;; as they were already words used for project management
+  ;; https://htmlcolorcodes.com/
   (use-package hl-todo
     :config
     ;; Adding a new keyword: ANCHOR and REVIEW.
@@ -724,6 +725,7 @@ Highlight various =.ANCHORS.= in comments.
     (add-to-list 'hl-todo-keyword-faces '("REVIEW" . "#5eff33"))
     (add-to-list 'hl-todo-keyword-faces '("NOTE" . "#ff8e33"))
     (add-to-list 'hl-todo-keyword-faces '("TODO" . "#ff3349"))
+    (add-to-list 'hl-todo-keyword-faces '("SYNOPSIS" . "#4fd4ff"))
     :init
     (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
 
@@ -776,7 +778,7 @@ Highlight various =.ANCHORS.= in comments.
     (progn
       (global-set-key (kbd "<f8>") 'ace-window)
       (global-set-key (kbd "M-[") 'ace-window)
-      ;; (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
       ;;more info at https://github.com/abo-abo/ace-window
       )
     )
@@ -835,7 +837,8 @@ ivy replaces ido, may have to update for use with ivy below.
 avy-jump: will replace ace-jump, by the same maintainer as the above packages.
 Note, that this may interfere with the ido-config in the config.org.
 
-**** IN-PROGRESS Swiper
+**** CANCELED Swiper
+CLOSED: [2020-01-23 Thu 08:04]
 
 <<<<<<< HEAD
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -851,7 +854,8 @@ Note, that this may interfere with the ido-config in the config.org.
 #+END_SRC
 
 
-**** IN-PROGRESS ALL
+**** DONE ALL
+CLOSED: [2020-01-23 Thu 08:04]
 
 I want to change to the above packages, however this is been problematic.
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -865,7 +869,10 @@ I want to change to the above packages, however this is been problematic.
 
   (use-package counsel
     :after ivy
-    :config (counsel-mode))
+    :config
+    (setq counsel-describe-function-function #'helpful-callable)
+    (setq counsel-describe-variable-function #'helpful-variable)
+    (counsel-mode))
 
   (use-package ivy
     :defer 0.1
@@ -875,7 +882,9 @@ I want to change to the above packages, however this is been problematic.
     :custom
     (ivy-count-format "(%d/%d) ")
     (ivy-use-virtual-buffers t)
-    :config (ivy-mode))
+    :config
+    (ivy-mode)
+    )
 
   (use-package ivy-rich
     :after ivy
@@ -1166,6 +1175,18 @@ built in package for code-folding
 
   (global-set-key (kbd "C-c C-<f8>") 'aj/toggle-fold)
 
+#+END_SRC
+
+** Kill line backwards
+
+#+BEGIN_SRC emacs-lisp
+  ;; from https://www.emacswiki.org/emacs/BackwardKillLine
+  (defun aj/backward-kill-line (arg)
+    "Kill ARG lines backward."
+    (interactive "p")
+    (kill-line (- 1 arg)))
+
+  (global-set-key "\C-cu" 'aj/backward-kill-line) ;; `C-c u'
 #+END_SRC
 
 ** Open File Path Under Cursor

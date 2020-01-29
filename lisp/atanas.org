@@ -129,6 +129,25 @@ This is not currently used. If needed, tangle them.
 
 #+end_src
 
+** openwith
+
+#+BEGIN_SRC emacs-lisp
+  (use-package openwith
+    :demand
+    :init
+    :config
+    (openwith-mode t)
+    (setq openwith-associations
+          (list
+           (list (openwith-make-extension-regexp
+                  '("pdf" "html" "svg" "doc" "docx" "xls" "xlsx" "ppt" "pptx" "pptm" "pzfx"))
+                 "open"
+                 '(file))
+           ))
+    )
+
+#+END_SRC
+
 * Third-party packages
 ** Yasnippet NOT USED
 Yasnippet is a snippet expansion system for Emacs. It uses short phrases and the tab key to trigger the insertion of frequently-used snippets of code or text in your document.
@@ -349,16 +368,19 @@ From kjhealy:
     (setq ess-swv-processor "'knitr"
           ess-swv-pdflatex-commands '("pdflatex" "make" "texi2pdf")) ; added from spacemacs config
 #+end_src
-*** ess-view
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+*** ess-view
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; NOTE not saving back in, see issue on git re: MacOS
   ;; see <https://github.com/GioBo/ess-view/issues/5>
   (use-package ess-view
     :ensure t
     :after ess
+    :diminish
     :config
-    (setq ess-view--spreadsheet-program "/Applications/Microsoft Excel.app/Contents/MacOS/Microsoft Excel")
+    ;; open in excel
+    (setq ess-view--spreadsheet-program "/Applications/Microsoft Excel.app/Contents/MacOS/Microsoft Excel"
+    ;; (setq ess-view-inspect-and-save-df t)
     ;; enable ess-view package to be triggered from the source doc
     ;; see: <https://github.com/GioBo/ess-view/issues/9>
     (defun ess-view-extract-R-process ()
@@ -372,6 +394,28 @@ From kjhealy:
       )
     )
 
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package ess-view
+    :ensure t
+    :after ess
+    :diminish
+    :config
+    (setq ess-view--spreadsheet-program "open")
+    (setq ess-view-inspect-and-save-df t)
+    ;; enable ess-view package to be triggered from the source doc
+    ;; see: <https://github.com/GioBo/ess-view/issues/9>
+    (defun ess-view-extract-R-process ()
+      "Return the name of R running in current buffer."
+      (let*
+          ((proc (ess-get-process))         ; Modified from (proc (get-buffer-process (current-buffer)))
+           (string-proc (prin1-to-string proc))
+           (selected-proc (s-match "^#<process \\(R:?[0-9]*\\)>$" string-proc)))
+        (nth 1 (-flatten selected-proc))
+        )
+      )
+    )
 #+END_SRC
 
 *** Use Polymode
@@ -466,7 +510,9 @@ This was attempted, however error generated due some environment problem. Will l
     :config
     (setq pandoc-citation-jump-function 'pandoc-open-in-ebib))
 #+end_src
-***** Reference management
+
+***** Ebib
+This needs to come before the "openwith" function below
 #+source: manage-bib-files
 #+begin_src emacs-lisp :tangle yes
   (use-package ebib
@@ -474,8 +520,8 @@ This was attempted, however error generated due some environment problem. Will l
     (setq ebib-preload-bib-files '("/Users/atanas/.pandoc/MyLib.bib")
           ebib-lay-out 'full
           ebib-file-associations '(
-                                   ;; ("pdf" . "/Applications/PDF Expert.app/Contents/MacOS/PDF Expert")
-                                   ("pdf")
+                                   ;; open via openwith
+                                   ("pdf" . "open")
                                    ("ps" . "gv")))
     )
 #+end_src
@@ -1267,7 +1313,8 @@ built in package for code-folding
 
 #+END_SRC
 
-** Kill line backwards
+** DONE Kill line backwards
+CLOSED: [2020-01-30 Thu 08:55]
 
 #+BEGIN_SRC emacs-lisp
   ;; from https://www.emacswiki.org/emacs/BackwardKillLine
@@ -1279,12 +1326,12 @@ built in package for code-folding
   (global-set-key "\C-cu" 'aj/backward-kill-line) ;; `C-c u'
 #+END_SRC
 
-** Open File Path Under Cursor
-This works, but errors when there is a space in the file name.
+** IN-PROGRESS Open File Path Under Cursor
+This works, but can error sometimes no open when filename contains spaces.
 #+source: open-path
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
   ;; (defun xah-open-file-at-cursor ()
-  (defun xah-open-file-at-cursor ()
+  (defun aj/xah-open-file-at-cursor ()
     "Open the file path under cursor.
   If there is text selection, uses the text selection for path.
   If the path starts with “http://”, open the URL in browser.
@@ -1333,22 +1380,21 @@ This works, but errors when there is a space in the file name.
                     (forward-line (1- $line-num)))
                 (when (y-or-n-p (format "file no exist: 「%s」. Create?" $fpath))
                   (find-file $fpath))))
-          (if (file-exists-p $path)
-              (progn ; open f.ts instead of f.js
-                (let (($ext (file-name-extension $path))
-                      ($fnamecore (file-name-sans-extension $path)))
-                  (if (and (string-equal $ext "js")
-                           (file-exists-p (concat $fnamecore ".ts")))
-                      (find-file (concat $fnamecore ".ts"))
-                    (find-file $path))))
-            (if (file-exists-p (concat $path ".el"))
-                (find-file (concat $path ".el"))
-              (when (y-or-n-p (format "file no exist: 「%s」. Create?" $path))
-                (find-file $path ))))))))
+           (if (file-exists-p $path)
+            (progn ; open f.ts instead of f.js
+              (let (($ext (file-name-extension $path))
+                    ($fnamecore (file-name-sans-extension $path)))
+                (if (and (string-equal $ext "js")
+                         (file-exists-p (concat $fnamecore ".ts")))
+                    (find-file (concat $fnamecore ".ts"))
+                  (find-file $path))))
+          (if (file-exists-p (concat $path ".el"))
+              (find-file (concat $path ".el"))
+            (when (y-or-n-p (format "file no exist: 「%s」. Create?" $path))
+              (find-file $path ))))))))
 #+end_src
 
-#+RESULTS: open-path
-: xah-open-file-at-cursor
+
 ** IN-PROGRESS line-number on debug
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; get line number of error

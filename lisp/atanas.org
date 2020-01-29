@@ -572,7 +572,7 @@ Weasel words--phrases or words that sound good without conveying information--ob
   (use-package writegood-mode)
 #+end_src
 
-*** Multiple Cursors and Drag-Stuff
+** Multiple Cursors and Drag-Stuff
 Use multiple cursors for search, replace, and text-cleaning tasks. For a demonstration, see http://emacsrocks.com/e13.html. Tangle if need to use this.
 
 #+source: multiple-cursors
@@ -854,6 +854,21 @@ Highlight various =.ANCHORS.= in comments.
       (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 #+END_SRC
 
+*** IN-PROGRESS ediff-setup
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; from <https://oremacs.com/2015/01/17/setting-up-ediff/>
+  (use-package ediff
+    :config
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain
+          ediff-split-window-function 'split-window-horizontally
+          ediff-diff-options "-w")
+    )
+
+  ;; (winner-mode)
+  ;; (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
+#+END_SRC
+
 ** Keep packages up to date
 #+source: updater
 #+begin_src emacs-lisp :tangle yes
@@ -866,7 +881,8 @@ Highlight various =.ANCHORS.= in comments.
 #+end_src
 
 ** IN-PROGRESS Testing packages
-*** TODO counsel, swiper, ivy
+*** DONE counsel, swiper, ivy
+CLOSED: [2020-01-23 Thu 22:24]
 https://github.com/abo-abo/swiper
 swiper replaces isearch: this looks really cool, and more flexible.
 ivy replaces ido, may have to update for use with ivy below.

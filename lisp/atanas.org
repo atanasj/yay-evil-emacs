@@ -588,7 +588,7 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     ;; When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this) ; doesn't seem to work
     ;; Rectangular region mode
     (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
     ;; Mark more like this
@@ -899,9 +899,6 @@ CLOSED: [2020-01-23 Thu 08:04]
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package swiper)
 
-=======
-#+BEGIN_SRC emacs-lisp :tangle yes
->>>>>>> parent of 214be12... change lots of config from :init to :config re use-package
   (global-unset-key (kbd "C-s"))
   (global-unset-key (kbd "C-r"))
   (global-set-key (kbd "C-s") 'swiper)
@@ -916,7 +913,7 @@ I want to change to the above packages, however this is been problematic.
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
   (use-package ido
-    :defer t)
+    :defer t) ; this seems to be necessary so teh below config doesn't fail
 
   (global-unset-key (kbd "C-s"))
   (global-unset-key (kbd "C-r"))

@@ -851,7 +851,10 @@ Highlight various =.ANCHORS.= in comments.
   (use-package elisp-slime-nav
     :config
     (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-      (add-hook hook 'turn-on-elisp-slime-nav-mode)))
+      (add-hook hook 'turn-on-elisp-slime-nav-mode))
+    :hook
+    (org-mode . elisp-slime-nav-mode)
+    )
 #+END_SRC
 
 *** IN-PROGRESS ediff-setup

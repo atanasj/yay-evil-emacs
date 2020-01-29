@@ -411,13 +411,13 @@ Markdown mode support, including preview in =.Marked2.app.=.
   ;; This function will open Marked.app and monitor the current markdown document
   ;; for anything changes.  In other words, it will live reload and convert the
   ;; markdown documment
-  (defun markdown-preview-file ()
+  (defun aj/markdown-preview-file ()
     "run Marked on the current file and revert the buffer"
    (interactive)
    (shell-command
    (format "open -a /Applications/Marked\\ 2.app %s" (shell-quote-argument (buffer-file-name)))))
 
-  (global-set-key "\C-co" 'markdown-preview-file)
+  (global-set-key "\C-co" 'aj/markdown-preview-file)
 
   (use-package yaml-mode
     :config
@@ -532,8 +532,27 @@ Need to configi
     (:map flyspell-mode-map ("s-." . flyspell-popup-correct)))
 #+end_src
 
-thn
+***** grammar
+#+BEGIN_SRC emacs-lisp
+  ;; https://laclefyoshi.hatenablog.com/entry/20150912/langtool_popup
+  ;; (defun aj/langtool-autoshow-detail-popup (overlays)
+  ;;   (when (require 'pos-tip nil t)
+  ;;     ;; Do not interrupt current popup
+  ;;     (unless (or popup-instances
+  ;;                 ;; suppress popup after type `C-g` .
+  ;;                 (memq last-command '(keyboard-quit)))
+  ;;       (let ((msg (langtool-details-error-message overlays)))
+  ;;         (popup-tip msg)))))
 
+  (use-package langtool
+    :config
+    (setq langtool-language-tool-jar "/usr/local/Cellar/languagetool/4.8/libexec/languagetool.jar"
+          langtool-default-language "en-GB")
+    )
+    ;; (setq langtool-autoshow-message-function
+    ;;       'aj/langtool-autoshow-detail-popup)
+
+#+END_SRC
 
 ***** Writegood
 Description from [[http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/][here]]: FSF
@@ -804,7 +823,7 @@ Highlight various =.ANCHORS.= in comments.
   ;; get restart-emacs for easy restarting when updating config
   (use-package restart-emacs
     :config
-    (setq restart-emacs-restore-frames t))
+    (setq restart-emacs-restore-frames nil))
 #+end_src
 *** crux
 #+source: crux-open-with-system-def-app
@@ -1361,6 +1380,34 @@ This works, but errors when there is a space in the file name.
       (debugger-make-xrefs)))
 
 #+END_SRC
+
+** mouse scroll-all-mode
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; from  https://www.emacswiki.org/emacs/ScrollAllMode
+  ;; allows scrolling diffs in unison
+  (defun mwheel-scroll-all-function-all (func &optional arg)
+    (if (and scroll-all-mode arg)
+        (save-selected-window
+          (walk-windows
+           (lambda (win)
+             (select-window win)
+             (condition-case nil
+                 (funcall func arg)
+               (error nil)))))
+      (funcall func arg)))
+
+  (defun mwheel-scroll-all-scroll-up-all (&optional arg)
+    (mwheel-scroll-all-function-all 'scroll-up arg))
+
+  (defun mwheel-scroll-all-scroll-down-all (&optional arg)
+    (mwheel-scroll-all-function-all 'scroll-down arg))
+
+  (setq mwheel-scroll-up-function 'mwheel-scroll-all-scroll-up-all)
+  (setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
+
+#+END_SRC
+
 
 * TODO Config Tasks
 ** TODO Citations

@@ -349,6 +349,30 @@ From kjhealy:
     (setq ess-swv-processor "'knitr"
           ess-swv-pdflatex-commands '("pdflatex" "make" "texi2pdf")) ; added from spacemacs config
 #+end_src
+*** ess-view
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; NOTE not saving back in, see issue on git re: MacOS
+  ;; see <https://github.com/GioBo/ess-view/issues/5>
+  (use-package ess-view
+    :ensure t
+    :after ess
+    :config
+    (setq ess-view--spreadsheet-program "/Applications/Microsoft Excel.app/Contents/MacOS/Microsoft Excel")
+    ;; enable ess-view package to be triggered from the source doc
+    ;; see: <https://github.com/GioBo/ess-view/issues/9>
+    (defun ess-view-extract-R-process ()
+      "Return the name of R running in current buffer."
+      (let*
+          ((proc (ess-get-process))         ; Modified from (proc (get-buffer-process (current-buffer)))
+           (string-proc (prin1-to-string proc))
+           (selected-proc (s-match "^#<process \\(R:?[0-9]*\\)>$" string-proc)))
+        (nth 1 (-flatten selected-proc))
+        )
+      )
+    )
+
+#+END_SRC
 
 *** Use Polymode
 Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.

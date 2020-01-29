@@ -39,7 +39,7 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
 #+begin_src emacs-lisp :tangle no
   ;; from  kjkeayl's config, however the remainder below at this stage not required
   ;; set keys for Apple keyboard, for emacs in OS X
-  (setq ns-command-modifier 'super) ; make cmd key do Super
+  (setq mac-command-modifier 'super) ; make cmd key do Super
   ;; (setq mac-option-modifier 'super) ; make opt key do Super
   ;; (setq mac-control-modifier 'control) ; make Control key do Control
   (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper

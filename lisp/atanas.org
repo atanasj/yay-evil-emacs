@@ -485,7 +485,7 @@ Markdown mode support, including preview in =.Marked2.app.=.
    (shell-command
    (format "open -a /Applications/Marked\\ 2.app %s" (shell-quote-argument (buffer-file-name)))))
 
-  (global-set-key "\C-co" 'aj/markdown-preview-file)
+  (global-set-key "\C-cm" 'aj/markdown-preview-file)
 
   (use-package yaml-mode
     :config

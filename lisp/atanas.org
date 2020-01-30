@@ -359,7 +359,8 @@ From kjhealy:
 #+end_src
 **** ess-R-data-view
 #+source: ess-R-data-view
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
+  ;; will use ess-data-view, as easier to use external
   (use-package ess-R-data-view)
 #+end_src
 *** Use Knitr to process Sweave documents
@@ -495,8 +496,8 @@ Markdown mode support, including preview in =.Marked2.app.=.
 #+end_src
 
 **** TODO Pandoc
-Need to configure specific file types outlined below i.e., tempaltes, etc.
-This was attempted, however error generated due some environment problem. Will likely just take this over with makefiles.
+Basic configuration as plan to use makefiles.
+Will leave in case change mind.
 #+source: pandoc
 #+begin_src emacs-lisp :tangle yes
   (use-package pandoc-mode
@@ -529,7 +530,8 @@ This needs to come before the "openwith" function below
 ***** PDF Tools
 
 #+source: pdf-tools
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
+  ;; configured `openwith` instead, so do  not need this package.
   (use-package pdf-tools
     :config
     (add-hook 'doc-view-mode-hook 'pdf-tools-install))
@@ -565,6 +567,13 @@ Need to configi
   (global-hl-line-mode 1)
 #+end_src
 
+**** TODO LATEX
+***** AucTex
+Ths is a series of packages, including the latexmk
+https://www.gnu.org/software/auctex/
+***** latexmk
+latex specific makefile
+See https://github.com/Sparsa/.emacs.d and https://www.reddit.com/r/emacs/comments/akmwko/the_best_latex_editor/
 **** Spelling
 #+source: spelling
 #+begin_src emacs-lisp :tangle yes
@@ -927,8 +936,8 @@ Highlight various =.ANCHORS.= in comments.
     )
 #+END_SRC
 
-*** IN-PROGRESS ediff-setup
-
+*** DONE ediff-setup
+CLOSED: [2020-01-29 Wed 21:39]
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; from <https://oremacs.com/2015/01/17/setting-up-ediff/>
   (use-package ediff
@@ -942,6 +951,9 @@ Highlight various =.ANCHORS.= in comments.
   ;; (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 #+END_SRC
 
+** TODO MAKEFILE
+See make-mode config here: https://www.emacswiki.org/emacs/MakefileMode
+and the makefile section here: https://github.com/emacs-tw/awesome-emacs#makefile
 ** Keep packages up to date
 #+source: updater
 #+begin_src emacs-lisp :tangle yes

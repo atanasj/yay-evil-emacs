@@ -837,6 +837,15 @@ Highlight various =.ANCHORS.= in comments.
 
 #+end_src
 
+** highlight-indent-guides
+for better code navigation
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package highlight-indent-guides
+    :hook (prog-mode . highlight-indent-guides-mode))
+
+#+END_SRC
+
+
 ** TODO Project Management and Navigation
 *** projectile
 #+source: projectile
@@ -973,20 +982,6 @@ swiper replaces isearch: this looks really cool, and more flexible.
 ivy replaces ido, may have to update for use with ivy below.
 avy-jump: will replace ace-jump, by the same maintainer as the above packages.
 Note, that this may interfere with the ido-config in the config.org.
-
-**** CANCELED Swiper
-CLOSED: [2020-01-23 Thu 08:04]
-
-<<<<<<< HEAD
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package swiper)
-
-  (global-unset-key (kbd "C-s"))
-  (global-unset-key (kbd "C-r"))
-  (global-set-key (kbd "C-s") 'swiper)
-  (global-set-key (kbd "C-r") 'swiper)
-#+END_SRC
-
 
 **** DONE ALL
 CLOSED: [2020-01-23 Thu 08:04]

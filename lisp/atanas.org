@@ -218,22 +218,6 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
                     )))
     )
 
-  ;;   (use-package golden-ratio
-  ;;     ;; both the below worked in scratch but must be something clonflicting
-  ;;     ;; TODO consider using general for keybindings to manage single layer
-  ;;     ;; :chords ("gr" . golden-ratio-mode) ; not working
-  ;;     ;; :bind ("C-c C-g" . golden-ratio-mode) ; worked in
-  ;; :bind (
-  ;; :config
-  ;;     (setq golden-ratio-auto-scale t) ; use instead of the adjust factors
-  ;;     (setq golden-ratio-extra-commands
-  ;;           (append golden-ratio-extra-commands
-  ;;                   '(ace-window
-  ;;                     ess-eval-buffer-and-go
-  ;;                     ess-eval-function-and-go
-  ;;                     ess-eval-line-and-go
-  ;;                     )))
-  ;;      )
 #+end_src
 
 *** Make shift-enter do a lot in ESS.
@@ -311,6 +295,8 @@ From kjhealy:
           ess-expression-offset 2
           ess-nuke-trailing-whitespace-p t
           ess-default-style 'DEFAULT)
+    ;; auto-width
+    (setq ess-auto-width 'window)
     ;; Toggle underscore off no replacement of _ for <-
     (setq ess-smart-S-assign-key nil)
     ;; Stop R repl eval from blocking emacs.
@@ -371,32 +357,6 @@ From kjhealy:
 #+end_src
 
 *** ess-view
-#+BEGIN_SRC emacs-lisp :tangle no
-  ;; NOTE not saving back in, see issue on git re: MacOS
-  ;; see <https://github.com/GioBo/ess-view/issues/5>
-  (use-package ess-view
-    :ensure t
-    :after ess
-    :diminish
-    :config
-    ;; open in excel
-    (setq ess-view--spreadsheet-program "/Applications/Microsoft Excel.app/Contents/MacOS/Microsoft Excel"
-    ;; (setq ess-view-inspect-and-save-df t)
-    ;; enable ess-view package to be triggered from the source doc
-    ;; see: <https://github.com/GioBo/ess-view/issues/9>
-    (defun ess-view-extract-R-process ()
-      "Return the name of R running in current buffer."
-      (let*
-          ((proc (ess-get-process))         ; Modified from (proc (get-buffer-process (current-buffer)))
-           (string-proc (prin1-to-string proc))
-           (selected-proc (s-match "^#<process \\(R:?[0-9]*\\)>$" string-proc)))
-        (nth 1 (-flatten selected-proc))
-        )
-      )
-    )
-
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package ess-view
     :ensure t
@@ -524,6 +484,7 @@ This needs to come before the "openwith" function below
                                    ;; open via openwith
                                    ("pdf" . "open")
                                    ("ps" . "gv")))
+    :hook (ebib . golden-ratio-mode)
     )
 #+end_src
 
@@ -603,12 +564,14 @@ See https://github.com/Sparsa/.emacs.d and https://www.reddit.com/r/emacs/commen
     :hook ((flyspell-mode . my-flyspell-mode-hook)
            (text-mode . flyspell-mode)
            (prog-mode . flyspell-prog-mode))
-           )
-      ;;      (flyspell-mode . flyspell-popup-auto-correct-mode))
+    )
 
-  (use-package flyspell-popup
-    :bind
-    (:map flyspell-mode-map ("s-." . flyspell-popup-correct)))
+  ;; rapid mode entered by "C-u C-M-;", "C-u C-u" changes direction
+  ;; rapid mode moves through the document
+  (use-package flyspell-correct-ivy
+    :bind ("C-M-;" . flyspell-correct-wrapper)
+    :init
+    (setq flyspell-correct-interface #'flyspell-correct-ivy))
 #+end_src
 
 ***** grammar
@@ -841,10 +804,19 @@ Highlight various =.ANCHORS.= in comments.
 for better code navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package highlight-indent-guides
-    :hook (prog-mode . highlight-indent-guides-mode))
+    :hook (prog-mode . highlight-indent-guides-mode)
+    :config
+    (setq highlight-indent-guides-method 'character
+          highlight-indent-guides-character ?\|
+          ;; highlight-indent-guides-responsive 'stack
+          ;; highlight-indent-guides-delay 0
+          )
+    ;; (setq highlight-indent-guides-auto-odd-face-perc 15)
+    ;; (setq highlight-indent-guides-auto-even-face-perc 15)
+    ;; (setq highlight-indent-guides-auto-character-face-perc 20)
+    )
 
 #+END_SRC
-
 
 ** TODO Project Management and Navigation
 *** projectile
@@ -960,6 +932,44 @@ CLOSED: [2020-01-29 Wed 21:39]
   ;; (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 #+END_SRC
 
+*** IN-PROGRESS magit-todos
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; See TODOs in magit buffer
+  ;; need to also have other hl-todo keywords
+  ;; (use-package magit-todos
+  ;;   :config
+  ;;   (magit-todos-mode)
+  ;;   )
+  (use-package magit-todos
+    ;; :ensure t
+    ;; :load-path "~/CodeWorks/emacs/magit-todos"
+    :commands (magit-todos-mode)
+    :hook (magit-mode . magit-todos-mode)
+    :config
+    (setq magit-todos-recursive t
+          magit-todos-depth 100)
+    (custom-set-variables
+     '(magit-todos-keywords (list "TODO" "FIXME" "REVIEW")))
+    ;; :custom (magit-todos-keywords (list "TODO" "FIXME"))
+    )
+
+#+END_SRC
+
+*** IN-PROGRESS imenu
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; cool counsel based heading navigation
+  ;; need to work out how to have it alphabetical
+  (use-package imenu
+    :ensure nil
+    :bind (("C-M-s-," . imenu))
+    )
+
+  ;; not working
+  ;; (ivy-configure 'counsel-imenu
+  ;;    :update-fn 'auto)
+
+#+END_SRC
+
 ** TODO MAKEFILE
 See make-mode config here: https://www.emacswiki.org/emacs/MakefileMode
 and the makefile section here: https://github.com/emacs-tw/awesome-emacs#makefile
@@ -1035,7 +1045,22 @@ I want to change to the above packages, however this is been problematic.
     :config
     (all-the-icons-ivy-setup))
 
+  ;; (use-package ivy-prescient
+  ;;   :after counsel
+  ;;   :config
+  ;;   (ivy-prescient-mode)
+  ;;   )
+
+  (use-package counsel-projectile
+    :after projectile
+    :demand t
+    :config
+    (counsel-projectile-mode)
+    )
+
+  (use-package prescient)
   (use-package ivy-prescient
+    :demand t
     :after counsel
     :config
     (ivy-prescient-mode)
@@ -1651,3 +1676,25 @@ Change shortcuts for formatting font faces e.g., bold, italic, etc.
 Would like ace-window numbers in the modeline, but this is only for looks. Will keep here as a TODO and then review. Not important really.: xah-open-file-at-cursor
 ** TODO setup straight.el to replace quelpa
 ** TODO setup general.el for all keybindings
+* Experiments
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; cool counsel based heading navigation
+  ;; need to work out how to have it alphabetical
+  (use-package imenu
+    :ensure nil
+    :bind (("C-M-<" . imenu))
+    )
+
+
+  ;; R-lsp config, not really working as expected
+  (with-eval-after-load 'lsp-mode
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection '("R" "--slave" "-e" "languageserver::run()"))
+                      :major-modes '(ess-r-mode)
+                      :server-id 'lsp-R))
+    (add-hook 'R-mode-hook #'lsp-R-enable)
+    )
+
+  (ess :variables ess-r-backend 'lsp)
+#+END_SRC

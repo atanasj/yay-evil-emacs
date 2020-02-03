@@ -1364,7 +1364,7 @@ This used to access Zotero's citation picker via Better Bibtex.
     (do-applescript "tell application \"Emacs\" to activate")
     )
 
-  (global-set-key (kbd "s-y") 'aj/zotero-cayw)
+  (global-set-key (kbd "S-s-y") 'aj/zotero-cayw)
 #+end_src
 
 ** iTerm2 integration

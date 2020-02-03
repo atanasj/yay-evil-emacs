@@ -2,6 +2,64 @@
 #+Author: Ian Y.E. Pan
 #+Date: 2019
 Welcome! This Emacs "distro" is based on my personal Emacs configuration (on GNU Emacs 26.3). It's unopinionated and was created for general use in mind. The package settings are grouped in a logical manner, and I've documented as detailed as possible what each code snippet does in this file.
+* defcont
+from centaur emacs
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defconst sys/win32p
+    (eq system-type 'windows-nt)
+    "Are we running on a WinTel system?")
+
+  (defconst sys/linuxp
+    (eq system-type 'gnu/linux)
+    "Are we running on a GNU/Linux system?")
+
+  (defconst sys/macp
+    (eq system-type 'darwin)
+    "Are we running on a Mac system?")
+
+  (defconst sys/mac-x-p
+    (and (display-graphic-p) sys/macp)
+    "Are we running under X on a Mac system?")
+
+  (defconst sys/mac-cocoa-p
+    (featurep 'cocoa)
+    "Are we running with Cocoa on a Mac system?")
+
+  (defconst sys/linux-x-p
+    (and (display-graphic-p) sys/linuxp)
+    "Are we running under X on a GNU/Linux system?")
+
+  (defconst sys/cygwinp
+    (eq system-type 'cygwin)
+    "Are we running on a Cygwin system?")
+
+  (defconst sys/rootp
+    (string-equal "root" (getenv "USER"))
+    "Are you using ROOT user?")
+
+  (defconst emacs/>=25p
+    (>= emacs-major-version 25)
+    "Emacs is 25 or above.")
+
+  (defconst emacs/>=26p
+    (>= emacs-major-version 26)
+    "Emacs is 26 or above.")
+
+  (defconst emacs/>=27p
+    (>= emacs-major-version 27)
+    "Emacs is 27 or above.")
+
+  (defconst emacs/>=25.3p
+    (or emacs/>=26p
+        (and (= emacs-major-version 25) (>= emacs-minor-version 3)))
+    "Emacs is 25.3 or above.")
+
+  (defconst emacs/>=25.2p
+    (or emacs/>=26p
+        (and (= emacs-major-version 25) (>= emacs-minor-version 2)))
+    "Emacs is 25.2 or above.")
+
+#+END_SRC
 
 * Settings without corresponding packages
 Clean up the UI and enhance some basic defaults defined in "C Source Code". The variable ~ian/indent-width~ controls the default indentation across various programming modes. The default is 4, you can change this variable to 2 or any other indentation width you prefer, and the change will be made across all programming language modes including C, C++, Java, JavaScript, Python etc.
@@ -248,39 +306,127 @@ Delete intermediate buffers when navigating through dired.
       (eval-after-load "dired"
         #'(lambda ()
             (put 'dired-find-alternate-file 'disabled nil)
-            (define-key dired-mode-map (kbd "RET") #'dired-find-alternate-file))))
+            (define-key dired-mode-map (kbd "RET") #'dired-find-alternate-file)))
+      ;; delete from here if needed
+      ;; Show directory first
+      (setq dired-listing-switches "-alh --group-directories-first")
+
+      ;; Quick sort dired buffers via hydra
+      (use-package dired-quick-sort
+        :bind (:map dired-mode-map
+                    ("S" . hydra-dired-quick-sort/body)))
+
+      ;; Show git info in dired
+      (use-package dired-git-info
+        :bind (:map dired-mode-map
+                    (")" . dired-git-info-mode)))
+
+      ;; Allow rsync from dired buffers
+      ;; (use-package dired-rsync
+      ;;   :bind (:map dired-mode-map
+      ;;               ("C-c C-r" . dired-rsync)))
+
+      ;; Colourful dired
+      (use-package diredfl
+        :init (diredfl-global-mode 1))
+
+      ;; Shows icons
+      (use-package all-the-icons-dired
+        :diminish
+        :hook (dired-mode . all-the-icons-dired-mode)
+        :config
+        (with-no-warnings
+          (defun my-all-the-icons-dired--display ()
+            "Display the icons of files in a dired buffer."
+            (when dired-subdir-alist
+              (let ((inhibit-read-only t))
+                (save-excursion
+                  ;; TRICK: Use TAB to align icons
+                  (setq-local tab-width 1)
+                  (goto-char (point-min))
+                  (while (not (eobp))
+                    (when (dired-move-to-filename nil)
+                      (insert " ")
+                      (let ((file (dired-get-filename 'verbatim t)))
+                        (unless (member file '("." ".."))
+                          (let ((filename (dired-get-filename nil t)))
+                            (if (file-directory-p filename)
+                                (insert (all-the-icons-icon-for-dir filename nil ""))
+                              (insert (all-the-icons-icon-for-file file :v-adjust -0.05))))
+                          ;; Align and keep one space for refeshing after some operations
+                          (insert "\t "))))
+                    (forward-line 1))))))
+          (advice-add #'all-the-icons-dired--display
+                      :override #'my-all-the-icons-dired--display)))
+
+      ;; Extra Dired functionality
+     (use-package dired-aux :ensure nil)
+     (use-package dired-x
+      :ensure nil
+      :demand
+      :config
+      (let ((cmd "open"
+             ;; (cond
+             ;;      (sys/mac-x-p "open")
+             ;;      (sys/linux-x-p "xdg-open")
+             ;;      (sys/win32p "start")
+             ;;      (t ""))
+                 ))
+        (setq dired-guess-shell-alist-user
+              `(("\\.pdf\\'" ,cmd)
+                ("\\.docx\\'" ,cmd)
+                ("\\.\\(?:djvu\\|eps\\)\\'" ,cmd)
+                ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" ,cmd)
+                ("\\.\\(?:xcf\\)\\'" ,cmd)
+                ("\\.csv\\'" ,cmd)
+                ("\\.tex\\'" ,cmd)
+                ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
+                ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
+                ("\\.html?\\'" ,cmd)
+                ("\\.md\\'" ,cmd))))
+
+      (setq dired-omit-files
+            (concat dired-omit-files
+                    "\\|^.DS_Store$\\|^.projectile$\\|^.git*\\|^.svn$\\|^.vscode$\\|\\.js\\.meta$\\|\\.meta$\\|\\.elc$\\|^.emacs.*"))))
+
+  ;; `find-dired' alternative using `fd'
+  (when (executable-find "fd")
+    (use-package fd-dired))
+
+    ;; uncomment from here
     ;; add subtree searching so as not to use
-    (use-package dired-subtree
-      :config
-      (bind-keys :map dired-mode-map
-                 ("i" . dired-subtree-insert)
-                 (";" . dired-subtree-remove)))
-    ;; add some colour
-    (use-package dired-rainbow
-      :config
-      (progn
-        (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
-        (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
-        (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
-        (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
-        (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
-        (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
-        (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
-        (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
-        (dired-rainbow-define log "#c17d11" ("log"))
-        (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
-        (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
-        (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
-        (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
-        (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-        (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
-        (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
-        (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
-        (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
-        (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
-        (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
-        ))
+    ;; (use-package dired-subtree
+    ;;   :config
+    ;;   (bind-keys :map dired-mode-map
+    ;;              ("i" . dired-subtree-insert)
+    ;;              (";" . dired-subtree-remove)))
+    ;; ;; add some colour
+    ;; (use-package dired-rainbow
+    ;;   :config
+    ;;   (progn
+    ;;     (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+    ;;     (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+    ;;     (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+    ;;     (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+    ;;     (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+    ;;     (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+    ;;     (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+    ;;     (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+    ;;     (dired-rainbow-define log "#c17d11" ("log"))
+    ;;     (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+    ;;     (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+    ;;     (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+    ;;     (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    ;;     (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    ;;     (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+    ;;     (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+    ;;     (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+    ;;     (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+    ;;     (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+    ;;     (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
+    ;;     ))
 #+end_src
+
 ** Dump custom-set-variables to a garbage file and don't load it
 #+BEGIN_SRC emacs-lisp
   (use-package cus-edit

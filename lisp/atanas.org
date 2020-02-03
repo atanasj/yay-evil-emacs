@@ -272,6 +272,10 @@ From kjhealy:
   ;; setup ess for r-modes
   ;; not convinced need all this, as had simpler config  and same behaviour
   (use-package ess
+    ;; the below works, but might be useful for hte centaur config
+    ;; :init
+    ;; (add-hook 'ess-r-mode-hook 'eglot-ensure)
+    ;; (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
     :mode (
            ("/R/.*\\.q\\'"       . R-mode)
            ("\\.[rR]\\'"         . R-mode)
@@ -322,8 +326,8 @@ From kjhealy:
     (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     :hook
     ;; enable lintr
-    (ess-mode . (lambda ()
-                  (flycheck-mode t)))
+    ;; (ess-mode . (lambda ()
+    ;;               (flycheck-mode t)))
     ;; ess-shift-enter to execute code
     (ess-mode . (lambda()
                   (local-set-key [(shift return)] 'my-ess-eval)))
@@ -337,10 +341,10 @@ From kjhealy:
     )
 
 
-    ;; below disabled but left here, golden-ratio seems to interfere with company
-    ;; have set kbd for to enable company mode as "<f12>""
-    ;; (ess-mode . company-mode)
-    ;; (ess-r-mode . company-mode)
+  ;; below disabled but left here, golden-ratio seems to interfere with company
+  ;; have set kbd for to enable company mode as "<f12>""
+  ;; (ess-mode . company-mode)
+  ;; (ess-r-mode . company-mode)
 
 #+end_src
 **** ess-R-data-view
@@ -1206,6 +1210,11 @@ https://github.com/emacsmirror/rainbow-mode
 CLOSED: [2020-01-22 Wed 11:00]
 https://github.com/company-mode/company-quickhelp
 #+BEGIN_SRC emacs-lisp :tangle no
+
+  ;; Better sorting and filtering
+  (use-package company-prescient
+    :init (company-prescient-mode 1))
+
   (use-package pos-tip)
   ;; pop-up helpmenu when company used
   ;; this may become annoying, so be aware
@@ -1224,7 +1233,11 @@ alternative to above
   ;; Icons and quickhelp
   (use-package company-box
     :diminish
-    :hook (company-mode . company-box-mode)
+    :hook
+    (
+     (company-mode . company-box-mode)
+     ;; (eglot-managed-mode. company-box-mode)
+     )
     :init (setq company-box-backends-colors nil
                 company-box-show-single-candidate t
                 company-box-max-candidates 50
@@ -1677,7 +1690,7 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
 ** TODO setup straight.el to replace quelpa
 ** TODO setup general.el for all keybindings
 * Experiments
-
+** lsp
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; cool counsel based heading navigation
   ;; need to work out how to have it alphabetical
@@ -1697,4 +1710,17 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     )
 
   (ess :variables ess-r-backend 'lsp)
+#+END_SRC
+
+** eglot-config
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; this is working well in r-mode
+  ;; not sure about python-mode
+  ;; lsp-mode maybe better for python when I get to configuring it
+  (use-package eglot
+     :init
+     (add-hook 'ess-r-mode-hook 'eglot-ensure)
+     (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
+     (add-hook 'python-mode 'eglot-ensure)
+     )
 #+END_SRC

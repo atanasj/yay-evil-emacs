@@ -479,7 +479,7 @@ Will leave in case change mind.
 ***** Ebib
 This needs to come before the "openwith" function below
 #+source: manage-bib-files
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (use-package ebib
     :config
     (setq ebib-preload-bib-files '("/Users/atanas/.pandoc/MyLib.bib")
@@ -1044,11 +1044,6 @@ I want to change to the above packages, however this is been problematic.
     :bind (("C-s" . swiper)
            ("C-r" . swiper)))
 
-  (use-package all-the-icons-ivy
-    :ensure t
-    :config
-    (all-the-icons-ivy-setup))
-
   ;; (use-package ivy-prescient
   ;;   :after counsel
   ;;   :config
@@ -1068,6 +1063,14 @@ I want to change to the above packages, however this is been problematic.
     :after counsel
     :config
     (ivy-prescient-mode)
+    )
+
+  (use-package all-the-icons-ivy
+    :ensure t
+    :config
+    (all-the-icons-ivy-setup)
+    ;; (setq all-the-icons-ivy-file-commands
+    ;;       '(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile-find-file counsel-projectile-find-dir))
     )
 
 #+END_SRC
@@ -1674,7 +1677,8 @@ this is too confusing to use, although it does work.
    (lambda ()
      (define-key markdown-mode-map "\C-c[" 'markdown-reftex-citation)))
 #+end_src
-*** TODO ivy-bibtex
+*** CANCELED ivy-bibtex
+CLOSED: [2020-02-04 Tue 01:34]
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; TODO when get this working, how to insert citation without pre and post-notes
   (use-package ivy-bibtex
@@ -1699,10 +1703,73 @@ this is too confusing to use, although it does work.
     ("C-c C-z" . ivy-bibtex)
     )
 #+END_SRC
+*** IN-PROGRESS helm-bibtex
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; TODO when get this working, how to insert citation without pre and post-notes
+  (use-package helm-bibtex
+    :config
+    (setq bibtex-completion-bibliography '"~/.pandoc/MyLib.bib")
+    (setq bibtex-completion-pdf-field "File")
+    (setq bibtex-completion-pdf-open-function
+          (lambda (fpath)
+            (call-process "open" nil 0 nil "-a" "/Applications/PDF Expert.app" fpath)))
+    (setq bibtex-completion-display-formats
+          '((article       . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} ${journal:40}")
+            (inbook        . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+            (incollection  . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+            (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+            (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*}")))
+    (setq bibtex-completion-additional-search-fields '(keywords))
+    (setq bibtex-completion-pdf-symbol "⌘")
+    (setq bibtex-completion-notes-symbol "✎")
+    (setq bibtex-completion-format-citation-functions
+          '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+            (latex-mode    . bibtex-completion-format-citation-cite)
+            (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+            (default       . bibtex-completion-format-citation-default)))
+    (setq helm-bibtex-default-action 'helm-bibtex-insert-citation)
+    :bind
+    ("s-b" . helm-bibtex)
+    )
+#+END_SRC
 
-** TODO Python-IDE
+** IN-PROGRESS Python-IDE
 Setup Python-IDE similar to R-IDE
-See Centuar setup
+See Centuar setup, not sure if this makes it a REPL though.
+lsp-mode seems to work well with this.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Python Mode
+  ;; Install:
+  ;;   pip install pyflakes
+  ;;   pip install autopep8
+  (use-package python
+    :ensure nil
+    :hook (inferior-python-mode . (lambda ()
+                                    (process-query-on-exit-flag
+                                     (get-process "Python"))))
+    :init
+    ;; Disable readline based native completion
+    (setq python-shell-completion-native-enable nil)
+    :config
+    ;; Default to Python 3. Prefer the versioned Python binaries since some
+    ;; systems stupidly make the unversioned one point at Python 2.
+    (when (and (executable-find "python3")
+               (string= python-shell-interpreter "python"))
+      (setq python-shell-interpreter "python3"))
+    ;; Env vars
+    (with-eval-after-load 'exec-path-from-shell
+      (exec-path-from-shell-copy-env "PYTHONPATH"))
+    ;; Live Coding in Python
+    (use-package live-py-mode)
+
+    ;; Format using YAPF
+    ;; Install: pip install yapf
+    (use-package yapfify
+      :diminish yapf-mode
+      :hook (python-mode . yapf-mode)))
+
+#+END_SRC
+
 ** TODO R-IDE
 noIt would be good to auto enable company mode on R windows, however this seems to be problematic with golden ratio.
 As such, have a keybinding enable to toggle company mode.
@@ -1816,4 +1883,56 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
                                         :height 1.25)
                  " ")
               "Project: "))))
+#+END_SRC
+** treemacs
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package treemacs
+    :commands (treemacs-follow-mode
+               treemacs-filewatch-mode
+               treemacs-fringe-indicator-mode
+               treemacs-git-mode)
+    :bind ([f6] . treemacs)
+    ;; (([f6]        . treemacs)
+    ;;        ("M-0"       . treemacs-select-window)
+    ;;        ("C-x 1"     . treemacs-delete-other-windows)
+    ;;        ("C-x t 1"   . treemacs-delete-other-windows)
+    ;;        ("C-x t t"   . treemacs)
+    ;;        ("C-x t b"   . treemacs-bookmark)
+    ;;        ("C-x t C-t" . treemacs-find-file)
+    ;;        ("C-x t M-t" . treemacs-find-tag)
+    ;;        :map treemacs-mode-map
+    ;;        ([mouse-1]   . treemacs-single-click-expand-action))
+    :config
+    (setq treemacs-sorting                 'alphabetic-case-insensitive-desc
+          ;; treemacs-collapse-dirs           (if treemacs-python-executable 3 0)
+          treemacs-follow-after-init       t
+          treemacs-is-never-other-window   t
+          treemacs-silent-filewatch        t
+          treemacs-silent-refresh          t
+          treemacs-width                   30)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    ;; (pcase (cons (not (null (executable-find "git")))
+    ;;              (not (null (executable-find "python3"))))
+    ;;   (`(t . t)
+    ;;    (treemacs-git-mode 'deferred))
+    ;;   (`(t . _)
+    ;;    (treemacs-git-mode 'simple)))
+
+    ;; Projectile integration
+    (use-package treemacs-projectile
+      :after projectile
+      :bind (:map projectile-command-map
+                  ("h" . treemacs-projectile)))
+
+    (use-package treemacs-magit
+      :after magit
+      :commands treemacs-magit--schedule-update
+      :hook ((magit-post-commit
+              git-commit-post-finish
+              magit-post-stage
+              magit-post-unstage)
+             . treemacs-magit--schedule-update)))
+
 #+END_SRC

@@ -4,7 +4,7 @@
 Welcome! This Emacs "distro" is based on my personal Emacs configuration (on GNU Emacs 26.3). It's unopinionated and was created for general use in mind. The package settings are grouped in a logical manner, and I've documented as detailed as possible what each code snippet does in this file.
 * defcont
 from centaur emacs
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   (defconst sys/win32p
     (eq system-type 'windows-nt)
     "Are we running on a WinTel system?")
@@ -322,7 +322,7 @@ Delete intermediate buffers when navigating through dired.
                     (")" . dired-git-info-mode)))
 
       ;; Allow rsync from dired buffers
-      ;; (use-package dired-rsync
+      ;drw3; (use-package dired-rsync
       ;;   :bind (:map dired-mode-map
       ;;               ("C-c C-r" . dired-rsync)))
 
@@ -462,6 +462,59 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
     )
 
 #+END_SRC
+*** treemacs
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package treemacs
+    :commands (treemacs-follow-mode
+               treemacs-filewatch-mode
+               treemacs-fringe-indicator-mode
+               treemacs-git-mode)
+    :bind ([f6] . treemacs)
+    ;; (([f6]        . treemacs)
+    ;;        ("M-0"       . treemacs-select-window)
+    ;;        ("C-x 1"     . treemacs-delete-other-windows)
+    ;;        ("C-x t 1"   . treemacs-delete-other-windows)
+    ;;        ("C-x t t"   . treemacs)
+    ;;        ("C-x t b"   . treemacs-bookmark)
+    ;;        ("C-x t C-t" . treemacs-find-file)
+    ;;        ("C-x t M-t" . treemacs-find-tag)
+    ;;        :map treemacs-mode-map
+    ;;        ([mouse-1]   . treemacs-single-click-expand-action))
+    :config
+    (setq treemacs-sorting                 'alphabetic-case-insensitive-desc
+          ;; treemacs-collapse-dirs           (if treemacs-python-executable 3 0)
+          treemacs-follow-after-init       t
+          treemacs-is-never-other-window   t
+          treemacs-silent-filewatch        t
+          treemacs-silent-refresh          t
+          treemacs-width                   30)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    ;; (pcase (cons (not (null (executable-find "git")))
+    ;;              (not (null (executable-find "python3"))))
+    ;;   (`(t . t)
+    ;;    (treemacs-git-mode 'deferred))
+    ;;   (`(t . _)
+    ;;    (treemacs-git-mode 'simple)))
+
+    ;; Projectile integration
+    (use-package treemacs-projectile
+      :after projectile
+      :bind (:map projectile-command-map
+                  ("h" . treemacs-projectile)))
+
+    (use-package treemacs-magit
+      :after magit
+      :commands treemacs-magit--schedule-update
+      :hook ((magit-post-commit
+              git-commit-post-finish
+              magit-post-stage
+              magit-post-unstage)
+             . treemacs-magit--schedule-update)))
+
+#+END_SRC
+
 *** Modeline
 **** all-the-icons
 #+BEGIN_SRC emacs-lisp

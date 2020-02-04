@@ -1232,6 +1232,7 @@ https://github.com/company-mode/company-quickhelp
     (company-quickhelp-mode))
 #+END_SRC
 *** company box
+
 alternative to above
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; Better sorting and filtering
@@ -1829,9 +1830,16 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     (add-hook 'ess-r-mode-hook 'eglot-ensure)
     (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
     (add-hook 'python-mode 'eglot-ensure)
-    :after company-box
+    ;; :after company-box
+    :bind
+    ("C-c h" . eglot-help-at-point)
+    ("C-c <f6>" . xref-find-definitions)
     )
+  ;; (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point)
+  ;; (define-key eglot-mode-map (kbd "<f6>") 'xref-find-definitions)
 #+END_SRC
+
+
 ** iBuffer
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package ibuffer

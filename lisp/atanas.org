@@ -1057,6 +1057,7 @@ I want to change to the above packages, however this is been problematic.
 
   (use-package ivy-rich
     :after ivy
+    :init (ivy-rich-mode 1)
     :custom
     (ivy-virtual-abbreviate 'full
                             ivy-rich-switch-buffer-align-virtual-buffer t

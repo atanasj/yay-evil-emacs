@@ -1991,6 +1991,8 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
     :init
     (setq lsp-keymap-prefix "s-l")
+    :bind (:map lsp-mode-map
+                ("C-c C-d C-w" . lsp-describe-thing-at-point))
     :hook (
            (ess-r-mode . lsp)
            ;; if you want which-key integration
@@ -2002,9 +2004,12 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
           lsp-prefer-flymake nil
           )
     )
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; (use-package lsp-python-ms
   ;;     :demand
   ;;     :ensure nil
@@ -2021,25 +2026,25 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
   ;;           "~/python-language-server/output/bin/release/osx-x64/publish/microsoft.python.languageserver")
   ;;     (setq lsp-python-ms-python-executable-cmd "/Users/tejas/anaconda3/envs/tf/bin/python"))
 
-    (use-package lsp-ui
-    :ensure t
+  (use-package lsp-ui
+    ;; :ensure t
     ;; :requires use-package-hydra
-    :commands lsp-ui-mode
-    :config
-    (setq lsp-ui-sideline-enable t)
-    (setq lsp-print-io nil)
-    (setq lsp-prefer-flymake :none)
-    (setq flycheck-checker-error-threshold 10000)
-    (setq lsp-ui-flycheck-enable t)
-    (setq-local flycheck-checker 'python-flake8)
-    (setq lsp-ui-flycheck-list-position 'right)
-    (setq lsp-ui-flycheck-live-reporting t)
-    (setq lsp-ui-peek-enable t)
-    (setq lsp-ui-peek-list-width 60)
-    (setq lsp-ui-peek-peek-height 25)
-    (setq lsp-ui-imenu-enable t)
-    (setq lsp-ui-doc-enable t)
-    (setq lsp-ui-sideline-ignore-duplicate t))
+    :commands lsp-ui-mode)
+  ;; :config
+  ;; (setq lsp-ui-sideline-enable t)
+  ;; (setq lsp-print-io nil)
+  ;; (setq lsp-prefer-flymake :none)
+  ;; (setq flycheck-checker-error-threshold 10000)
+  ;; (setq lsp-ui-flycheck-enable t)
+  ;; (setq-local flycheck-checker 'python-flake8)
+  ;; (setq lsp-ui-flycheck-list-position 'right)
+  ;; (setq lsp-ui-flycheck-live-reporting t)
+  ;; (setq lsp-ui-peek-enable t)
+  ;; (setq lsp-ui-peek-list-width 60)
+  ;; (setq lsp-ui-peek-peek-height 25)
+  ;; (setq lsp-ui-imenu-enable t)
+  ;; (setq lsp-ui-doc-enable t)
+  ;; (setq lsp-ui-sideline-ignore-duplicate t))
 #+END_SRC
 
 

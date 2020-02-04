@@ -776,6 +776,7 @@ Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a m
       (setq org-agenda-text-search-extra-files '(agenda-archives))
       (setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
       (setq org-enforce-todo-dependencies t)
+      (setq org-file-apps 'org-file-apps-defaults-macosx)
       )
     )
 

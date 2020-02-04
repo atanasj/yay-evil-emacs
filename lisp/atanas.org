@@ -1073,6 +1073,11 @@ I want to change to the above packages, however this is been problematic.
     ;;       '(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile-find-file counsel-projectile-find-dir))
     )
 
+  (use-package imenu-anywhere
+    :bind
+    ("C-c M-i" . ivy-imenu-anywhere)
+    )
+
 #+END_SRC
 
 *** DONE [#A] fix-word
@@ -1642,11 +1647,13 @@ This works, but can error sometimes no open when filename contains spaces.
 
 
 * TODO Config Tasks
+** TODO Latex-IDE
+See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_ide/
 ** TODO Citations
 This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
-*** TODO reftex
-this is too confusing to use, although it does work.
-#+source: reftex-md
+*** CANCELED reftex
+CLOSED: [2020-02-04 Tue 10:23]
+Use `helm-bibtex` instead.
 #+begin_src emacs-lisp :tangle no
   ;; reftex in markdown mode
 
@@ -1737,6 +1744,14 @@ CLOSED: [2020-02-04 Tue 01:34]
 Setup Python-IDE similar to R-IDE
 See Centuar setup, not sure if this makes it a REPL though.
 lsp-mode seems to work well with this.
+See these too:
+https://www.reddit.com/r/emacs/comments/aosged/any_tips_for_configuring_emacs_for_python/
+
+https://realpython.com/emacs-the-best-python-editor/
+
+https://github.com/warchiefx/dotemacs/blob/master/site-wcx/wcx-python.el
+https://github.com/warchiefx/dotemacs/blob/master/site-wcx/wcx-lsp.el
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; Python Mode
   ;; Install:

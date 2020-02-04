@@ -1029,16 +1029,6 @@ I want to change to the above packages, however this is been problematic.
     (ivy-mode)
     )
 
-  (use-package ivy-rich
-    :after ivy
-    :custom
-    (ivy-virtual-abbreviate 'full
-                            ivy-rich-switch-buffer-align-virtual-buffer t
-                            ivy-rich-path-style 'abbrev)
-    :config
-    (ivy-set-display-transformer 'ivy-switch-buffer
-                                 'ivy-rich-switch-buffer-transformer))
-
   (use-package swiper
     :after ivy
     :bind (("C-s" . swiper)
@@ -1065,8 +1055,19 @@ I want to change to the above packages, however this is been problematic.
     (ivy-prescient-mode)
     )
 
+  (use-package ivy-rich
+    :after ivy
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev)
+    :config
+    (ivy-set-display-transformer 'ivy-switch-buffer
+                                 'ivy-rich-switch-buffer-transformer))
+
   (use-package all-the-icons-ivy
     :ensure t
+    :after ivy-rich
     :config
     (all-the-icons-ivy-setup)
     ;; (setq all-the-icons-ivy-file-commands

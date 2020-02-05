@@ -542,40 +542,41 @@ See https://github.com/Sparsa/.emacs.d and https://www.reddit.com/r/emacs/commen
 **** Spelling
 #+source: spelling
 #+begin_src emacs-lisp :tangle yes
-  ;; can't remember where I found this one
-  (defun my-flyspell-mode-hook ()
-    ;; Do things when flyspell enters or leaves flyspell mode
-    ;; Added manually
-    ;;
-    ;; Magic Mouse Fixes
-    (if flyspell-mode (progn
-                        (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-                        (define-key flyspell-mouse-map [mouse-3] #'undefined))
-      nil)
-    ;; End my-flyspell-mode-hook
-    )
-  ;; solution from:
-  ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
-  (use-package flyspell
-    :init
-    (progn
-      (flyspell-mode 1))
-    :config
-    (progn
-      (setq ispell-program-name "aspell")
-      (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+    ;; can't remember where I found this one
+    (defun my-flyspell-mode-hook ()
+      ;; Do things when flyspell enters or leaves flyspell mode
+      ;; Added manually
+      ;;
+      ;; Magic Mouse Fixes
+      (if flyspell-mode (progn
+                          (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+                          (define-key flyspell-mouse-map [mouse-3] #'undefined))
+        nil)
+      ;; End my-flyspell-mode-hook
       )
-    :hook ((flyspell-mode . my-flyspell-mode-hook)
-           (text-mode . flyspell-mode)
-           (prog-mode . flyspell-prog-mode))
-    )
+    ;; solution from:
+    ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
+    (use-package flyspell
+      :init
+      (progn
+        (flyspell-mode 1))
+      :config
+      (progn
+        (setq ispell-program-name "aspell")
+        (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+        )
+      :hook ((flyspell-mode . my-flyspell-mode-hook)
+             (text-mode . flyspell-mode)
+             (prog-mode . flyspell-prog-mode))
+      )
 
-  ;; rapid mode entered by "C-u C-M-;", "C-u C-u" changes direction
-  ;; rapid mode moves through the document
-  (use-package flyspell-correct-ivy
-    :bind ("C-M-;" . flyspell-correct-wrapper)
-    :init
-    (setq flyspell-correct-interface #'flyspell-correct-ivy))
+    ;; rapid mode entered by "C-u C-M-;", "C-u C-u" changes direction
+    ;; rapid mode moves through the document
+    (use-package flyspell-correct-ivy
+      :bind ("C-M-;" . flyspell-correct-wrapper)
+      :init
+      (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
 #+end_src
 
 ***** grammar
@@ -1739,6 +1740,7 @@ CLOSED: [2020-02-04 Tue 01:34]
             (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
             (default       . bibtex-completion-format-citation-default)))
     (setq helm-bibtex-default-action 'helm-bibtex-insert-citation)
+    (setq helm-bibtex-full-frame nil)
     :bind
     ("s-b" . helm-bibtex)
     )

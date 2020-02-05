@@ -900,10 +900,11 @@ for better code navigation
 *** imenu-list
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package imenu-list
-    :bind ("s-\\" . imenu-list-smart-toggle)
+    :bind
+    ("s-\\" . imenu-list-smart-toggle)
     :config
-    (setq imenu-list-focus-after-activation t)
-    (setq imenu-list-auto-resize t)
+    (setq imenu-list-focus-after-activation t
+          imenu-list-size 0.236)
     (imenu-list-minor-mode 1)
     )
 

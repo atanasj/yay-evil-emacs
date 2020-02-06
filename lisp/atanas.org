@@ -99,8 +99,8 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 CLOSED: [2020-01-23 Thu 01:58]
 
 #+source: max-spec
-#+begin_src emacs-lisp
-
+#+begin_src emacs-lisp :tangle yes
+  (setq-default cursor-type 'bar)
 #+end_src
 
 
@@ -299,9 +299,13 @@ From kjhealy:
     ;;       ess-expression-offset 2
     ;;       ess-nuke-trailing-whitespace-p t
     ;;       ess-default-style 'DEFAULT)
-    (setq ess-r-backend 'lsp
-          ess-style 'RStudio
-          ess-use-flymake nil)
+    (setq ess-style 'RStudio
+          ;; the below seem to be important if wantint to use lsp-mode
+          ess-use-flymake nil
+          ess-use-company nil
+          ess-use-eldoc nil
+          ess-r-backend 'lsp
+          )
     (setq ess-auto-width 'window)
     ;; Toggle underscore off no replacement of _ for <-
     (setq ess-smart-S-assign-key nil)
@@ -327,10 +331,11 @@ From kjhealy:
     (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     :hook
-    enable lintr
-    (ess-mode . (lambda ()
-                  (flycheck-mode t)))
-    ess-shift-enter to execute code
+    ;; not sure if the below was negatively interacting with lsp and eglot
+    ;; enable lintr
+    ;; (ess-mode . (lambda ()
+    ;;               (flycheck-mode t)))
+    ;; ess-shift-enter to execute code
     (ess-mode . (lambda()
                   (local-set-key [(shift return)] 'my-ess-eval)))
     (inferior-ess-mode . (lambda()
@@ -2479,17 +2484,11 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
 
 
 ** eglot-config
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; this is working well in r-mode
   ;; not sure about python-mode
   ;; lsp-mode maybe better for python when I get to configuring it
-  (use-package eglot
-    :init
-    (add-hook 'ess-r-mode-hook 'eglot-ensure)
-    (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
-    (add-hook 'python-mode 'eglot-ensure)
-    :after company-box
-    )
+  (use-package eglot)
 #+END_SRC
 ** iBuffer
 #+BEGIN_SRC emacs-lisp :tangle yes

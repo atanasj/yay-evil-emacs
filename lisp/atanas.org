@@ -95,12 +95,11 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 | (lambda nil (org-bullets-mode 1)) | org-clock-load | pandoc-mode | org-bullets-mode | org-indent-mode | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-block-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
 
 * Settings without corresponding packages
-** CANCELED max-specpdl-size 50000
-CLOSED: [2020-01-23 Thu 01:58]
-
-#+source: max-spec
+** various
 #+begin_src emacs-lisp
-
+  ;; chage cursor from block to bar
+  ;; from ansser: https://emacs.stackexchange.com/questions/392/how-to-change-the-cursor-type-and-color
+  (setq-default cursor-type 'bar)
 #+end_src
 
 

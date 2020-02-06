@@ -96,7 +96,7 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 
 * Settings without corresponding packages
 ** various
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; chage cursor from block to bar
   ;; from ansser: https://emacs.stackexchange.com/questions/392/how-to-change-the-cursor-type-and-color
   (setq-default cursor-type 'bar)

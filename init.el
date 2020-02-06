@@ -46,6 +46,10 @@
 (require 'org)
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
 
+;; chage cursor from block to bar
+;; from ansser: https://emacs.stackexchange.com/questions/392/how-to-change-the-cursor-type-and-color
+(setq-default cursor-type 'bar)
+
 (server-start); start emacs in server mode so can list as editor
 
 (provide 'init)

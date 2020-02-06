@@ -303,8 +303,8 @@ From kjhealy:
           ;; the below seem to be important if wantint to use lsp-mode
           ess-use-flymake nil
           ess-use-company nil
-          ess-use-eldoc nil
-          ess-r-backend 'lsp
+          ;; ess-use-eldoc nil
+          ;; ess-r-backend 'lsp
           )
     (setq ess-auto-width 'window)
     ;; Toggle underscore off no replacement of _ for <-
@@ -343,8 +343,8 @@ From kjhealy:
                            (local-set-key [C-down] 'comint-next-input)))
     (Rnw-mode . (lambda()
                   (local-set-key [(shift return)] 'my-ess-eval)))
-    (ess-mode . company-mode)
-    (inferior-ess-mode . company-mode)
+    ;; (ess-mode . company-mode)
+    ;; (inferior-ess-mode . company-mode)
     )
 
 
@@ -2231,7 +2231,7 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
 ** TODO setup general.el for all keybindings
 * Experiments
 ** lsp
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
 
   (use-package lsp-mode
     :diminish
@@ -2412,7 +2412,7 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
 #+END_SRC
 
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; cool counsel based heading navigation
   ;; need to work out how to have it alphabetical
   ;; (use-package imenu
@@ -2489,7 +2489,9 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
   ;; not sure about python-mode
   ;; lsp-mode maybe better for python when I get to configuring it
   (use-package eglot)
+
 #+END_SRC
+
 ** iBuffer
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package ibuffer

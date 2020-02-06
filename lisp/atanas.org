@@ -226,7 +226,7 @@ This is taken mostly from the kjhealy and the spacemacs config. May need to go o
  http://www.emacswiki.org/emacs/EmacsSpeaksStatistics,
  FelipeCsaszar. Adapted to split vertically instead of horizontally.
 #+src-name: ess-shift-enter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq ess-ask-for-ess-directory t
         ess-local-process-name "R"
         ansi-color-for-comint-mode 'filter
@@ -293,17 +293,24 @@ From kjhealy:
     ;; (require 'ess-r-mode)
     (use-package ess-r-mode
       :load-path "elpa/ess/")
-    (setq ess-first-continued-statement-offset 2
-          ess-continued-statement-offset 0
-          ess-expression-offset 2
-          ess-nuke-trailing-whitespace-p t
-          ess-default-style 'DEFAULT)
+    ;; ess tab style
+    (setq ess-set-style 'RStudio)
+    ;; lintr setup
+    ;; (setq ess-r-flymake-linters "lintr::default_linters")
     ;; auto-width
     (setq ess-auto-width 'window)
     ;; Toggle underscore off no replacement of _ for <-
     (setq ess-smart-S-assign-key nil)
     ;; Stop R repl eval from blocking emacs.
     (setq ess-eval-visibly 'nowait)
+
+    (setq ess-ask-for-ess-directory t
+          ess-local-process-name "R"
+          ansi-color-for-comint-mode 'filter
+          comint-scroll-to-bottom-on-input t
+          comint-scroll-to-bottom-on-output t
+          comint-move-point-for-output t)
+
     (defun tide-insert-assign ()
       "Insert an assignment <-"
       (interactive)
@@ -328,13 +335,13 @@ From kjhealy:
     ;; (ess-mode . (lambda ()
     ;;               (flycheck-mode t)))
     ;; ess-shift-enter to execute code
-    (ess-mode . (lambda()
-                  (local-set-key [(shift return)] 'my-ess-eval)))
-    (inferior-ess-mode . (lambda()
-                           (local-set-key [C-up] 'comint-previous-input)
-                           (local-set-key [C-down] 'comint-next-input)))
-    (Rnw-mode . (lambda()
-                  (local-set-key [(shift return)] 'my-ess-eval)))
+    ;; (ess-mode . (lambda()
+    ;;               (local-set-key [(shift return)] 'my-ess-eval)))
+    ;; (inferior-ess-mode . (lambda()
+    ;;                        (local-set-key [C-up] 'comint-previous-input)
+    ;;                        (local-set-key [C-down] 'comint-next-input)))
+    ;; (Rnw-mode . (lambda()
+    ;;               (local-set-key [(shift return)] 'my-ess-eval)))
     (ess-mode . company-mode)
     (inferior-ess-mode . company-mode)
     )
@@ -1833,7 +1840,7 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     :init
     (add-hook 'ess-r-mode-hook 'eglot-ensure)
     (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
-    (add-hook 'python-mode 'eglot-ensure)
+    ;; (add-hook 'python-mode 'eglot-ensure)
     ;; :after company-box
     :bind
     ("C-c h" . eglot-help-at-point)

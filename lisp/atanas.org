@@ -1650,23 +1650,23 @@ https://github.com/emacsmirror/rainbow-mode
 *** DONE [#A] company-quick help (and pos-tip)
 CLOSED: [2020-01-22 Wed 11:00]
 https://github.com/company-mode/company-quickhelp
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
 
   ;; Better sorting and filtering
   (use-package company-prescient
     :init (company-prescient-mode 1))
 
-  (use-package pos-tip)
-  ;; pop-up helpmenu when company used
-  ;; this may become annoying, so be aware
-  (use-package company-quickhelp
-    :requires pos-tip
-    :config
-    (company-quickhelp-mode))
+  ;; (use-package pos-tip)
+  ;; ;; pop-up helpmenu when company used
+  ;; ;; this may become annoying, so be aware
+  ;; (use-package company-quickhelp
+  ;;   :requires pos-tip
+  ;;   :config
+  ;;   (company-quickhelp-mode))
 #+END_SRC
 *** company box
 alternative to above
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; Better sorting and filtering
   (use-package company-prescient
     :init (company-prescient-mode 1))
@@ -2240,7 +2240,7 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
      (prog-mode . (lambda ()
                          (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode)
                            (lsp-deferred))))
-    ;; (ess-r-mode . lsp)
+    (ess-r-mode . lsp)
     ;; ;; if you want which-key integration
     ;; (lsp-mode . lsp-enable-which-key-integration)
     )

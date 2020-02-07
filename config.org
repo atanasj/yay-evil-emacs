@@ -96,7 +96,8 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
     :ensure nil
     :hook (prog-mode . display-line-numbers-mode)
     :config
-    (setq-default display-line-numbers-width 3))
+    (setq-default display-line-numbers-width 3)
+    )
 
 #+END_SRC
 * Map fn to Hyper, CMD to Super

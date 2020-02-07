@@ -281,6 +281,8 @@ From kjhealy:
     (setq ess-set-style 'RStudio)
     ;; auto-width
     (setq ess-auto-width 'window)
+    ;; let lsp manage lintr
+    (setq ess-use-flymake nil)
     ;; Toggle underscore off no replacement of _ for <-
     (setq ess-smart-S-assign-key nil)
     ;; Stop R repl eval from blocking emacs.
@@ -1798,6 +1800,9 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     :bind
     ("C-c h" . eglot-help-at-point)
     ("C-c <f6>" . xref-find-definitions)
+    :config
+    ;; turn of highlighting
+    (setq eglot-ignored-server-capabilites '(:documentHighlightProvider))
     )
   ;; (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point)
   ;; (define-key eglot-mode-map (kbd "<f6>") 'xref-find-definitions)

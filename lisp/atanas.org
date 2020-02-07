@@ -99,7 +99,7 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 CLOSED: [2020-01-23 Thu 01:58]
 
 #+source: max-spec
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (setq-default cursor-type 'bar)
 #+end_src
 

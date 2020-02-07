@@ -46,6 +46,8 @@
 (require 'org)
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
 
+(setq-default cursor-type 'bar)
+
 (server-start); start emacs in server mode so can list as editor
 
 (provide 'init)

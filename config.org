@@ -700,7 +700,7 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
     (ess-mode . company-mode)
     (ess-r-mode . company-mode)
     (prog-mode . company-mode)
-    ;; (after-init . global-company-mode)
+    (after-init . global-company-mode)
     :config
     (setq company-minimum-prefix-length 1
           company-idle-delay 0.1
@@ -711,11 +711,20 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
     (with-eval-after-load 'company
       (define-key company-active-map (kbd "C-n") 'company-select-next)
       (define-key company-active-map (kbd "C-p") 'company-select-previous))
+    ;; not really sure what this wil do but have it here for now
+    (defun aj/company-to-yasnippet ()
+      (interactive)
+      (company-abort)
+      (call-interactively 'company-yasnippet))
+    (bind-key "<backtab>" 'aj/company-to-yasnippet company-active-map)
+    (bind-key "<backtab>" 'company-yasnippet)
     :bind
     ("<f12>" . company-mode)
     )
 
 #+END_SRC
+
+src
 *** Flycheck
 A modern on-the-fly syntax checking extension -- absolute essential
 #+BEGIN_SRC emacs-lisp

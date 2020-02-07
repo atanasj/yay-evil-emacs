@@ -96,13 +96,6 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 
 * Settings without corresponding packages
 ** various
-#+begin_src emacs-lisp :tangle no
-  ;; chage cursor from block to bar
-  ;; from ansser: https://emacs.stackexchange.com/questions/392/how-to-change-the-cursor-type-and-color
-  (setq-default cursor-type 'bar)
-#+end_src
-
-
 ** Cleanup-Buffers
 This is not currently used. If needed, tangle them.
 
@@ -261,20 +254,12 @@ From kjhealy:
 
 #+src-name: ess-mode
 #+begin_src emacs-lisp
-  ;; =========================================================
-  ;; This solution is working
-  ;; ========================================================
-
-  ;; enable flycheck
-  ;; (add-hook 'after-init-hook #'global-flycheck-mode) ; already enabled in config.org
-
+  ;; =====================================================================
+  ;; ESS
+  ;; =====================================================================
   ;; setup ess for r-modes
   ;; not convinced need all this, as had simpler config  and same behaviour
   (use-package ess
-    ;; the below works, but might be useful for hte centaur config
-    ;; :init
-    ;; (add-hook 'ess-r-mode-hook 'eglot-ensure)
-    ;; (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
     :mode (
            ("/R/.*\\.q\\'"       . R-mode)
            ("\\.[rR]\\'"         . R-mode)
@@ -290,13 +275,10 @@ From kjhealy:
                   ("R" . Rd-mode)
                   )
     :config
-    ;; (require 'ess-r-mode)
     (use-package ess-r-mode
       :load-path "elpa/ess/")
     ;; ess tab style
     (setq ess-set-style 'RStudio)
-    ;; lintr setup
-    ;; (setq ess-r-flymake-linters "lintr::default_linters")
     ;; auto-width
     (setq ess-auto-width 'window)
     ;; Toggle underscore off no replacement of _ for <-
@@ -310,7 +292,7 @@ From kjhealy:
           comint-scroll-to-bottom-on-input t
           comint-scroll-to-bottom-on-output t
           comint-move-point-for-output t)
-
+    ;; insert pipes etc...
     (defun tide-insert-assign ()
       "Insert an assignment <-"
       (interactive)
@@ -331,26 +313,9 @@ From kjhealy:
     (define-key ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     (define-key inferior-ess-r-mode-map (kbd "C-'") 'tide-insert-assign)
     :hook
-    ;; enable lintr
-    ;; (ess-mode . (lambda ()
-    ;;               (flycheck-mode t)))
-    ;; ess-shift-enter to execute code
-    ;; (ess-mode . (lambda()
-    ;;               (local-set-key [(shift return)] 'my-ess-eval)))
-    ;; (inferior-ess-mode . (lambda()
-    ;;                        (local-set-key [C-up] 'comint-previous-input)
-    ;;                        (local-set-key [C-down] 'comint-next-input)))
-    ;; (Rnw-mode . (lambda()
-    ;;               (local-set-key [(shift return)] 'my-ess-eval)))
     (ess-mode . company-mode)
     (inferior-ess-mode . company-mode)
     )
-
-
-  ;; below disabled but left here, golden-ratio seems to interfere with company
-  ;; have set kbd for to enable company mode as "<f12>""
-  ;; (ess-mode . company-mode)
-  ;; (ess-r-mode . company-mode)
 
 #+end_src
 **** ess-R-data-view
@@ -512,10 +477,11 @@ This needs to come before the "openwith" function below
 The below works, however there is some bash error message.
 #+source: pan_wc
 #+begin_src emacs-lisp :tangle yes
-  (defun aj/pwc ()
+  (defun aj/pandoc-wc ()
+    "Return wordcount of current buffer using pandoc wordcount.lua"
     (interactive) (shell-command (concat "pandoc --lua-filter wordcount.lua " buffer-file-name)))
   ;; this might be problematic, as really I only want this for markdown docs
-  (global-set-key "\C-cw" 'aj/pwc)
+  (global-set-key "\C-cw" 'aj/pandoc-wc)
 #+end_src
 
 ***** DONE Writeroom-mode
@@ -1452,26 +1418,13 @@ built in package for code-folding
 #+BEGIN_SRC emacs-lisp
   ;; from https://www.reddit.com/r/emacs/comments/746cd0/which_code_folding_package_do_you_use/
   (defun aj/toggle-fold ()
+    "Toggle comment blocks"
     (interactive)
     (save-excursion
       (end-of-line)
       (hs-toggle-hiding)))
 
   (global-set-key (kbd "M-[") 'aj/toggle-fold)
-  ;; below does the same things but cannot get the symbols
-
-  (use-package hideshowvis
-    :load-path "src/hideshowvis/"
-    :diminish hs-minor-mode
-    :bind ("M-[" . hs-toggle-hiding)
-    :config
-    (progn
-      (hideshowvis-enable)
-      ;; graphical +/- fold buttons
-      (hideshowvis-symbols))
-    )
-
-
 
 #+END_SRC
 

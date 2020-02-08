@@ -1666,7 +1666,7 @@ https://github.com/company-mode/company-quickhelp
 #+END_SRC
 *** company box
 alternative to above
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; Better sorting and filtering
   (use-package company-prescient
     :init (company-prescient-mode 1))
@@ -1674,11 +1674,11 @@ alternative to above
   ;; Icons and quickhelp
   (use-package company-box
     :diminish
-    :hook
-    (
-     (company-mode . company-box-mode)
-     ;; (eglot-managed-mode. company-box-mode)
-     )
+    ;; :hook
+    ;; (
+    ;;  ;; (company-mode . company-box-mode)
+    ;;  ;; (eglot-managed-mode. company-box-mode)
+    ;;  )
     :init (setq company-box-backends-colors nil
                 company-box-show-single-candidate t
                 company-box-max-candidates 50
@@ -2238,12 +2238,12 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     :hook
     (
      (prog-mode . (lambda ()
-                         (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode)
-                           (lsp-deferred))))
-    (ess-r-mode . lsp)
-    ;; ;; if you want which-key integration
-    ;; (lsp-mode . lsp-enable-which-key-integration)
-    )
+                    (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode)
+                      (lsp-deferred))))
+     (ess-r-mode . lsp)
+     ;; ;; if you want which-key integration
+     ;; (lsp-mode . lsp-enable-which-key-integration)
+     )
     :bind (:map lsp-mode-map
                 ("C-c h" . lsp-describe-thing-at-point))
     :init (setq lsp-auto-guess-root t        ; Detect project root
@@ -2264,7 +2264,45 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
       (setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
       ;; (unless (executable-find "rls")
       ;;   (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls"))))
-    ))
+      ))
+
+  ;; Completion
+  (use-package company-lsp
+    :init (setq company-lsp-cache-candidates 'auto)
+    :config
+    ;; WORKAROUND:Fix tons of unrelated completion candidates shown
+    ;; when a candidate is fulfilled
+    ;; @see https://github.com/emacs-lsp/lsp-python-ms/issues/79
+    (add-to-list 'company-lsp-filter-candidates '(mspyls))
+
+    (with-no-warnings
+      (defun my-company-lsp--on-completion (response prefix)
+        "Handle completion RESPONSE.
+
+        PREFIX is a string of the prefix when the completion is requested.
+
+        Return a list of strings as the completion candidates."
+        (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+               (items (cond ((hash-table-p response) (gethash "items" response))
+                            ((sequencep response) response)))
+               (candidates (mapcar (lambda (item)
+                                     (company-lsp--make-candidate item prefix))
+                                   (lsp--sort-completions items)))
+               (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+               (should-filter (or (eq company-lsp-cache-candidates 'auto)
+                                  (and (null company-lsp-cache-candidates)
+                                       (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+          (when (null company-lsp--completion-cache)
+            (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+            (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+          (when (eq company-lsp-cache-candidates 'auto)
+            ;; Only cache candidates on auto mode. If it's t company caches the
+            ;; candidates for us.
+            (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+          (if should-filter
+              (company-lsp--filter-candidates candidates prefix)
+            candidates)))
+      (advice-add #'company-lsp--on-completion :override #'my-company-lsp--on-completion)))
 
 
   (use-package pretty-hydra
@@ -2334,44 +2372,6 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
       "Hide the mode-line in lsp-ui-imenu."
       (setq mode-line-format nil))
     (advice-add #'lsp-ui-imenu :after #'my-lsp-ui-imenu-hide-mode-line))
-
-  ;; Completion
-  (use-package company-lsp
-    :init (setq company-lsp-cache-candidates 'auto)
-    :config
-    ;; WORKAROUND:Fix tons of unrelated completion candidates shown
-    ;; when a candidate is fulfilled
-    ;; @see https://github.com/emacs-lsp/lsp-python-ms/issues/79
-    (add-to-list 'company-lsp-filter-candidates '(mspyls))
-
-    (with-no-warnings
-      (defun my-company-lsp--on-completion (response prefix)
-        "Handle completion RESPONSE.
-
-      PREFIX is a string of the prefix when the completion is requested.
-
-      Return a list of strings as the completion candidates."
-        (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
-               (items (cond ((hash-table-p response) (gethash "items" response))
-                            ((sequencep response) response)))
-               (candidates (mapcar (lambda (item)
-                                     (company-lsp--make-candidate item prefix))
-                                   (lsp--sort-completions items)))
-               (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
-               (should-filter (or (eq company-lsp-cache-candidates 'auto)
-                                  (and (null company-lsp-cache-candidates)
-                                       (company-lsp--get-config company-lsp-filter-candidates server-id)))))
-          (when (null company-lsp--completion-cache)
-            (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
-            (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
-          (when (eq company-lsp-cache-candidates 'auto)
-            ;; Only cache candidates on auto mode. If it's t company caches the
-            ;; candidates for us.
-            (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
-          (if should-filter
-              (company-lsp--filter-candidates candidates prefix)
-            candidates)))
-      (advice-add #'company-lsp--on-completion :override #'my-company-lsp--on-completion)))
 
   ;; Ivy integration
   (use-package lsp-ivy

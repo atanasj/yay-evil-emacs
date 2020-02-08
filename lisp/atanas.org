@@ -1928,3 +1928,29 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
              . treemacs-magit--schedule-update)))
 
 #+END_SRC
+
+** lsp-mode_simple
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package lsp-mode
+    :after company
+    :config
+    (setq lsp-prefer-flymake nil
+          lsp-auto-configure t)
+    )
+
+  (use-package company-lsp
+    ;; :after lsp-mode company
+    )
+
+  (use-package lsp-ui
+    ;; :after company lsp-mode compnay-lsp
+    ;; :hook
+    ;; (lsp-mode . lsp-ui)
+    ;; :config
+    ;; (add-hook 'ess-r-mode-hook 'flycheck-mode)
+    ;; (add-hook 'inferior-ess-mode-hook 'flycheck-mode)
+    )
+
+#+END_SRC

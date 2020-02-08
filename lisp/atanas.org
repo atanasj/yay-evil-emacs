@@ -1793,8 +1793,8 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
   ;; lsp-mode maybe better for python when I get to configuring it
   (use-package eglot
     :init
-    (add-hook 'ess-r-mode-hook 'eglot-ensure)
-    (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
+    ;; (add-hook 'ess-r-mode-hook 'eglot-ensure)
+    ;; (add-hook 'inferior-ess-r-mode-hook 'eglot-ensure)
     ;; (add-hook 'python-mode 'eglot-ensure)
     ;; :after company-box
     :bind

@@ -985,6 +985,18 @@ CLOSED: [2020-01-29 Wed 21:39]
 
 #+END_SRC
 
+*** IN-PROGRESS diff-hl-mode
+
+#+begin_src emacs-lisp :tangle yes
+  ;; use diff-hl-mode and referesh with magit
+  (use-package diff-hl
+    :commands
+    (global-diff-hl-mode)
+    :config
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+    )
+
+#+end_src
 ** TODO MAKEFILE
 See make-mode config here: https://www.emacswiki.org/emacs/MakefileMode
 and the makefile section here: https://github.com/emacs-tw/awesome-emacs#makefile

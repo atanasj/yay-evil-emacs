@@ -708,7 +708,7 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
     (ess-mode . company-mode)
     (ess-r-mode . company-mode)
     (prog-mode . company-mode)
-    (after-init . global-company-mode)
+    ;; (after-init . global-company-mode)
     :config
     (setq company-minimum-prefix-length 1
           company-idle-delay 0.1

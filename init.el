@@ -48,7 +48,7 @@
 
 ;; chage cursor from block to bar
 ;; from ansser: https://emacs.stackexchange.com/questions/392/how-to-change-the-cursor-type-and-color
-(setq-default cursor-type 'bar)
+(setq-default cursor-type '(bar . 3))
 
 (server-start); start emacs in server mode so can list as editor
 

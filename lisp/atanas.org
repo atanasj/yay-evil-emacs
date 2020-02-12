@@ -586,6 +586,17 @@ See https://github.com/Sparsa/.emacs.d and https://www.reddit.com/r/emacs/commen
     :bind ("C-M-;" . flyspell-correct-wrapper)
     :init
     (setq flyspell-correct-interface #'flyspell-correct-avy-menu))
+
+
+(add-hook 'markdown-mode-hook
+          '(lambda ()
+             (setq flyspell-generic-check-word-predicate 'aj/pandoc-flyspell-verify)))
+
+(defun aj/pandoc-flyspell-verify ()
+  (save-excursion
+    (forward-word -1)
+    (not (looking-back "@"))))
+
 #+end_src
 
 ***** grammar
@@ -880,13 +891,15 @@ for better code navigation
       (global-set-key (kbd "<f8>") 'ace-window)
       (global-set-key (kbd "M-]") 'ace-window)
       (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-      ;;more info at https://github.com/abo-abo/ace-window
       )
+    (custom-set-faces
+     '(aw-leading-char-face ((t (:foreground "#51afef" :height 4.0 :width normal :family "Menlo")))))
     )
+
 #+end_src
 *** frog-jump-buffer
 #+source: frog-jump-buffer
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (use-package frog-jump-buffer
     :load-path "src/frog-jump-buffer/"
     :bind ("<f9>" . frog-jump-buffer))

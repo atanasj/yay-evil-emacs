@@ -61,15 +61,33 @@ from centaur emacs
 
 #+END_SRC
 
+* install straight
+
+#+begin_src emacs-lisp :tangle no
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+#+end_src
 * Settings without corresponding packages
 Clean up the UI and enhance some basic defaults defined in "C Source Code". The variable ~ian/indent-width~ controls the default indentation across various programming modes. The default is 4, you can change this variable to 2 or any other indentation width you prefer, and the change will be made across all programming language modes including C, C++, Java, JavaScript, Python etc.
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
     :preface
     (defvar ian/indent-width 4)      ; change this value to your preferred width
-    :bind
-    ("C-+" . text-scale-increase)
-    ("C--" . text-scale-decrease)
+    ;; :bind
+    ;; ("C-+" . text-scale-increase)
+    ;; ("C--" . text-scale-decrease)
     :config
     (setq frame-title-format "%b"    ; set to bufer title name
           ring-bell-function 'ignore ; minimise distraction
@@ -529,6 +547,7 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
   (use-package quelpa-use-package)
   (require 'font-lock)
   (use-package font-lock+
+    ;; :straight t ; not working
     ;; :quelpa     ; commented as only needed to install once, slows down load time otherwise
     ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github)
     )
@@ -731,7 +750,8 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
     (bind-key "<backtab>" 'aj/company-to-yasnippet company-active-map)
     (bind-key "<backtab>" 'company-yasnippet)
     :bind
-    ("<f12>" . company-mode)
+    (("<f12>" . company-mode)
+     ("s-." . company-abort))
     )
 
 #+END_SRC

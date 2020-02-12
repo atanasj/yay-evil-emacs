@@ -640,6 +640,24 @@ Weasel words--phrases or words that sound good without conveying information--ob
   (use-package writegood-mode)
 #+end_src
 
+**** iedit mode
+
+#+begin_src emacs-lisp :tangle yes
+  ;; Edit multiple regions in the same way simultaneously
+  (use-package iedit
+    :defines desktop-minor-mode-table
+    :bind (("C-s-;" . iedit-mode)
+           ("C-x r RET" . iedit-rectangle-mode)
+           :map isearch-mode-map ("C-s-;" . iedit-mode-from-isearch)
+           :map esc-map ("C-s-;" . iedit-execute-last-modification)
+           :map help-map ("C-s-;" . iedit-mode-toggle-on-function))
+    :config
+    ;; Avoid restoring `iedit-mode'
+    (with-eval-after-load 'desktop
+      (add-to-list 'desktop-minor-mode-table
+                   '(iedit-mode nil))))
+
+#+end_src
 ** Multiple Cursors and Drag-Stuff
 Use multiple cursors for search, replace, and text-cleaning tasks. For a demonstration, see http://emacsrocks.com/e13.html. Tangle if need to use this.
 
@@ -1793,9 +1811,9 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
                 (setq TeX-parse-self t)
                 (setq-default TeX-master "paper.tex")
                 (setq reftex-plug-into-AUCTeX t)
-                (pdf-tools-install)
-                (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-                      TeX-source-correlate-start-server t)
+                ;; (pdf-tools-install)
+                (setq TeX-source-correlate-start-server t)
+                ;; TeX-view-program-selection '((output-pdf "PDF Tools"))
                 ;; Update PDF buffers after successful LaTeX runs
                 (add-hook 'TeX-after-compilation-finished-functions
                           #'TeX-revert-document-buffer)
@@ -1804,9 +1822,9 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
                             (reftex-mode t)
                             (flyspell-mode t)))
                 )
-      ;; :hook ((latex-mode . visual-line-mode)
-      ;;        (latex-mode . display-line-numbers-mode)
-      ;;        (latex-mode . rainbow-delimiters-mode))
+      :hook ((latex-mode . visual-line-mode)
+             (latex-mode . display-line-numbers-mode)
+             (latex-mode . rainbow-delimiters-mode))
       )
 
   ;; (add-hook 'text-mode-hook #'visual-line-mode)
@@ -1947,6 +1965,10 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
                  (TeX-source-correlate-mode 1)))
     (add-hook 'TeX-after-compilation-finished-functions
               #'TeX-revert-document-buffer))
+
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
 
   (use-package company-auctex
     :ensure t

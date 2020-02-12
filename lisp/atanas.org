@@ -547,55 +547,56 @@ See https://github.com/Sparsa/.emacs.d and https://www.reddit.com/r/emacs/commen
 **** Spelling
 #+source: spelling
 #+begin_src emacs-lisp :tangle yes
-  ;; can't remember where I found this one
-  (defun my-flyspell-mode-hook ()
-    ;; Do things when flyspell enters or leaves flyspell mode
-    ;; Added manually
-    ;;
-    ;; Magic Mouse Fixes
-    (if flyspell-mode (progn
-                        (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-                        (define-key flyspell-mouse-map [mouse-3] #'undefined))
-      nil)
-    ;; End my-flyspell-mode-hook
-    )
-  ;; solution from:
-  ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
-  (use-package flyspell
-    :init
-    (progn
-      (flyspell-mode 1))
-    :config
-    (progn
-      (setq ispell-program-name "aspell")
-      (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+    ;; can't remember where I found this one
+    (defun my-flyspell-mode-hook ()
+      ;; Do things when flyspell enters or leaves flyspell mode
+      ;; Added manually
+      ;;
+      ;; Magic Mouse Fixes
+      (if flyspell-mode (progn
+                          (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+                          (define-key flyspell-mouse-map [mouse-3] #'undefined))
+        nil)
+      ;; End my-flyspell-mode-hook
       )
-    :hook ((flyspell-mode . my-flyspell-mode-hook)
-           (text-mode . flyspell-mode)
-           (prog-mode . flyspell-prog-mode))
-    )
+    ;; solution from:
+    ;; https://emacs.stackexchange.com/questions/9640/could-not-load-package-flyspell-with-use-package
+    (use-package flyspell
+      :init
+      (progn
+        (flyspell-mode 1))
+      :config
+      (progn
+        (setq ispell-program-name "aspell")
+        (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+        )
+      :hook ((flyspell-mode . my-flyspell-mode-hook)
+             (text-mode . flyspell-mode)
+             (prog-mode . flyspell-prog-mode))
+      )
 
-  ;; rapid mode entered by "C-u C-M-;", "C-u C-u" changes direction
-  ;; rapid mode moves through the document
-  ;; (use-package flyspell-correct-ivy
-  ;;   :after flyspell
-  ;;   :bind ("C-M-;" . flyspell-correct-wrapper)
-  ;;   :init
-  ;;   (setq flyspell-correct-interface #'flyspell-correct-ivy))
-  (use-package flyspell-correct-avy-menu
-    :bind ("C-M-;" . flyspell-correct-wrapper)
-    :init
-    (setq flyspell-correct-interface #'flyspell-correct-avy-menu))
+    ;; rapid mode entered by "C-u C-M-;", "C-u C-u" changes direction
+    ;; rapid mode moves through the document
+    ;; (use-package flyspell-correct-ivy
+    ;;   :after flyspell
+    ;;   :bind ("C-M-;" . flyspell-correct-wrapper)
+    ;;   :init
+    ;;   (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
+  ;; (use-package flyspell-correct-avy-menu
+  ;;     :bind ("C-M-;" . flyspell-correct-wrapper)
+  ;;     :init
+  ;;     (setq flyspell-correct-interface #'flyspell-correct-avy-menu))
 
 
-(add-hook 'markdown-mode-hook
-          '(lambda ()
-             (setq flyspell-generic-check-word-predicate 'aj/pandoc-flyspell-verify)))
+    (add-hook 'markdown-mode-hook
+              '(lambda ()
+                 (setq flyspell-generic-check-word-predicate 'aj/pandoc-flyspell-verify)))
 
-(defun aj/pandoc-flyspell-verify ()
-  (save-excursion
-    (forward-word -1)
-    (not (looking-back "@"))))
+    (defun aj/pandoc-flyspell-verify ()
+      (save-excursion
+        (forward-word -1)
+        (not (looking-back "@"))))
 
 #+end_src
 
@@ -961,25 +962,25 @@ CLOSED: [2020-01-29 Wed 21:39]
 #+END_SRC
 
 *** IN-PROGRESS magit-todos
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; See TODOs in magit buffer
   ;; need to also have other hl-todo keywords
   ;; (use-package magit-todos
   ;;   :config
   ;;   (magit-todos-mode)
   ;;   )
-  (use-package magit-todos
-    ;; :ensure t
-    ;; :load-path "~/CodeWorks/emacs/magit-todos"
-    :commands (magit-todos-mode)
-    :hook (magit-mode . magit-todos-mode)
-    :config
-    (setq magit-todos-recursive t
-          magit-todos-depth 100)
-    (custom-set-variables
-     '(magit-todos-keywords (list "TODO" "FIXME" "REVIEW")))
-    ;; :custom (magit-todos-keywords (list "TODO" "FIXME"))
-    )
+  ;; (use-package magit-todos
+  ;;   ;; :ensure t
+  ;;   ;; :load-path "~/CodeWorks/emacs/magit-todos"
+  ;;   :commands (magit-todos-mode)
+  ;;   :hook (magit-mode . magit-todos-mode)
+  ;;   :config
+  ;;   (setq magit-todos-recursive t
+  ;;         magit-todos-depth 100)
+  ;;   (custom-set-variables
+  ;;    '(magit-todos-keywords (list "TODO" "FIXME" "REVIEW")))
+  ;;   ;; :custom (magit-todos-keywords (list "TODO" "FIXME"))
+  ;;   )
 
 #+END_SRC
 
@@ -1076,20 +1077,94 @@ I want to change to the above packages, however this is been problematic.
   ;;   (ivy-prescient-mode)
   ;;   )
 
-  (use-package counsel-projectile
-    :after projectile
-    :demand t
-    :config
-    (counsel-projectile-mode)
-    )
+  ;; (use-package counsel-projectile
+  ;;   :after projectile
+  ;;   :demand t
+  ;;   :config
+  ;;   (counsel-projectile-mode)
+  ;;   )
 
-  (use-package prescient)
+  ;; (use-package prescient)
+  ;; (use-package ivy-prescient
+  ;;   :demand t
+  ;;   :after counsel
+  ;;   :config
+  ;;   (ivy-prescient-mode)
+  ;;   )
+
+  ;; Enhance M-x
+  (use-package amx
+    :init (setq amx-history-length 20))
+
+  ;; Better sorting and filtering
+  (use-package prescient
+    :commands prescient-persist-mode
+    :init
+    (setq prescient-filter-method '(literal regexp initialism fuzzy))
+    (prescient-persist-mode 1))
+
   (use-package ivy-prescient
-    :demand t
-    :after counsel
-    :config
-    (ivy-prescient-mode)
-    )
+    :commands ivy-prescient-re-builder
+    :custom-face
+    (ivy-minibuffer-match-face-1 ((t (:inherit font-lock-doc-face :foreground nil))))
+    :init
+    (defun ivy-prescient-non-fuzzy (str)
+      "Generate an Ivy-formatted non-fuzzy regexp list for the given STR.
+  This is for use in `ivy-re-builders-alist'."
+      (let ((prescient-filter-method '(literal regexp)))
+        (ivy-prescient-re-builder str)))
+
+    (setq ivy-prescient-retain-classic-highlighting t
+          ivy-re-builders-alist
+          '((counsel-ag . ivy-prescient-non-fuzzy)
+            (counsel-rg . ivy-prescient-non-fuzzy)
+            (counsel-pt . ivy-prescient-non-fuzzy)
+            (counsel-grep . ivy-prescient-non-fuzzy)
+            (counsel-imenu . ivy-prescient-non-fuzzy)
+            (counsel-yank-pop . ivy-prescient-non-fuzzy)
+            (swiper . ivy-prescient-non-fuzzy)
+            (swiper-isearch . ivy-prescient-non-fuzzy)
+            (swiper-all . ivy-prescient-non-fuzzy)
+            (lsp-ivy-workspace-symbol . ivy-prescient-non-fuzzy)
+            (lsp-ivy-global-workspace-symbol . ivy-prescient-non-fuzzy)
+            (insert-char . ivy-prescient-non-fuzzy)
+            (counsel-unicode-char . ivy-prescient-non-fuzzy)
+            (t . ivy-prescient-re-builder))
+          ivy-prescient-sort-commands
+          '(:not swiper swiper-isearch ivy-switch-buffer
+                 counsel-grep counsel-git-grep counsel-ag counsel-imenu
+                 counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
+
+    (ivy-prescient-mode 1))
+
+  ;; Additional key bindings for Ivy
+  (use-package ivy-hydra
+    :commands ivy-hydra-read-action
+    :init (setq ivy-read-action-function #'ivy-hydra-read-action))
+
+  ;; Ivy integration for Projectile
+  (use-package counsel-projectile
+    :hook (counsel-mode . counsel-projectile-mode)
+    :init (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point)))
+
+  ;; Integrate yasnippet
+  (use-package ivy-yasnippet
+    :commands ivy-yasnippet--preview
+    :bind ("C-c C-y" . ivy-yasnippet)
+    :config (advice-add #'ivy-yasnippet--preview :override #'ignore))
+
+  ;; Select from xref candidates with Ivy
+  (use-package ivy-xref
+    :init
+    (when (boundp 'xref-show-definitions-function)
+      (setq xref-show-definitions-function #'ivy-xref-show-defs))
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+
+  ;; Correcting words with flyspell via Ivy
+  (use-package flyspell-correct-ivy
+    :after flyspell
+    :bind ("C-M-;" . flyspell-correct-wrapper)
+    :init (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
   (use-package ivy-rich
     :after ivy
@@ -1927,6 +2002,10 @@ CLOSED: [2020-02-04 Tue 01:34]
   (use-package ivy-bibtex
     :config
     (setq bibtex-completion-bibliography '"~/.pandoc/MyLib.bib")
+    (setq bibtex-completion-pdf-field "File")
+    (setq bibtex-completion-pdf-open-function
+          (lambda (fpath)
+            (call-process "open" nil 0 nil "-a" "/Applications/PDF Expert.app" fpath)))
     (setq bibtex-completion-display-formats
           '((article       . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} ${journal:40}")
             (inbook        . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")

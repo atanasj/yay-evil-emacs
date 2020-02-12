@@ -685,7 +685,8 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region)
     :config
     (setq mc/always-run-for-all t)
-    (setq mc/cursor-bar-face ((t (:background "#51afef" :height 0.4 :width extra-condensed))))
+    (custom-set-faces
+     '(mc/cursor-bar-face ((t (:background "#51afef" :height 0.4 :width extra-condensed)))))
     )
 
 #+end_src
@@ -908,9 +909,8 @@ for better code navigation
     :defer t
     :init
     (progn
-      (global-set-key (kbd "<f8>") 'ace-window)
       (global-set-key (kbd "M-]") 'ace-window)
-      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      ;; (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
       )
     (custom-set-faces
      '(aw-leading-char-face ((t (:foreground "#51afef" :height 4.0 :width normal :family "Menlo")))))

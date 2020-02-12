@@ -641,7 +641,7 @@ Weasel words--phrases or words that sound good without conveying information--ob
 #+end_src
 
 **** iedit mode
-
+similar to multiple cursors
 #+begin_src emacs-lisp :tangle yes
   ;; Edit multiple regions in the same way simultaneously
   (use-package iedit
@@ -684,7 +684,8 @@ Use multiple cursors for search, replace, and text-cleaning tasks. For a demonst
     (global-set-key (kbd "H-S-n") 'mc/mark-more-like-this-extended)
     (global-set-key (kbd "H-S-a") 'mc/mark-all-in-region)
     :config
- (setq mc/always-run-for-all t)
+    (setq mc/always-run-for-all t)
+    (setq mc/cursor-bar-face ((t (:background "#51afef" :height 0.4 :width extra-condensed))))
     )
 
 #+end_src

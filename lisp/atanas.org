@@ -269,30 +269,20 @@ From kjhealy:
   ;; setup ess for r-modes
   ;; not convinced need all this, as had simpler config  and same behaviour
   (use-package ess
-    :mode (
-           ("/R/.*\\.q\\'"       . R-mode)
-           ("\\.[rR]\\'"         . R-mode)
-           ("\\.[rR]profile\\'"  . R-mode)
-           ("NAMESPACE\\'"       . R-mode)
-           ("CITATION\\'"        . R-mode)
-           ("\\.[Rr]out"         . R-transcript-mode)
-           ("\\.Rd\\'"           . Rd-mode)
-           )
-    :interpreter (
-                  ("R" . R-mode)
-                  ("R" . R-transcript-mode)
-                  ("R" . Rd-mode)
-                  )
+        :ensure t
+    :defer t
+    :init
+    (require 'ess-site)
+    ;; (require 'ess-view)
+    ;; (require 'ess-R-data-view)
+    ;; (require 'poly-R)
     :config
-    (use-package ess-r-mode
-      :load-path "elpa/ess/")
-    ;; ess tab style
     (setq ess-set-style 'RStudio)
     ;; auto-width
     (setq ess-auto-width 'window)
     ;; let lsp manage lintr
     (setq ess-use-flymake nil)
-    ;; Toggle underscore off no replacement of _ for <-
+    ;; Toggle underscore off no replacement of _ for assign
     (setq ess-smart-S-assign-key nil)
     ;; Stop R repl eval from blocking emacs.
     (setq ess-eval-visibly 'nowait)

@@ -1767,72 +1767,66 @@ This works, but can error sometimes no open when filename contains spaces.
 
 
 * TODO Config Tasks
-** IN-PROGRESS Latex-IDE
+** IN-PROGRESS Latex-IDE-NW
 See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_ide/
+Cannot get this working
 #+begin_src emacs-lisp :tangle no
-    (use-package pdf-tools
-      :ensure t
-      :config
-      (pdf-tools-install)
-      (setq-default pdf-view-display-size 'fit-page)
-      (setq pdf-annot-activate-created-annotations t)
-      (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
-      (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
-      (add-hook 'pdf-view-mode-hook (lambda ()
-                                      (bms/pdf-midnite-amber))) ; automatically turns on midnight-mode for pdfs
-      )
+  (use-package pdf-tools
+    :ensure t
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-page)
+    (setq pdf-annot-activate-created-annotations t)
+    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+    (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
+    (add-hook 'pdf-view-mode-hook (lambda ()
+                                    (bms/pdf-midnite-amber))) ; automatically turns on midnight-mode for pdfs
+    )
 
-    (use-package auctex-latexmk
-      :ensure t
-      :config
-      (auctex-latexmk-setup)
-      (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+  (use-package auctex-latexmk
+    :ensure t
+    :config
+    (auctex-latexmk-setup)
+    (setq auctex-latexmk-inherit-TeX-PDF-mode t))
 
-    (use-package reftex
-      :ensure t
-      :defer t
-      :config
-      (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
+  (use-package reftex
+    :ensure t
+    :defer t
+    :config
+    (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
 
-    ;; (use-package auto-dictionary
-    ;;   :ensure t
-    ;;   :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+  ;; (use-package auto-dictionary
+  ;;   :ensure t
+  ;;   :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
-    (use-package company-auctex
-      :ensure t
-      :init (company-auctex-init))
+  (use-package company-auctex
+    :ensure t
+    :init (company-auctex-init))
 
-    (use-package tex
-      :ensure auctex
-      :mode ("\\.tex\\'" . latex-mode)
-      :config (progn
-                (setq TeX-source-correlate-mode t)
-                (setq TeX-source-correlate-method 'synctex)
-                (setq TeX-auto-save t)
-                (setq TeX-parse-self t)
-                (setq-default TeX-master "paper.tex")
-                (setq reftex-plug-into-AUCTeX t)
-                ;; (pdf-tools-install)
-                (setq TeX-source-correlate-start-server t)
-                ;; TeX-view-program-selection '((output-pdf "PDF Tools"))
-                ;; Update PDF buffers after successful LaTeX runs
-                (add-hook 'TeX-after-compilation-finished-functions
-                          #'TeX-revert-document-buffer)
-                (add-hook 'LaTeX-mode-hook
-                          (lambda ()
-                            (reftex-mode t)
-                            (flyspell-mode t)))
-                )
-      :hook ((latex-mode . visual-line-mode)
-             (latex-mode . display-line-numbers-mode)
-             (latex-mode . rainbow-delimiters-mode))
-      )
+  (use-package tex
+    :ensure auctex
+    :mode ("\\.tex\\'" . latex-mode)
+    :config (progn
+              (setq TeX-source-correlate-mode t)
+              (setq TeX-source-correlate-method 'synctex)
+              (setq TeX-auto-save t)
+              (setq TeX-parse-self t)
+              (setq-default TeX-master "paper.tex")
+              (setq reftex-plug-into-AUCTeX t)
+              (pdf-tools-install)
+              (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+                    TeX-source-correlate-start-server t)
+              ;; Update PDF buffers after successful LaTeX runs
+              (add-hook 'TeX-after-compilation-finished-functions
+                        #'TeX-revert-document-buffer)
+              (add-hook 'LaTeX-mode-hook
+                        (lambda ()
+                          (reftex-mode t)
+                          (flyspell-mode t)))
+              ))
 
-  ;; (add-hook 'text-mode-hook #'visual-line-mode)
-
-  ;; (add-hook 'text-mode-hook #'display-line-numbers-mode)
 #+end_src
-** LATEX-2
+** LATEX-2-NW
 
 #+begin_src emacs-lisp :tangle no
   ;; latex-config: working, coutesy from
@@ -1875,6 +1869,7 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
     (setq reftex-cite-prompt-optional-args t)); Prompt for empty optional arguments in cite
 
   (use-package pdf-tools
+    :load-path ("elpa/pdf-tools/")
     :ensure t
     :mode ("\\.pdf\\'" . pdf-tools-install)
     :bind ("C-c C-g" . pdf-sync-forward-search)
@@ -1885,12 +1880,16 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
 
 #+end_src
 
-** Latex-3
+#+RESULTS:
+: pdf-sync-forward-search
+
+** Latex-3-Working
 
 #+begin_src emacs-lisp :tangle no
   ;;
-  ;; LaTeX configuration
+  ;; LaTeX configuration, requires auctex-latexmk
   ;;
+  (use-package auctex-latexmk)
 
   (use-package pdf-tools
     :ensure t
@@ -1942,9 +1941,15 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
 
 #+end_src
 
-** LATEX-4
+** LATEX-4-NW
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
+
+   (use-package auctex-latexmk
+        :after auctex
+        :config
+        (auctex-latexmk-setup))
+
   (use-package tex
     :ensure auctex
     :config
@@ -1967,9 +1972,9 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
     (add-hook 'TeX-after-compilation-finished-functions
               #'TeX-revert-document-buffer))
 
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
+  ;; (setq TeX-auto-save t)
+  ;; (setq TeX-parse-self t)
+  ;; (setq-default TeX-master nil)
 
   (use-package company-auctex
     :ensure t
@@ -1983,6 +1988,341 @@ See: https://www.reddit.com/r/emacs/comments/cd6fe2/how_to_make_emacs_a_latex_id
 
 #+end_src
 
+** LATeX-5-NW
+Not working as expected, not updating the preview in the app
+#+begin_src emacs-lisp :tangle no
+  ;;; tex.el --- xxtex related stuff.
+  ;;; Commentary:
+  ;;
+  ;;; Code:
+  ;;
+  ;; LaTeX-mode-hook is used by AUCTeX's LaTeX mode.
+
+  ;; latex-mode-hook is used by Emacs' built-in latex mode.
+
+
+
+  (defun moose/LaTeX-mode ()
+    (magic-latex-buffer)
+  ;;;  (flyspell-mode)
+    (rainbow-delimiters-mode)
+    (setq-default TeX-master "main") ; forces query for main
+    (setq TeX-view-program-selection '((output-pdf "PDF Viewer"))
+          TeX-view-program-list
+          '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b && open -F -a Skim.app %o"))
+          TeX-command-default "latexmk")
+    (add-to-list 'TeX-command-list
+                 '("latexmk" "latexmk" TeX-run-TeX nil t
+                   :help "Run latexmk on file")))
+
+  (add-hook 'LaTeX-mode-hook 'moose/LaTeX-mode)
+
+
+  (use-package auctex
+    :mode "\\.(la)?tex\\'"
+    :config
+    (use-package magic-latex-buffer
+      :init
+      (setq magic-latex-enable-block-highlight t
+            magic-latex-enable-suscript        t
+            magic-latex-enable-pretty-symbols  t
+            magic-latex-enable-block-align     t
+            magic-latex-enable-minibuffer-echo t
+            magic-latex-enable-inline-image    nil
+            )
+      (use-package auctex-latexmk
+        :after auctex
+        :config
+        (auctex-latexmk-setup)))
+    (use-package company-auctex
+      :after auctex company yasnippet
+      :hook LaTeX-mode ; note that lowercase refers to vanilla mode
+      ))
+
+
+
+
+
+  (use-package latex-preview-pane
+    :disabled t ;; only enable for smart terminal
+    )
+
+  ;; ;; ;;;;;;;
+  ;; ;; ;; ;;
+  ;; ;; (use-package reftex
+  ;; ;;   :mode ("\\.tex\\'" . latex-mode)
+  ;; ;;   :commands turn-on-reftex
+  ;; ;;   :init
+  ;; ;;   (progn
+  ;; ;;     (setq reftex-plug-into-AUCTeX t)))
+
+
+  ;; (provide 'moose-tex)
+
+#+end_src
+** LATeX-6-working
+
+This is working with current `.latexmkrc` file
+#+begin_src emacs-lisp :tangle yes
+  ;;
+  ;; PDF tools
+  ;;
+  (use-package pdf-tools
+    ;; :if (and (eq system-type 'gnu/linux) (null noninteractive))
+    :config
+    ;; Install pdf-tools if necessary (without asking)
+    (pdf-tools-install t))
+
+  ;; (provide 'pdf-tools-config-pvj)
+  ;;
+  ;; LaTeX configuration
+  ;;
+  (use-package tex
+    :ensure auctex
+    :config
+    ;; Indent items by two spaces.
+    (setq LaTeX-item-indent 0)
+    (setq TeX-PDF-mode t)
+    ;; Generate sync file and sync with C-v
+    (eval-after-load
+        "tex" '(add-to-list 'TeX-command-list
+                            '("latexmk" "latexmk -pdf %t --synctex=1" TeX-run-TeX)))
+    (setq latex-run-command "pdflatex")
+    (setq LaTeX-command "latex --synctex=1")
+    ;; Use pdf-tools to open PDF files
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+          TeX-source-correlate-start-server t
+          TeX-source-correlate-method 'synctex)
+    (setq TeX-auto-save t
+          TeX-parse-self t)
+    ;; Needed to sync TeX and PDF
+    (add-hook 'LaTeX-mode-hook
+              '(lambda ()
+                 (TeX-source-correlate-mode 1)))
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    ;; (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+    ;; (setq auto-revert-interval 0.5)
+    (add-hook 'pdf-view-mode-hook
+              (lambda ()
+                (pdf-view-fit-page-to-window) ))
+    (add-hook 'LaTeX-mode-hook
+              '(lambda ()
+                 (reftex-mode))))
+
+  ;;
+  ;; Retrieve BibTeX entries
+  ;;
+  ;; Call 'gscholar-bibtex' to retrieve BibTeX entries from Google
+  ;; Scholar, ACM Digital Library, IEEE Xplore and DBLP.
+  ;; (use-package gscholar-bibtex)
+  ;;
+  ;; Reformat BibTeX using bibclean
+  ;;
+  ;; (use-package bibclean-format
+  ;;   :bind (:map
+  ;;          bibtex-mode-map
+  ;;          ("C-c f" . bibclean-format)))
+  ;; (provide 'latex-config-pvj)
+
+#+end_src
+** Latex-7-NW
+https://github.com/peterewills/my_configs/blob/master/.emacs
+#+begin_src emacs-lisp :tangle no
+  (use-package tex
+    :defer t
+    :ensure auctex
+    :init
+    (eval-after-load 'add-to-exec-path "/usr/local/bin")
+    (eval-after-load 'add-to-exec-path "/Users/atanas/Library/TinyTeX/bin/x86_64-darwin")
+    (server-start) ;; so skim can talk to emacs
+    ;; a bunch of default settings I want
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (add-hook 'LaTeX-mode-hook 'auto-complete-mode)
+    (add-to-list 'auto-mode-alist '("\\.tex$" . LaTeX-mode)); force LaTeX-mode
+    ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+    (add-hook 'LaTeX-mode-hook (lambda ()
+                                 (push
+                                  '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                    :help "Run latexmk on file")
+                                  TeX-command-list)))
+    (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+    :custom
+    (TeX-parse-self t)
+    (preview-auto-cache-preamble t)
+    (TeX-save-query nil) ;; autosave before compiling
+    (TeX-master nil)
+    (reftex-plug-into-AUCTeX t)
+    (TeX-PDF-mode t)
+    ;; use Skim as default pdf viewer
+    ;; Skim's displayline is used for forward search (from .tex to .pdf)
+    ;; option -b highlights the current line; option -g opens Skim in the background
+    (TeX-view-program-selection '((output-pdf "PDF Viewer")))
+    (TeX-view-program-list
+     '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+    (preview-gs-command "/usr/local/bin/gs"))
+#+end_src
+** latex-8-NW
+not working as expected
+#+begin_src emacs-lisp :tangle no
+;;; LaTeX with AUCTeX
+
+
+(use-package tex-site                   ; AUCTeX initialization
+  :ensure auctex)
+
+(use-package tex                        ; TeX editing/processing
+  :ensure auctex
+  :defer t
+  :config
+  (progn
+    (setq TeX-parse-self t              ; Parse documents to provide completion
+                                        ; for packages, etc.
+          TeX-auto-save t               ; Automatically save style information
+          TeX-electric-sub-and-superscript t ; Automatically insert braces after
+                                        ; sub- and superscripts in math mode
+          TeX-electric-math '("\\(" "\\)")
+          ;; Don't insert magic quotes right away.
+          TeX-quote-after-quote t
+          ;; Don't ask for confirmation when cleaning
+          TeX-clean-confirm nil
+          ;; Provide forward and inverse search with SyncTeX
+          TeX-source-correlate-mode t
+          TeX-source-correlate-method 'synctex)
+    (setq-default TeX-master nil        ; Ask for the master file
+                  TeX-engine 'luatex    ; Use a modern engine
+                  ;; Redundant in 11.88, but keep for older AUCTeX
+                  TeX-PDF-mode t)
+
+    ;; Move to chktex
+    (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")))
+
+(use-package tex-buf                    ; TeX buffer management
+  :ensure auctex
+  :defer t
+  ;; Don't ask for confirmation when saving before processing
+  :config (setq TeX-save-query nil))
+
+(use-package tex-style                  ; TeX style
+  :ensure auctex
+  :defer t
+  :config
+  ;; Enable support for csquotes
+  (setq LaTeX-csquotes-close-quote "}"
+        LaTeX-csquotes-open-quote "\\enquote{"))
+
+(use-package tex-fold                   ; TeX folding
+  :ensure auctex
+  :defer t
+  :init (add-hook 'TeX-mode-hook #'TeX-fold-mode))
+
+(use-package tex-mode                   ; TeX mode
+  :ensure auctex
+  :defer t
+  :config
+  (font-lock-add-keywords 'latex-mode
+                          `((,(rx "\\"
+                                  symbol-start
+                                  "fx" (1+ (or (syntax word) (syntax symbol)))
+                                  symbol-end)
+                             . font-lock-warning-face))))
+
+(use-package latex                      ; LaTeX editing
+  :ensure auctex
+  :defer t
+  :config
+  (progn
+    ;; Teach TeX folding about KOMA script sections
+    (setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
+                              (,(rx (0+ space) "\\subsection*{") 3)
+                              (,(rx (0+ space) "\\subsubsection*{") 4)
+                              (,(rx (0+ space) "\\minisec{") 5))
+          ;; No language-specific hyphens please
+          LaTeX-babel-hyphen nil)
+
+    (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)))    ; Easy math input
+
+(use-package auctex-latexmk             ; latexmk command for AUCTeX
+  :ensure t
+  :defer t
+  :init (with-eval-after-load 'latex
+          (auctex-latexmk-setup)))
+
+(use-package auctex-skim                ; Skim as viewer for AUCTeX
+  :load-path "lisp/"
+  :commands (auctex-skim-select)
+  :init (with-eval-after-load 'tex
+          (auctex-skim-select)))
+
+(use-package bibtex                     ; BibTeX editing
+  :defer t
+  :config
+  (progn
+    ;; Run prog mode hooks for bibtex
+    (add-hook 'bibtex-mode-hook (lambda () (run-hooks 'prog-mode-hook)))
+
+    ;; Use a modern BibTeX dialect
+    (bibtex-set-dialect 'biblatex)))
+
+(defun lunaryorn-reftex-find-ams-environment-caption (environment)
+  "Find the caption of an AMS ENVIRONMENT."
+  (let ((re (rx-to-string `(and "\\begin{" ,environment "}"))))
+    ;; Go to the beginning of the label first
+    (re-search-backward re)
+    (goto-char (match-end 0)))
+  (if (not (looking-at (rx (zero-or-more space) "[")))
+      (error "Environment %s has no title" environment)
+    (let ((beg (match-end 0)))
+      ;; Move point onto the title start bracket and move over to the end,
+      ;; skipping any other brackets in between, and eventually extract the text
+      ;; between the brackets
+      (goto-char (1- beg))
+      (forward-list)
+      (buffer-substring-no-properties beg (1- (point))))))
+
+(use-package reftex                     ; TeX/BibTeX cross-reference management
+  :defer t
+  :init (add-hook 'LaTeX-mode-hook #'reftex-mode)
+  :config
+  (progn
+    ;; Plug into AUCTeX
+    (setq reftex-plug-into-AUCTeX t
+          ;; Automatically derive labels, and prompt for confirmation
+          reftex-insert-label-flags '(t t)
+          reftex-label-alist
+          '(
+            ;; Additional label definitions for RefTeX.
+            ("definition" ?d "def:" "~\\ref{%s}"
+             lunaryorn-reftex-find-ams-environment-caption
+             ("definition" "def.") -3)
+            ("theorem" ?h "thm:" "~\\ref{%s}"
+             lunaryorn-reftex-find-ams-environment-caption
+             ("theorem" "th.") -3)
+            ("example" ?x "ex:" "~\\ref{%s}"
+             lunaryorn-reftex-find-ams-environment-caption
+             ("example" "ex") -3)
+            ;; Algorithms package
+            ("algorithm" ?a "alg:" "~\\ref{%s}"
+             "\\\\caption[[{]" ("algorithm" "alg") -3)))
+
+    ;; Provide basic RefTeX support for biblatex
+    (unless (assq 'biblatex reftex-cite-format-builtin)
+      (add-to-list 'reftex-cite-format-builtin
+                   '(biblatex "The biblatex package"
+                              ((?\C-m . "\\cite[]{%l}")
+                               (?t . "\\textcite{%l}")
+                               (?a . "\\autocite[]{%l}")
+                               (?p . "\\parencite{%l}")
+                               (?f . "\\footcite[][]{%l}")
+                               (?F . "\\fullcite[]{%l}")
+                               (?x . "[]{%l}")
+                               (?X . "{%l}"))))
+      (setq reftex-cite-format 'biblatex)))
+  :diminish reftex-mode)
+#+end_src
 ** TODO Citations
 This is done, as I've just inserted this citation using the alfred workflow. My attempt with the do-applescript keeps failing so going to try this:
 *** CANCELED reftex

@@ -482,15 +482,19 @@ Will leave in case change mind.
 ***** Ebib
 This needs to come before the "openwith" function below
 #+source: manage-bib-files
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
   (use-package ebib
     :config
     (setq ebib-preload-bib-files '("/Users/atanas/.pandoc/MyLib.bib")
-          ebib-lay-out 'full
+          ebib-layout 'index-only
           ebib-file-associations '(
                                    ;; open via openwith
                                    ("pdf" . "open")
                                    ("ps" . "gv")))
+    :bind
+    (:map markdown-mode-map
+          ("s-b" . ebib)
+          ("S-s-b" . ebib-insert-citation))
     :hook (ebib . golden-ratio-mode)
     )
 #+end_src
@@ -2067,11 +2071,11 @@ This is working with current `.latexmkrc` file
   ;;
   ;; PDF tools
   ;;
-  (use-package pdf-tools
-    ;; :if (and (eq system-type 'gnu/linux) (null noninteractive))
-    :config
-    ;; Install pdf-tools if necessary (without asking)
-    (pdf-tools-install t))
+  ;; (use-package pdf-tools
+  ;;   ;; :if (and (eq system-type 'gnu/linux) (null noninteractive))
+  ;;   :config
+  ;;   ;; Install pdf-tools if necessary (without asking)
+  ;;   (pdf-tools-install t))
 
   ;; (provide 'pdf-tools-config-pvj)
   ;;
@@ -2090,7 +2094,7 @@ This is working with current `.latexmkrc` file
     (setq latex-run-command "pdflatex")
     (setq LaTeX-command "latex --synctex=1")
     ;; Use pdf-tools to open PDF files
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+    (setq TeX-view-program-selection '((output-pdf "Skim"))
           TeX-source-correlate-start-server t
           TeX-source-correlate-method 'synctex)
     (setq TeX-auto-save t
@@ -2389,7 +2393,7 @@ CLOSED: [2020-02-04 Tue 01:34]
     )
 #+END_SRC
 *** IN-PROGRESS helm-bibtex
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; TODO when get this working, how to insert citation without pre and post-notes
   (use-package helm-bibtex
     :config

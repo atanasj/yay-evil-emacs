@@ -30,7 +30,7 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
 (setq package-enable-at-startup nil)
-(package-initialize)
+(package-initialize)			
 
 ;; workaround bug in Emacs 26.2
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
@@ -54,3 +54,18 @@
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(treemacs yasnippet-snippets yapfify yaml-mode writeroom-mode writegood-mode which-key use-package-chords undo-tree tablist restart-emacs rainbow-mode rainbow-delimiters quelpa-use-package pretty-hydra poly-R pfuture pcre2el paren-face pandoc-mode org-bullets openwith ob-applescript nyan-mode multiple-cursors magit lsp-ui lsp-python-ms lsp-ivy live-py-mode latex-preview-pane langtool json-mode ivy-yasnippet ivy-xref ivy-rich ivy-prescient ivy-hydra imenu-list imenu-anywhere iedit ido-vertical-mode ido-completing-read+ ibuffer-projectile hl-todo highlight-operators highlight-numbers highlight-indent-guides highlight-escape-sequences helpful golden-ratio general frog-menu font-lock+ flyspell-correct-ivy flyspell-correct-avy-menu flycheck flx-ido fix-word fd-dired exec-path-from-shell ess-view elisp-slime-nav eglot ebib dumb-jump drag-stuff doom-themes doom-modeline diredfl dired-subtree dired-rainbow dired-quick-sort dired-git-info diminish diff-hl dashboard crux counsel-projectile company-prescient company-lsp company-box company-auctex centaur-tabs bui biblio auto-package-update auto-dictionary auctex-latexmk amx all-the-icons-ivy all-the-icons-dired aggressive-indent ag adaptive-wrap ace-window ace-jump-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(aw-leading-char-face ((t (:foreground "#51afef" :height 4.0 :width normal :family "Menlo"))))
+ '(ivy-minibuffer-match-face-1 ((t (:inherit font-lock-doc-face :foreground nil))))
+ '(mc/cursor-bar-face ((t (:background "#51afef" :height 0.4 :width extra-condensed)))))

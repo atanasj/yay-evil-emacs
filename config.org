@@ -495,17 +495,17 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
                treemacs-filewatch-mode
                treemacs-fringe-indicator-mode
                treemacs-git-mode)
-    :bind ([f6] . treemacs)
-    ;; (([f6]        . treemacs)
-    ;;        ("M-0"       . treemacs-select-window)
-    ;;        ("C-x 1"     . treemacs-delete-other-windows)
-    ;;        ("C-x t 1"   . treemacs-delete-other-windows)
-    ;;        ("C-x t t"   . treemacs)
-    ;;        ("C-x t b"   . treemacs-bookmark)
-    ;;        ("C-x t C-t" . treemacs-find-file)
-    ;;        ("C-x t M-t" . treemacs-find-tag)
-    ;;        :map treemacs-mode-map
-    ;;        ([mouse-1]   . treemacs-single-click-expand-action))
+    :bind
+    ("<f6>"      . treemacs)
+    ("M-0"       . treemacs-select-window)
+    ("C-x 1"     . treemacs-delete-other-windows)
+    ;; ("C-x t 1"   . treemacs-delete-other-windows)
+    ;; ("C-x t t"   . treemacs)
+    ;; ("C-x t b"   . treemacs-bookmark)
+    ;; ("C-x t C-t" . treemacs-find-file)
+    ;; ("C-x t M-t" . treemacs-find-tag)
+    (:map treemacs-mode-map
+    ([mouse-1]   . treemacs-single-click-expand-action))
     :config
     (setq treemacs-sorting                 'alphabetic-case-insensitive-desc
           ;; treemacs-collapse-dirs           (if treemacs-python-executable 3 0)
@@ -517,12 +517,13 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
 
     (treemacs-follow-mode t)
     (treemacs-filewatch-mode t)
-    ;; (pcase (cons (not (null (executable-find "git")))
-    ;;              (not (null (executable-find "python3"))))
-    ;;   (`(t . t)
-    ;;    (treemacs-git-mode 'deferred))
-    ;;   (`(t . _)
-    ;;    (treemacs-git-mode 'simple)))
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null (executable-find "python3"))))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple)))
+    )
 
     ;; Projectile integration
     (use-package treemacs-projectile
@@ -537,7 +538,7 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
               git-commit-post-finish
               magit-post-stage
               magit-post-unstage)
-             . treemacs-magit--schedule-update)))
+             . treemacs-magit--schedule-update))
 
 #+END_SRC
 
@@ -548,8 +549,8 @@ Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages 
   (require 'font-lock)
   (use-package font-lock+
     ;; :straight t ; not working
-    ;; :quelpa     ; commented as only needed to install once, slows down load time otherwise
-    ;; (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github)
+    :quelpa     ; commented as only needed to install once, slows down load time otherwise
+    (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github)
     )
 
   (use-package all-the-icons)

@@ -4,7 +4,8 @@
 This is my config for additional packages and thier associated settings. Some of this is taken from other packages, and I will cite them as appropriate.
 
 * Keybindings
-These are keybindings related to built-in features that are not enabled by default.
+These are k   [ State ]: EDITED, shown value does not take effect until you set or save it.
+re not enabled by default.
 ** DONE Org-mode
 CLOSED: [2020-01-18 Sat 23:48]
 A global binding for Org-mode. This has been added to the Org Mode in the =.config.org.=
@@ -94,7 +95,7 @@ See [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-lin
 #+RESULTS: org-setup
 | (lambda nil (org-bullets-mode 1)) | org-clock-load | pandoc-mode | org-bullets-mode | org-indent-mode | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-block-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
 
-* Settings without corresponding packages
+g* Settings without corresponding packages
 ** various
 ** Cleanup-Buffers
 This is not currently used. If needed, tangle them.
@@ -389,7 +390,7 @@ From kjhealy:
 *** Use Polymode
 Polymode is a package that supports multiple modes inside a single buffer. It is aimed particularly at literate programming approaches and supports, e.g., R and markdown in a single =.Rmd= file. So it is very useful with knitr in R.
 #+source: polymode
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   ;; from spacemacs config
    (use-package polymode
     :mode (("\\.Rmd"   . Rmd-mode))
@@ -403,6 +404,24 @@ Polymode is a package that supports multiple modes inside a single buffer. It is
         (R-mode)
         (poly-markdown+r-mode))
       ))
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package polymode
+    :ensure t
+    :init
+    (use-package poly-R)
+    (use-package poly-markdown)
+    (use-package poly-noweb)
+    :config
+    (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.Snw" . poly-noweb+r-mode))
+    (add-to-list 'auto-mode-alist '("\\.Rnw" . poly-noweb+r-mode))
+    (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
+    ;; Export files with the same name as the main file
+    (setq polymode-exporter-output-file-format "%s")
+    )
+
 #+end_src
 *** Add a Keyboard Shortcut for Rmd chunks
 
@@ -1081,7 +1100,11 @@ I want to change to the above packages, however this is been problematic.
     :defer 0.1
     :diminish
     :bind (("C-c C-r" . ivy-resume)
-           ("C-x B" . ivy-switch-buffer-other-window))
+           ("C-x B" . ivy-switch-buffer-other-window)
+           (:map ivy-minibuffer-map
+                 ("C-SPC"   . ivy-mark)
+                 ("C-S-SPC" . ivy-unmark))
+           )
     :custom
     (ivy-count-format "(%d/%d) ")
     (ivy-use-virtual-buffers t)
@@ -1133,7 +1156,7 @@ I want to change to the above packages, however this is been problematic.
     :init
     (defun ivy-prescient-non-fuzzy (str)
       "Generate an Ivy-formatted non-fuzzy regexp list for the given STR.
-  This is for use in `ivy-re-builders-alist'."
+    This is for use in `ivy-re-builders-alist'."
       (let ((prescient-filter-method '(literal regexp)))
         (ivy-prescient-re-builder str)))
 
@@ -1272,7 +1295,7 @@ https://github.com/Wilfred/helpful
 *** DONE centaur-tab
 CLOSED: [2020-01-22 Wed 13:56]
 https://github.com/ema2159/centaur-tabs
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package centaur-tabs
     :demand
     :config
@@ -2656,14 +2679,16 @@ Would like ace-window numbers in the modeline, but this is only for looks. Will 
     :after company
     :config
     (setq lsp-prefer-flymake nil
-          lsp-auto-configure t)
+          lsp-auto-configure t
+          lsp-prefer-capf t
+          lsp-idle-delay 0.500)
     )
 
   (use-package company-lsp)
 
   (use-package lsp-ui
     :config
-    (setq lsp-ui-doc-position 'top)
+    (setq lsp-ui-doc-position 'at-point)
     )
 
 #+END_SRC
